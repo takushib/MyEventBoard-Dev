@@ -19,6 +19,7 @@
       $eDesc = $_POST['eventDescription'];
       $eCreator = 2;
       $eLocation = $_POST['eventLocation'];
+      $duration = $_POST['eDuration'];
       $cp = 10;
       $oSlots = 10;
 
@@ -35,7 +36,7 @@
         $ed = $item['endDate'];
         $val1 = $sd;
         $val2 = $ed;
-        $val3 = 60;
+        $val3 = $duration;
         $val4 = 1;
         $val5 = 1;
         $val6 = 0;
