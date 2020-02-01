@@ -52,8 +52,13 @@ function createFields() {
 			break;
 	}
 
+	createCells(startTime, endTime, minutesIncrement);
+	selectASlot();
 
-	
+}
+
+function createCells(startTime, endTime, minutesIncrement)
+{
 	while (temp < endTime)
 	{
 		var newRow = $('<tr><th><div>' + minutesToFormat(temp) + '</div></th><td></td></tr>');
@@ -66,13 +71,10 @@ function createFields() {
 		
 		temp = temp + minutesIncrement
 		$('#slotPicker tbody').append(newRow);
-
 	}
 	
-	selectASlot();
-	
-
-
+	var newRow = $('<tr><th><div>' + minutesToFormat(temp) + '</div></th><td></td></tr>');
+	newRow.addClass("removeOnClear");
 }
 
 function selectASlot()
