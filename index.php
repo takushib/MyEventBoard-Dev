@@ -10,9 +10,6 @@
 
     // render page using twig
 
-
-
     echo $twig -> render('views/index.twig');
-
 
 ?>

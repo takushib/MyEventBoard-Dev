@@ -4,13 +4,33 @@
 
 <div class="container objectSpace">
 
-<h2> Your Invites </h2>
+	<h2> Your Invites </h2>
 
+	<div class="container entryField1">
 
-<div class="container entryField1">
+		<div class="yourInvites">
 
-	<div class ="yourInvites">
-	</div>
+			<table class="table">
+
+				<tr class="row">
+					{% for table_header in table_headers %}
+					<th class="col">{{table_header}}</th>
+					{% endfor %}
+				</tr>
+
+				{% for table_row in table_rows %}
+
+				<tr class="row">
+					{% for table_data in table_row %}
+					<td class="col">{{table_data}}</td>
+					{% endfor %}
+				</tr>
+				
+				{% endfor %}
+
+			</table>
+
+		</div>
 
 		<a href="./register">Go To Basic Event</a>
 
@@ -38,11 +58,11 @@
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 
 <!-- UI specific javascripts -->
-<script type="text/javascript" src="view_js/UI_index.js"></script>	
-	
+<script type="text/javascript" src="view_js/UI_index.js"></script>
+
 <!-- JavaScript specific to this page -->
 <script type="text/javascript" src="view_js/invite_index.js"></script>
 
