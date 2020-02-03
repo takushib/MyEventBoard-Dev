@@ -9,7 +9,7 @@
 
     include 'php/database.php';
 
-    // get invitation data from database
+    // get event data from database
 
     $query = "
     
