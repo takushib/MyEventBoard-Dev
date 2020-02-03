@@ -30,10 +30,11 @@
     $statement -> execute();
 
     $result = $statement -> get_result();
-
     $result_array = $result -> fetch_all(MYSQLI_ASSOC);
-
     $result_keys = array_keys($result_array[0]);
+
+    $result -> free();
+    $database -> close();
 
     // render page using twig
 
