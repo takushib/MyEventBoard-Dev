@@ -1,10 +1,58 @@
 <?php
 
+    // set up twig
+
     require 'vendor/autoload.php';
 
     $loader = new Twig_Loader_Filesystem('register_templates');
     $twig = new Twig_Environment($loader);
 
-    echo $twig -> render('views/register_index.twig'); 
+    // set up connection to database via MySQLi
+
+    include 'php/database.php';
+
+    // get event data from database
+
+    $query = 'SELECT name FROM Event WHERE id = 30';
+
+    $statement = $database -> prepare($query);
+    $statement -> execute();
+
+    $result = $statement -> get_result();
+    $result_row = $result -> fetch_assoc();
+    $event_name = $result_row['name'];
+
+    $result -> free();
+
+    // get time slot data for event from database
+
+    $query = "
+    
+        SELECT start_time, slot_capacity, spaces_available, is_full
+        FROM Timeslot 
+        WHERE fk_event_id = 30
+        
+    ";
+
+    $statement = $database -> prepare($query);
+    $statement -> execute();
+
+    $result = $statement -> get_result();
+    $result_array = $result -> fetch_all(MYSQLI_ASSOC);
+    $result_keys = array_keys($result_array[0]);
+
+    $result -> free();
+    $database -> close();
+
+    // render page using twig
+
+    echo $twig -> render(
+        'views/register_index.twig',
+        [
+            'event_name' => $event_name, 
+            'table_headers' => $result_keys,
+            'table_rows' => $result_array
+        ]
+    ); 
 
 ?>
