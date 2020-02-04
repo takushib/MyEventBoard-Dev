@@ -28,8 +28,7 @@
 
     $query = "
     
-        SELECT 
-        start_time, duration, slot_capacity, spaces_available, is_full, 
+        SELECT start_time, duration, slot_capacity, spaces_available, is_full
         FROM Timeslot 
         WHERE fk_event_id = 30
         
@@ -54,6 +53,6 @@
             'table_headers' => $result_keys,
             'table_rows' => $result_array
         ]
-    ); 
+    );
 
 ?>

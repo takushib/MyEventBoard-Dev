@@ -14,7 +14,6 @@ const monthEnum = {
 }
 
 
-
 $(function () {
 	$("#datepicker2").datepicker({
 		startDate: new Date(),
@@ -194,10 +193,11 @@ function createTimeSlotObjects() {
         start_time = slice_time(row.children[0].textContent);
 
         timeSlot = {
-            start_time: start_time,
-            capacity: row.children[1].textContent,
-            space: row.children[2].textContent,
-            full: row.children[3].textContent
+			start_time: start_time,
+			duration: row.children[1].textContent,
+            capacity: row.children[2].textContent,
+            space: row.children[3].textContent,
+            full: row.children[4].textContent
         }
 
         timeSlotObjects.push(timeSlot);
