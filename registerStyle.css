@@ -77,6 +77,10 @@
 
 .fullSlot > td
 {
-	background-color: #ffb6c1;
 	cursor: not-allowed !important;
+}
+
+.fullSlot 
+{
+	background-color: #ffb6c1;
 }
