@@ -10,6 +10,26 @@
 <div class="container entryField1">
 
 	<div class ="yourEvents">
+
+		<table class="table">
+
+			<tr class="row">
+				{% for table_header in table_headers %}
+				<th class="col">{{table_header}}</th>
+				{% endfor %}
+			</tr>
+
+			{% for table_row in table_rows %}
+
+			<tr class="row">
+				{% for table_data in table_row %}
+				<td class="col">{{table_data}}</td>
+				{% endfor %}
+			</tr>
+			
+			{% endfor %}
+
+		</table>
 	
 	</div>
 
