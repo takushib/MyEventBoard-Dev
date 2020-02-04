@@ -19,7 +19,7 @@
       $eDesc = $_POST['eventDescription'];
       $eCreator = 2;
       $eLocation = $_POST['eventLocation'];
-      $duration = $_POST['eDuration'];
+      $duration = $_POST['eventDuration'];
       $cp = 10;
       $oSlots = 10;
 

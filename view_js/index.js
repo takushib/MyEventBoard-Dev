@@ -60,8 +60,9 @@ window.onload = function () {
     		data: {
 				 	eventName: $('#eventNameInput').val(),
 				 	eventLocation: $('#locationInput').val(),
-				 	eventDescription: $('#eventDescriptTextArea').val(),
-	        slotArray: newArr
+					eventDescription: $('#eventDescriptTextArea').val(),
+					eventDuration: getDuration(),
+	        		slotArray: newArr
 	    	 }
 			}).done(function(response) {
     		alert(response);
@@ -342,13 +343,12 @@ function submitEvent() {
 				
 			});
 			
-			if (hasSelected === false)	//break out of statement
-				return false;
+			if (hasSelected === false) return false; //break out of statement
 			
 		}
 	});
 
-	if (hasSelected === false) {
+	if (hasSelected == false) {
 		return false; // return false if not all column have a selected time
  	}
 	else {
