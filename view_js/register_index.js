@@ -58,8 +58,10 @@ function createFields() {
 
 	var selectedDuration = "15 Minutes";
 	var startTime = 0;
-	var temp = startTime;
-	var endTime = 300;
+	var endTime = 120;
+	
+	var startTime2 = 180;
+	var endTime2 = 300;
 
 	switch (selectedDuration) {
 
@@ -76,26 +78,32 @@ function createFields() {
 			break;
 	}
 
-
-
-	while (temp < endTime) {
-		var newRow = $('<tr><th><div>' + minutesToFormat(temp) + '</div></th><td></td></tr>');
-		newRow.addClass("removeOnClear");
-		newRow.attr("scope", "row");
-
-		var minutesVal = $('<span>' + temp + '</span>');
-		minutesVal.addClass('doNotDisplay');
-		newRow.append(minutesVal);
-
-		temp = temp + minutesIncrement
-		$('#slotPicker tbody').append(newRow);
-
-	}
-
+	createCells(startTime, endTime, minutesIncrement);
+	createCells(startTime2, endTime2, minutesIncrement);
 	selectASlot();
 
+}
 
-
+function createCells(startTime, endTime, minutesIncrement)
+{
+	while (startTime < endTime)
+	{
+		var newRow = $('<tr><th><div>' + minutesToFormat(startTime) + '</div></th><td></td></tr>');
+		newRow.addClass("removeOnClear");
+		newRow.attr("scope", "row");
+		
+		var minutesVal = $('<span>'+startTime+'</span>');
+		minutesVal.addClass('doNotDisplay');
+		newRow.append(minutesVal);
+		
+		startTime = startTime + minutesIncrement
+		$('#slotPicker tbody').append(newRow);
+	}
+	
+	var newRow = $('<tr><th></th><th></th></tr>');
+	newRow.addClass("removeOnClear blank");
+	$('#slotPicker tbody').append(newRow);
+	
 }
 
 function selectASlot() {
