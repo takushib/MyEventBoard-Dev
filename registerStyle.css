@@ -74,3 +74,9 @@
 {
 	border: none !important;
 }
+
+.fullSlot > td
+{
+	background-color: #ffb6c1;
+	cursor: not-allowed !important;
+}
