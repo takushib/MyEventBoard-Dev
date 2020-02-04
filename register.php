@@ -27,12 +27,12 @@
     // get time slot data for event from database
 
     $query = "
-    
-        SELECT 
-        start_time, duration, slot_capacity, spaces_available, is_full, 
-        FROM Timeslot 
+
+        SELECT
+        start_time, duration, slot_capacity, spaces_available, is_full 
+        FROM Timeslot
         WHERE fk_event_id = 30
-        
+
     ";
 
     $statement = $database -> prepare($query);
@@ -50,10 +50,10 @@
     echo $twig -> render(
         'views/register_index.twig',
         [
-            'event_name' => $event_name, 
+            'event_name' => $event_name,
             'table_headers' => $result_keys,
             'table_rows' => $result_array
         ]
-    ); 
+    );
 
 ?>
