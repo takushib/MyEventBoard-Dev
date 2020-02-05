@@ -7,35 +7,48 @@
     $loader = new Twig_Loader_Filesystem('register_templates');
     $twig = new Twig_Environment($loader);
 
+    // get key for event from URL
+
+    $event_key = ($_GET["key"]);
+
     // set up connection to database via MySQLi
 
     include 'php/database.php';
 
     // get event data from database
 
-    $query = 'SELECT name FROM Event WHERE id = 30';
+    $query = 'SELECT name FROM Event WHERE id = (?)';
 
     $statement = $database -> prepare($query);
+    $statement -> bind_param("i", $event_key);
     $statement -> execute();
 
     $result = $statement -> get_result();
     $result_row = $result -> fetch_assoc();
-    $event_name = $result_row['name'];
 
+    // if event data could not be found, show error page
+
+    if ($result_row == NULL) {
+        echo $twig -> render('views/404.twig');
+        exit;
+    }
+
+    $event_name = $result_row['name'];
+    
     $result -> free();
 
     // get time slot data for event from database
 
     $query = "
-
-        SELECT
-        start_time, duration, slot_capacity, spaces_available, is_full
-        FROM Timeslot
-        WHERE fk_event_id = 30
-
+    
+        SELECT start_time, duration, slot_capacity, spaces_available, is_full
+        FROM Timeslot 
+        WHERE fk_event_id = (?)
+        
     ";
 
     $statement = $database -> prepare($query);
+    $statement -> bind_param("i", $event_key);
     $statement -> execute();
 
     $result = $statement -> get_result();
