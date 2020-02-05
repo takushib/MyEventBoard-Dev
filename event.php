@@ -17,11 +17,12 @@
       $stmtE->bind_param("ssisii", $eName, $eDesc, $eCreator, $eLocation, $cp, $oSlots);
       $eName = $_POST['eventName'];
       $eDesc = $_POST['eventDescription'];
+      $sCap = $_POST['sCap'];
       $eCreator = 2;
       $eLocation = $_POST['eventLocation'];
       $duration = $_POST['eventDuration'];
-      $cp = 10;
-      $oSlots = 10;
+      $cp = $_POST['eventCap'];
+      $oSlots = $cp;
 
       $stmtE->execute();
 
@@ -37,8 +38,8 @@
         $val1 = $sd;
         $val2 = $ed;
         $val3 = $duration;
-        $val4 = 1;
-        $val5 = 1;
+        $val4 = $sCap;
+        $val5 = $sCap;
         $val6 = 0;
         $val7 = $last_id;
         /* Execute the statement */

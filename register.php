@@ -63,7 +63,7 @@
     echo $twig -> render(
         'views/register_index.twig',
         [
-            'event_name' => $event_name, 
+            'event_name' => $event_name,
             'table_headers' => $result_keys,
             'table_rows' => $result_array
         ]

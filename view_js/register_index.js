@@ -18,7 +18,7 @@ $(function () {
 	$("#datepicker2").datepicker({
 		startDate: new Date(),
 		multidate: false,
-		format: "mm/dd/yyyy",
+		format: "m/d/yyyy",
 		language: 'en'
 	});
 });
@@ -50,63 +50,105 @@ $(document).ready(function () {
 
 });
 
+function twentyFourFormatToMinutes(hour, minute)
+{	
+	return (parseInt((hour * 60),10) + parseInt(minute, 10));	
+}
+
+
+
+function calcStartTime()
+{
+	var obj = timeSlotObjects;
+
+	var objLength = timeSlotObjects.length;
+	
+	console.log(objLength);
+	var test = timeSlotObjects[0].start_time.hour;
+	var test2 = timeSlotObjects[1].start_time.hour;
+}
+
 
 function createFields() {
 
 	$('.removeOnClear').remove(); //Clear all cells
 
-	var selectedDuration = "15 Minutes";
-	var startTime = 0;
-	var endTime = 120;
+	var selectedDuration = timeSlotObjects[0].duration;
+	var selectedDate = $('.modal-body h2').text();
+	var objLength = timeSlotObjects.length;
 	
-	var startTime2 = 180;
-	var endTime2 = 300;
-
-	switch (selectedDuration) {
-
-		case "15 Minutes":
-			var minutesIncrement = 15;
-			break;
-
-		case "30 Minutes":
-			var minutesIncrement = 30;
-			break;
-
-		case "1 Hour":
-			var minutesIncrement = 60;
-			break;
+	var times = [];
+	var tempDateHolder;   // checks for the selected Date
+	var isAvailable = [];
+	
+	
+	for (var i = 0; i < objLength; i++) // store current day times into an array to loop through
+	{
+		tempDateHolder = timeSlotObjects[i].start_time.month + "/" + timeSlotObjects[i].start_time.day + "/" + timeSlotObjects[i].start_time.year;
+		
+		if (selectedDate.localeCompare(tempDateHolder) === 0)
+		{
+			times.push(twentyFourFormatToMinutes(timeSlotObjects[i].start_time.hour, timeSlotObjects[i].start_time.minute));
+			isAvailable.push(timeSlotObjects[i].full);
+		}
 	}
-
-	createCells(startTime, endTime, minutesIncrement);
-	createCells(startTime2, endTime2, minutesIncrement);
-	selectASlot();
-
+	
+	for (var i = 0; i < times.length; i++)
+	{
+		if (i === 0)
+		{
+			createCells(times[i], isAvailable[i]);
+			selectASlot();
+			continue;
+		}
+		
+		if (parseInt(times[i-1],10) + parseInt(selectedDuration, 10) !== parseInt(times[i], 10))
+		{
+			addBlankSpace();
+			createCells(times[i], isAvailable[i]);
+		}
+		else
+		{
+			createCells(times[i], isAvailable[i]);
+		}
+		
+		selectASlot();
+		
+	}
 }
 
-function createCells(startTime, endTime, minutesIncrement)
+function addBlankSpace()
 {
-	while (startTime < endTime)
-	{
-		var newRow = $('<tr><th><div>' + minutesToFormat(startTime) + '</div></th><td></td></tr>');
+	var newRow = $('<tr><th></th><th></th></tr>');
+	newRow.addClass("removeOnClear blank");
+	$('#slotPicker tbody').append(newRow);
+}
+
+function createCells(startTime, isFull)
+{
+		var newRow = $('<tr><th><div>' + totalMinutesToFormat(startTime) + '</div></th><td></td></tr>');
 		newRow.addClass("removeOnClear");
+	
+		if (isFull == 1)
+		{
+			newRow.addClass("fullSlot");
+		}
 		newRow.attr("scope", "row");
 		
 		var minutesVal = $('<span>'+startTime+'</span>');
 		minutesVal.addClass('doNotDisplay');
 		newRow.append(minutesVal);
-		
-		startTime = startTime + minutesIncrement
+
 		$('#slotPicker tbody').append(newRow);
-	}
-	
-	var newRow = $('<tr><th></th><th></th></tr>');
-	newRow.addClass("removeOnClear blank");
-	$('#slotPicker tbody').append(newRow);
 	
 }
 
 function selectASlot() {
 	$("#slotPicker td").click(function () {
+		
+		if ($(this).parent().hasClass('fullSlot'))
+			return;
+		
 		var check = false;
 
 		$("#slotPicker tr td:nth-child(2)").each(function () {
@@ -120,7 +162,7 @@ function selectASlot() {
 }
 
 
-function minutesToFormat(totalMinutes) {
+function totalMinutesToFormat(totalMinutes) {
 	totalMinutes = totalMinutes + "";
 
 	if (totalMinutes.search("AM") != -1 || totalMinutes.search("PM") != -1) {
@@ -128,15 +170,17 @@ function minutesToFormat(totalMinutes) {
 	}
 
 	var timeString;
-	var startHour = 7;
-	var formatChange = 12 - startHour;
 
-	var hours = startHour + Math.floor(totalMinutes / 60);
+	var hours = Math.floor(totalMinutes / 60);
 	var minutes = parseInt(totalMinutes) % 60;
+	
 	var format;
 
-	if (Math.floor(totalMinutes / 60) >= formatChange) {
-		if (hours != 12) hours = hours - 12;
+	if (hours > 12) {
+		hours = hours - 12;
+		format = "PM";
+	}
+	else if (hours === 12) {
 		format = "PM";
 	}
 	else {
