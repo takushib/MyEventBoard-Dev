@@ -84,3 +84,7 @@
 {
 	background-color: #ffb6c1;
 }
+
+.modal-open {
+ overflow: auto; 
+}

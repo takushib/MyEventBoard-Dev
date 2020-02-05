@@ -3,6 +3,11 @@
   overflow: hidden;
   background-color: orange;
   padding: 20px 10px;
+  width: 100%;
+}
+
+.navbar {
+	width: 100%;
 }
 
 /* Style the header links */
@@ -35,19 +40,14 @@
   }
 }
 
-
-body, html
-{
-	overflow-x: hidden;
-}
-
 @import url(https://fonts.googleapis.com/css?family=Muli:400, 300);
-body {
+body, html {
 	margin: 0;
 	background-color: grey;
 	height: 100%;
 	width: 100%;
 	padding: 0;
+	overflow-x: hidden;
 
 }
 

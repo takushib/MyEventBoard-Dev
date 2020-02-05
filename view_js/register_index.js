@@ -1,3 +1,22 @@
+$("#submitButton").click(function () {
+	
+		var check = false;
+		
+		$("#slotPicker tr td:nth-child(2)").each(function () {
+			if (($(this).hasClass("slotSelected")) === true)
+				check = true;
+		});
+
+		if (check === false)
+			alert("Please pick a slot");
+		else
+		{
+			$('#myModal').modal('toggle');
+			$('#feedBackModal').modal('toggle');
+		}
+});
+
+
 const monthEnum = {
 	January: '1',
 	February: '2',
@@ -18,6 +37,7 @@ $(function () {
 	$("#datepicker2").datepicker({
 		startDate: new Date(),
 		multidate: false,
+		maxDate: "+4m",
 		format: "m/d/yyyy",
 		language: 'en'
 	});
@@ -41,6 +61,7 @@ $(document).ready(function () {
 
 		//var popup = document.getElementById("myModal");
 		//popup.style.display = "block";
+		$('#myModal').modal('toggle');
 		$('.modal-body h2').text(e.format());
 		createFields();
 
