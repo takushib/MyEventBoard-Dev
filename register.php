@@ -27,16 +27,10 @@
     // get time slot data for event from database
 
     $query = "
-<<<<<<< HEAD
 
         SELECT
-        start_time, duration, slot_capacity, spaces_available, is_full 
+        start_time, duration, slot_capacity, spaces_available, is_full
         FROM Timeslot
-=======
-    
-        SELECT start_time, duration, slot_capacity, spaces_available, is_full
-        FROM Timeslot 
->>>>>>> 77a0c480063f9793bc4eff11a60ece0757e83fac
         WHERE fk_event_id = 30
 
     ";

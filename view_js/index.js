@@ -3,10 +3,10 @@ $(function () {
 })
 
 function checkInput(obj) {
-	
+
 	if (obj.val().length === 0)
 	{
-		
+
 		if (obj.hasClass("requiredInput") === true)
 		{
 			return false;
@@ -18,7 +18,7 @@ function checkInput(obj) {
 		}
 	}
 	else
-	{	
+	{
 		obj.removeClass("requiredInput");
 		return true;
 	}
@@ -31,7 +31,7 @@ window.onload = function () {
 		var eventLocationObj = $('#locationInput');
 		var eventNameCheck = checkInput(eventNameObj);
 		var eventLocationCheck = checkInput(eventLocationObj);
-		
+
 		if ( eventNameCheck === true && eventLocationCheck === true)
 		{
 			$('.entryField1').addClass('collapse');
@@ -42,9 +42,9 @@ window.onload = function () {
 	document.getElementById("field2toSubmit").addEventListener("click", function () {
 		var slots = submitEvent();
 		var eventDateInputObj = $('#Dates');
-		
+
 		var eventDateCheck = checkInput(eventDateInputObj);
-		
+
 		if (eventDateCheck === false)  // Must have a date selected
 		{
 			return;
@@ -53,6 +53,8 @@ window.onload = function () {
 			alert("Please select slots");
 		}
 		else {
+			var totalCap = timeslotCapInput.value * slots.length;
+			var slotCap = timeslotCapInput.value;
 			var newArr = JSON.stringify(slots);
 			$.ajax({
     		type: "POST",
@@ -62,7 +64,9 @@ window.onload = function () {
 				 	eventLocation: $('#locationInput').val(),
 					eventDescription: $('#eventDescriptTextArea').val(),
 					eventDuration: getDuration(),
-	        		slotArray: newArr
+	        slotArray: newArr,
+					eventCap: totalCap,
+					sCap: slotCap
 	    	 }
 			}).done(function(response) {
     		alert(response);
@@ -313,38 +317,38 @@ function formatEndTime(temp) {
 function submitEvent() {
 
 	var num = 0;
-	
+
 	var slotArray = [];
 	var hasSelected;
-	
+
 	$("#timeSelector thead tr th").each(function (index) {
 
 		if (index != 0) {
 
 			var currDate = $(this).text();
 			index++;
-			
+
 			hasSelected = false;
-			
+
 			$('#timeSelector tr td:nth-child(' + index + ')').each(function () {
-	
+
 				if ($(this).hasClass("selected")) {
 					var date = formatDate(currDate);
 					var currTime = $(this).closest('tr').find('th').children().text();
-					var slot = { 
+					var slot = {
 						startDate: date + " " + formatTime(currTime),
-						endDate: date + " " + formatEndTime(currTime) 
+						endDate: date + " " + formatEndTime(currTime)
 					};
 					console.log(slot.startDate);
 					console.log(slot.endDate);
 					slotArray.push(slot);
 					hasSelected = true;
 				}
-				
+
 			});
-			
+
 			if (hasSelected === false) return false; //break out of statement
-			
+
 		}
 	});
 
