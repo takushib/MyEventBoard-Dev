@@ -1,12 +1,28 @@
+// checks if a time slot has been selected. Return the selected obj if true. Otherwise return false
+function getColumnSelect()
+{
+	var check = false; 
+	var obj;
+	$("#slotPicker tr td:nth-child(2)").each(function () {
+			if (($(this).hasClass("slotSelected")) === true)
+			{
+				check = true;
+				obj = $(this);
+				return;	// break out of loop
+			}
+	});
+	
+	if (check === true)
+		return obj;
+	else
+		return false;
+}
+
+
 $("#submitButton").click(function () {
 	
-		var check = false;
+		var check = getColumnSelect();
 		
-		$("#slotPicker tr td:nth-child(2)").each(function () {
-			if (($(this).hasClass("slotSelected")) === true)
-				check = true;
-		});
-
 		if (check === false)
 			alert("Please pick a slot");
 		else
@@ -170,15 +186,16 @@ function selectASlot() {
 		if ($(this).parent().hasClass('fullSlot'))
 			return;
 		
-		var check = false;
-
-		$("#slotPicker tr td:nth-child(2)").each(function () {
-			if (($(this).hasClass("slotSelected")) === true)
-				$(this).toggleClass("slotSelected");
-		});
-
-		$(this).toggleClass("slotSelected");
-
+		var check =  getColumnSelect();
+		
+		if (check === false)
+			$(this).toggleClass("slotSelected");
+		else
+		{
+			check.toggleClass("slotSelected");
+			$(this).toggleClass("slotSelected");
+		
+		}
 	});
 }
 
