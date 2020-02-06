@@ -19,10 +19,9 @@
 	font-size: 20px;
 }
 
-
-.table-condensed tbody tr
+.table-condensed > tbody > tr > td
 {
-	border: 1px solid red;
+	border: 1px solid red !important;
 }
 
 .entryFieldRegister
