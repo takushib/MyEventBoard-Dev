@@ -71,25 +71,43 @@ const monthEnum = {
 	December: '12'
 }
 
-
-$(function () {
-	$("#datepicker2").datepicker({
-		startDate: new Date(),
-		multidate: false,
-		maxDate: "+4m",
-		format: "m/d/yyyy",
-		language: 'en'
-	});
-});
-
-
 $(document).ready(function () {
 
 	timeSlotObjects = createTimeSlotObjects();
 	document.getElementById('timeSlots').remove();
 
-	highlightCalendar();
 
+});
+
+function formatDate(d) {
+		var day = String(d.getDate())
+
+		var month = String((d.getMonth()+1))
+
+		return month + "/" + day + "/" + d.getFullYear()
+}
+
+$(function () {
+	var selectableDates = getSelectableDates();
+	console.log(selectableDates);
+	
+	$("#datepicker2").datepicker({
+		startDate: new Date(),
+		multidate: false,
+		endDate: "+3m",
+		beforeShowDay: function(date){
+			if (selectableDates.includes(formatDate(date)) === true)
+			{
+				return { enabled: true}
+			}
+			else
+				return { enabled: false}
+		},
+		format: "m/d/yyyy",
+		language: 'en'
+	});
+	
+	highlightCalendar();
 });
 
 
@@ -98,8 +116,6 @@ $(document).ready(function () {
 
 	$('#datepicker2').datepicker().on('changeDate', function (e) {
 
-		//var popup = document.getElementById("myModal");
-		//popup.style.display = "block";
 		$('#myModal').modal('toggle');
 		$('.modal-body h2').text(e.format());
 		createFields();
@@ -316,9 +332,26 @@ function createTimeSlotObjects() {
 
 }
 
+function getSelectableDates()
+{
+	var enableDays = [];
+	var objLength = timeSlotObjects.length;
+	var tempDateHolder;   // checks for the selected Date
+	
+	for (var i = 0; i < objLength; i++) // store current day times into an array to loop through
+	{
+		tempDateHolder = timeSlotObjects[i].start_time.month + "/" + timeSlotObjects[i].start_time.day + "/" + timeSlotObjects[i].start_time.year;
+		
+		if (enableDays.includes(tempDateHolder) === true)
+			continue;
+		enableDays.push(tempDateHolder);
+	}
+	console.log(enableDays);
+	return enableDays;
+}
 
 function highlightCalendar() {
-
+	
 	calendarTitle = document.getElementsByClassName('datepicker-switch')[0].textContent;
 	calendarMonth = calendarTitle.split(' ')[0];
 	calendarYear = calendarTitle.split(' ')[1];
@@ -333,11 +366,10 @@ function highlightCalendar() {
 		calendarDays = $('td[class="day"]');
 
 		for (day of calendarDays) {
-
+			
 			sameDay = day.textContent == timeSlot.start_time.day;
 
 			if (sameDay) day.classList.add('bg-info');
-
 		}
 
 	}
