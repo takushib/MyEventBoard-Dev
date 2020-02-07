@@ -34,17 +34,17 @@
     }
 
     $event_name = $result_row['name'];
-    
+
     $result -> free();
 
     // get time slot data for event from database
 
     $query = "
-    
-        SELECT start_time, duration, slot_capacity, spaces_available, is_full
-        FROM Timeslot 
+
+        SELECT id, start_time, duration, slot_capacity, spaces_available, is_full
+        FROM Timeslot
         WHERE fk_event_id = (?)
-        
+
     ";
 
     $statement = $database -> prepare($query);
