@@ -9,7 +9,6 @@
 }
 
 
-
 .table-condensed th
 {
 	font-size: 20px;
@@ -20,10 +19,9 @@
 	font-size: 20px;
 }
 
-
-.table-condensed tbody tr
+.table-condensed > tbody > tr > td
 {
-	border: 1px solid red;
+	border: 1px solid red !important;
 }
 
 .entryFieldRegister
@@ -83,4 +81,8 @@
 .fullSlot 
 {
 	background-color: #ffb6c1;
+}
+
+.modal-open {
+ overflow: auto; 
 }
