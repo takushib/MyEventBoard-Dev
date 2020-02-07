@@ -15,13 +15,22 @@
 
     $query = "
         
-        SELECT
-            user AS 'ONID',
-            event_name AS 'Event Name',
-            event_creator AS 'Event Creator\'s ONID',
-            event_id AS 'Event ID'
-        FROM
-            invite_list
+        SELECT 
+            t1.onid AS 'ONID',
+            t2.name AS 'Event Name',
+            t3.onid AS 'Event Creator\'s ONID',
+            t0.fk_event_id
+        FROM 
+            Invitations AS t0
+        INNER JOIN 
+            User AS t1 
+            ON t1.id = t0.fk_user_id
+        INNER JOIN 
+            Event AS t2 
+            ON t2.id = t0.fk_event_id
+        INNER JOIN 
+            User AS t3 
+            ON t3.id = t2.fk_event_creator
 
     ";
 
