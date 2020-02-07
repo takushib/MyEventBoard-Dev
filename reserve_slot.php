@@ -1,8 +1,5 @@
 <?php
 
-
-  require 'vendor/autoload.php';
-
   include 'php/database.php';
 
   $slot_id = $_POST["key"];
@@ -18,11 +15,5 @@
   $result = $database->query($sql);
   $row = $result->fetch_array(MYSQLI_NUM);
   echo $row[0];
-
-
-
-
-
-
-
+  
 ?>
