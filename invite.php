@@ -15,15 +15,13 @@
 
     $query = "
         
-        SELECT 
-            Invitations.id AS 'Invitation ID', 
-            User.onid AS 'ONID', 
-            Event.name AS 'Event Name'
-        FROM 
-            Invitations, User, Event 
-        WHERE 
-            Invitations.fk_user_id = User.id AND 
-            Invitations.fk_event_id = Event.id
+        SELECT
+            user AS 'ONID',
+            event_name AS 'Event Name',
+            event_creator AS 'Event Creator\'s ONID',
+            event_id AS 'Event ID'
+        FROM
+            invite_list
 
     ";
 
