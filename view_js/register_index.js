@@ -36,11 +36,11 @@ $("#submitButton").click(function () {
 					user_id: 0
 	    	 }
 			}).done(function(response) {
-    		if (response == 2) {
+    		if (response == -1) {
 					alert("UH OH");
 					check.parent().addClass("fullSlot");
 				}
-				else if (response == 1) {
+				else if (response == 0) {
 					check.parent().addClass("fullSlot");
 					$('#myModal').modal('toggle');
 					$('#feedBackModal').modal('toggle');
