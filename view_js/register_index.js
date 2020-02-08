@@ -1,15 +1,14 @@
 // checks if a time slot has been selected. Return the selected obj if true. Otherwise return false
-function getColumnSelect()
-{
+
+function getColumnSelect() {
 	var check = false;
 	var obj;
 	$("#slotPicker tr td:nth-child(2)").each(function () {
-			if (($(this).hasClass("slotSelected")) === true)
-			{
-				check = true;
-				obj = $(this);
-				return;	// break out of loop
-			}
+		if (($(this).hasClass("slotSelected")) === true) {
+			check = true;
+			obj = $(this);
+			return;	// break out of loop
+		}
 	});
 
 	if (check === true)
@@ -19,40 +18,63 @@ function getColumnSelect()
 }
 
 
+// for time slot in modal, set its color to red and set space to 0
+// for time slot object, set space to 0 and set full to 1
+
+function setFullSlot(modalTimeSlot, timeSlotObject) {
+
+	modalTimeSlot.parent().addClass("fullSlot");
+	modalTimeSlot[0].textContent = 0;
+
+	timeSlotObject.space = 0;
+	timeSlotObject.full = 1;
+
+}
+
+
 $("#submitButton").click(function () {
 
-		var check = getColumnSelect();
+	var selectedSlot = getColumnSelect();
 
-		if (check === false)
-			alert("Please pick a slot");
-		else
-		{
-			console.log(check.parent().attr('id'));
-			$.ajax({
-    		type: "POST",
-    		url: "reserve_slot.php",
-    		data: {
-				 	key: check.parent().attr('id'),
-					user_id: 0
-	    	 }
-			}).done(function(response) {
-    		if (response == -1) {
-					alert("UH OH");
-					check.parent().addClass("fullSlot");
-				}
-				else if (response == 0) {
-					check.parent().addClass("fullSlot");
-					$('#myModal').modal('toggle');
-					$('#feedBackModal').modal('toggle');
-				}
-				else {
-					$('#myModal').modal('toggle');
-					$('#feedBackModal').modal('toggle');
-					// went through
-				}
-			});
+	if (selectedSlot === false)
+		alert("Please pick a slot.");
+	else {
 
-		}
+		var slotKey = selectedSlot.parent().attr('id');
+		console.log(selectedSlot.parent().attr('id'));
+
+		$.ajax({
+			type: "POST",
+			url: "reserve_slot.php",
+			data: {
+				key: slotKey,
+				user_id: 0
+			}
+		}).done(function (response) {
+			
+			if (response <= -1) {
+				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
+				document.getElementById('feedbackMessage').textContent = 
+					"The time slot was full! Please select another one!";
+				$('#feedBackModal').modal('toggle');
+			}
+			else if (response == 0) {
+				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
+				document.getElementById('feedbackMessage').textContent = "You have been registered!";
+				$('#myModal').modal('toggle');
+				$('#feedBackModal').modal('toggle');
+			}
+			else {
+				$('#myModal').modal('toggle');
+				$('#feedBackModal').modal('toggle');
+				timeSlotObjects[slotKey].space = response;
+			}
+
+			selectedSlot[0].classList.remove('slotSelected');
+
+		});
+
+	}
 });
 
 
@@ -76,37 +98,35 @@ $(document).ready(function () {
 	timeSlotObjects = createTimeSlotObjects();
 	document.getElementById('timeSlots').remove();
 
-
 });
 
 function formatDate(d) {
-		var day = String(d.getDate())
+	var day = String(d.getDate())
 
-		var month = String((d.getMonth()+1))
+	var month = String((d.getMonth() + 1))
 
-		return month + "/" + day + "/" + d.getFullYear()
+	return month + "/" + day + "/" + d.getFullYear()
 }
 
 $(function () {
 	var selectableDates = getSelectableDates();
 	console.log(selectableDates);
-	
+
 	$("#datepicker2").datepicker({
 		startDate: new Date(),
 		multidate: false,
 		endDate: "+3m",
-		beforeShowDay: function(date){
-			if (selectableDates.includes(formatDate(date)) === true)
-			{
-				return { enabled: true}
+		beforeShowDay: function (date) {
+			if (selectableDates.includes(formatDate(date)) === true) {
+				return { enabled: true }
 			}
 			else
-				return { enabled: false}
+				return { enabled: false }
 		},
 		format: "m/d/yyyy",
 		language: 'en'
 	});
-	
+
 	highlightCalendar();
 });
 
@@ -126,22 +146,21 @@ $(document).ready(function () {
 
 });
 
-function twentyFourFormatToMinutes(hour, minute)
-{
-	return (parseInt((hour * 60),10) + parseInt(minute, 10));
+function twentyFourFormatToMinutes(hour, minute) {
+	return (parseInt((hour * 60), 10) + parseInt(minute, 10));
 }
 
 
 
-function calcStartTime()
-{
+function calcStartTime() {
 	var obj = timeSlotObjects;
 
 	var objLength = timeSlotObjects.length;
-
 	console.log(objLength);
-	var test = timeSlotObjects[0].start_time.hour;
-	var test2 = timeSlotObjects[1].start_time.hour;
+
+	var timeSlotKeys = Object.keys(timeSlotObjects)
+	var test = timeSlotObjects[timeSlotKeys[0]].start_time.hour;
+	var test2 = timeSlotObjects[timeSlotKeys[1]].start_time.hour;
 }
 
 
@@ -149,45 +168,48 @@ function createFields() {
 
 	$('.removeOnClear').remove(); //Clear all cells
 
-	var selectedDuration = timeSlotObjects[0].duration;
-	var slotId = [];
+	var timeSlotKeys = Object.keys(timeSlotObjects);
+	var selectedDuration = timeSlotObjects[timeSlotKeys[0]].duration;
+	
 	var selectedDate = $('.modal-body h2').text();
-	var objLength = timeSlotObjects.length;
+	var tempDateHolder;   // checks for the selected Date
 
 	var times = [];
-	var tempDateHolder;   // checks for the selected Date
+	var spaces = [];
 	var isAvailable = [];
+	var slotIDs = [];
 
 
-	for (var i = 0; i < objLength; i++) // store current day times into an array to loop through
+	for (var timeSlotKey of timeSlotKeys) // store current day times into an array to loop through
 	{
-		tempDateHolder = timeSlotObjects[i].start_time.month + "/" + timeSlotObjects[i].start_time.day + "/" + timeSlotObjects[i].start_time.year;
 
-		if (selectedDate.localeCompare(tempDateHolder) === 0)
-		{
-			slotId.push(timeSlotObjects[i].id);
-			times.push(twentyFourFormatToMinutes(timeSlotObjects[i].start_time.hour, timeSlotObjects[i].start_time.minute));
-			isAvailable.push(timeSlotObjects[i].full);
+		var timeSlot = timeSlotObjects[timeSlotKey];
+
+		tempDateHolder = timeSlot.start_time.month + "/" + timeSlot.start_time.day + "/" + timeSlot.start_time.year;
+
+		if (selectedDate.localeCompare(tempDateHolder) === 0) {
+			times.push(twentyFourFormatToMinutes(timeSlot.start_time.hour, timeSlot.start_time.minute));
+			spaces.push(timeSlot.space);
+			isAvailable.push(timeSlot.full);
+			slotIDs.push(timeSlot.id);
 		}
+
 	}
 
-	for (var i = 0; i < times.length; i++)
-	{
-		if (i === 0)
-		{
-			createCells(times[i], isAvailable[i], slotId[i]);
+	for (var i = 0; i < times.length; i++) {
+
+		if (i === 0) {
+			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i]);
 			selectASlot();
 			continue;
 		}
 
-		if (parseInt(times[i-1],10) + parseInt(selectedDuration, 10) !== parseInt(times[i], 10))
-		{
+		if (parseInt(times[i - 1], 10) + parseInt(selectedDuration, 10) !== parseInt(times[i], 10)) {
 			addBlankSpace();
-			createCells(times[i], isAvailable[i], slotId[i]);
+			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i]);
 		}
-		else
-		{
-			createCells(times[i], isAvailable[i], slotId[i]);
+		else {
+			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i]);
 		}
 
 		selectASlot();
@@ -195,29 +217,30 @@ function createFields() {
 	}
 }
 
-function addBlankSpace()
-{
+function addBlankSpace() {
 	var newRow = $('<tr><th></th><th></th></tr>');
 	newRow.addClass("removeOnClear blank");
 	$('#slotPicker tbody').append(newRow);
 }
 
-function createCells(startTime, isFull, id)
-{
-		var newRow = $('<tr><th><div>' + totalMinutesToFormat(startTime) + '</div></th><td></td></tr>');
-		newRow.attr('id',id);
-		newRow.addClass("removeOnClear");
-		if (isFull == 1)
-		{
-			newRow.addClass("fullSlot");
-		}
-		newRow.attr("scope", "row");
+function createCells(startTime, spaceAvailable, isFull, id) {
 
-		var minutesVal = $('<span>'+startTime+'</span>');
-		minutesVal.addClass('doNotDisplay');
-		newRow.append(minutesVal);
+	var rowContent = '<tr><th><div>' + totalMinutesToFormat(startTime);
+	rowContent += '</div></th><td>' + spaceAvailable +'</td></tr>'
 
-		$('#slotPicker tbody').append(newRow);
+	var newRow = $(rowContent);
+	newRow.attr('id', id);
+	newRow.addClass("removeOnClear");
+	if (isFull == 1) {
+		newRow.addClass("fullSlot");
+	}
+	newRow.attr("scope", "row");
+
+	var minutesVal = $('<span>' + startTime + '</span>');
+	minutesVal.addClass('doNotDisplay');
+	newRow.append(minutesVal);
+
+	$('#slotPicker tbody').append(newRow);
 
 }
 
@@ -227,12 +250,11 @@ function selectASlot() {
 		if ($(this).parent().hasClass('fullSlot'))
 			return;
 
-		var check =  getColumnSelect();
+		var check = getColumnSelect();
 
 		if (check === false)
 			$(this).toggleClass("slotSelected");
-		else
-		{
+		else {
 			check.toggleClass("slotSelected");
 			$(this).toggleClass("slotSelected");
 
@@ -280,9 +302,9 @@ function slice_time(timeText) {
 
 	// format is 'YYYY-MM-DD HH:MM:SS'
 
-    slicedText1 = timeText.split('-'); // 'YYYY', 'MM', 'DD HH:MM:SS'
-    slicedText2 = slicedText1[2].split(' '); // 'DD', HH:MM:SS'
-	slicedText3 = slicedText2[1].split(':'); // 'HH', 'MM', 'SS'
+	var slicedText1 = timeText.split('-'); // 'YYYY', 'MM', 'DD HH:MM:SS'
+	var slicedText2 = slicedText1[2].split(' '); // 'DD', HH:MM:SS'
+	var slicedText3 = slicedText2[1].split(':'); // 'HH', 'MM', 'SS'
 
 	// trim leading zero if it exists
 
@@ -294,54 +316,54 @@ function slice_time(timeText) {
 
 	// return object
 
-    return {
-        year: slicedText1[0],
-        month: slicedText1[1],
-        day: slicedText2[0],
-        hour: slicedText3[0],
-        minute: slicedText3[1]
-    }
+	return {
+		year: slicedText1[0],
+		month: slicedText1[1],
+		day: slicedText2[0],
+		hour: slicedText3[0],
+		minute: slicedText3[1]
+	}
 
 }
 
 function createTimeSlotObjects() {
 
-    timeSlotTable = document.getElementById('timeSlots');
-    tableRows = $(timeSlotTable.getElementsByTagName('tr')).slice(1);
+	timeSlotTable = document.getElementById('timeSlots');
+	tableRows = $(timeSlotTable.getElementsByTagName('tr')).slice(1);
 
-    timeSlotObjects = []
+	var timeSlotObjects = {};
 
-    for (row of tableRows) {
+	for (var row of tableRows) {
 
-        start_time = slice_time(row.children[1].textContent);
+		var start_time = slice_time(row.children[1].textContent);
 
-        timeSlot = {
-						id: row.children[0].textContent,
-						start_time: start_time,
-						duration: row.children[2].textContent,
-            capacity: row.children[3].textContent,
-            space: row.children[4].textContent,
-            full: row.children[5].textContent
-        }
+		var timeSlot = {
+			id: row.children[0].textContent,
+			start_time: start_time,
+			duration: row.children[2].textContent,
+			capacity: row.children[3].textContent,
+			space: row.children[4].textContent,
+			full: row.children[5].textContent
+		}
 
+		timeSlotObjects[timeSlot.id] = timeSlot;
 
-        timeSlotObjects.push(timeSlot);
+	}
 
-    }
-    return timeSlotObjects;
+	return timeSlotObjects;
 
 }
 
-function getSelectableDates()
-{
+function getSelectableDates() {
 	var enableDays = [];
-	var objLength = timeSlotObjects.length;
 	var tempDateHolder;   // checks for the selected Date
-	
-	for (var i = 0; i < objLength; i++) // store current day times into an array to loop through
+
+	for (var timeSlotKey of Object.keys(timeSlotObjects)) // store current day times into an array to loop through
 	{
-		tempDateHolder = timeSlotObjects[i].start_time.month + "/" + timeSlotObjects[i].start_time.day + "/" + timeSlotObjects[i].start_time.year;
-		
+		var timeSlot = timeSlotObjects[timeSlotKey];
+
+		tempDateHolder = timeSlot.start_time.month + "/" + timeSlot.start_time.day + "/" + timeSlot.start_time.year;
+
 		if (enableDays.includes(tempDateHolder) === true)
 			continue;
 		enableDays.push(tempDateHolder);
@@ -351,23 +373,25 @@ function getSelectableDates()
 }
 
 function highlightCalendar() {
-	
-	calendarTitle = document.getElementsByClassName('datepicker-switch')[0].textContent;
-	calendarMonth = calendarTitle.split(' ')[0];
-	calendarYear = calendarTitle.split(' ')[1];
 
-	for (timeSlot of timeSlotObjects) {
+	var calendarTitle = document.getElementsByClassName('datepicker-switch')[0].textContent;
+	var calendarMonth = calendarTitle.split(' ')[0];
+	var calendarYear = calendarTitle.split(' ')[1];
 
-		sameMonth = monthEnum[calendarMonth] == timeSlot.start_time.month;
-		sameYear = calendarYear == timeSlot.start_time.year;
+	for (var timeSlotKey of Object.keys(timeSlotObjects)) {
+
+		var timeSlot = timeSlotObjects[timeSlotKey];
+
+		var sameMonth = monthEnum[calendarMonth] == timeSlot.start_time.month;
+		var sameYear = calendarYear == timeSlot.start_time.year;
 
 		if (!sameMonth || !sameYear) continue;
 
-		calendarDays = $('td[class="day"]');
+		var calendarDays = $('td[class="day"]');
 
 		for (day of calendarDays) {
-			
-			sameDay = day.textContent == timeSlot.start_time.day;
+
+			var sameDay = day.textContent == timeSlot.start_time.day;
 
 			if (sameDay) day.classList.add('bg-info');
 		}
