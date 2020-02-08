@@ -31,11 +31,18 @@ window.onload = function () {
 		var eventLocationObj = $('#locationInput');
 		var eventNameCheck = checkInput(eventNameObj);
 		var eventLocationCheck = checkInput(eventLocationObj);
-
+		var eventSlotsCheckEmpty = $('#timeslotCapInput');
+		
+		
 		if ( eventNameCheck === true && eventLocationCheck === true)
 		{
+			if (eventSlotsCheckEmpty.val() === "")
+					eventSlotsCheckEmpty.val("1");
+				
 			$('.entryField1').addClass('collapse');
 			$('.entryField2').removeClass('collapse');
+			
+			
 		}
 	})
 
