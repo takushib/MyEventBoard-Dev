@@ -5,6 +5,12 @@
     align-items: stretch;
 }
 
+.side-bar
+{
+	margin-top: 3%;
+	padding: 10px;
+}
+
 .btn-square
 {
   width: 45px !important;

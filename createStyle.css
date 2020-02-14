@@ -1,19 +1,6 @@
-.form-group
-{
-	padding: 10px;
-}
-
 label
 {
 	font-weight: bold;
-}
-
-.objectSpace
-{
-	align-items: center;
-	padding: 40px;
-	background-color: white;
-	overflow-x: hidden;
 }
 
 .requiredSign
@@ -76,18 +63,9 @@ label
 	border: none;
 }
 
-.side-bar
-{
-	margin-top: 3%;
-	padding: 10px;
-}
 
 #timeSelector td.selected
 {
 	background-color:#ccc;
 }
 
-.doNotDisplay
-{
-	display: none;
-}

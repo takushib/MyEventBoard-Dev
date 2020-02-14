@@ -50,3 +50,21 @@ body, html {
 	overflow-x: hidden;
 
 }
+
+.objectSpace
+{
+	align-items: center;
+	padding: 40px;
+	background-color: white;
+	overflow-x: hidden;
+}
+
+.form-group
+{
+	padding: 10px;
+}
+
+.doNotDisplay
+{
+	display: none;
+}
