@@ -1,21 +1,20 @@
-{% extends "layout/layout.twig" %}
+{% extends "layout/layoutInvites.twig" %}
 
 {% block page_content %}
 
 <div class="container objectSpace">
 
-	<h2> Your Events </h2>
-
+	<h2> Your Invites </h2>
 
 	<div class="container entryField1">
 
-		<div class="yourEvents">
+		<div class="yourInvites">
 
 			<table class="table">
 
 				<tr class="row">
-					{% for table_header in table_headers %}
-					<th class="col">{{table_header}}</th>
+					{% for table_header in table_headers|slice(0, -1) %}
+					<th class="col">{{ table_header }}</th>
 					{% endfor %}
 				</tr>
 
@@ -23,18 +22,18 @@
 
 				<tr class="row">
 
-					{% set first_data = table_row|first %}
+					<td class="col">{{ table_row|first }}</td>
+
+					{% set event_key = table_row|last %}
 
 					<td class="col">
-						<a class="text-info" href="./register?key={{first_data}}">{{first_data}}</a>
+						<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
 					</td>
 
-					{% for table_data in table_row|slice(1) %}
-					<td class="col">{{table_data}}</td>
-					{% endfor %}
+					<td class="col">{{ table_row|slice(2,2)|first }}</td>
 
 				</tr>
-
+				
 				{% endfor %}
 
 			</table>
@@ -44,7 +43,6 @@
 	</div>
 
 </div>
-
 
 <!-- jQuery -->
 <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -72,6 +70,6 @@
 <script type="text/javascript" src="view_js/UI_index.js"></script>
 
 <!-- JavaScript specific to this page -->
-<script type="text/javascript" src="view_js/myevent_index.js"></script>
+<script type="text/javascript" src="view_js/invite_index.js"></script>
 
 {% endblock %}

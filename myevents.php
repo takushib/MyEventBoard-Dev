@@ -2,7 +2,7 @@
 
     require 'vendor/autoload.php';
 
-    $loader = new Twig_Loader_Filesystem('my_events_templates');
+    $loader = new Twig_Loader_Filesystem('templates');
     $twig = new Twig_Environment($loader);
 
     // set up connection to database via MySQLi
