@@ -1,20 +1,22 @@
 {% extends "layout/layout.twig" %}
 
+{% block page_head %} <link rel="stylesheet" href="css/main.css"> {% endblock %}
+
+
 {% block page_content %}
 
 <div class="container objectSpace">
 
-<!--
-<div class="welcomeTitle">
-	<label> Signed in as: User </label>
-</div>
--->
+	<!--
+	<div class="welcomeTitle">
+		<label> Signed in as: User </label>
+	</div>
+	-->
 
-<div class="weeksEvent container">
-<h3 class="weekEventHeader"> Events for this week </h3>
-
-<div class="eventsContainer container" id="eventsContainer">
-</div>
+	<div class="weeksEvent container">
+		<h3 class="weekEventHeader"> Events for this week </h3>
+		<div class="eventsContainer container" id="eventsContainer"></div>
+	</div>
 
 </div>
 
@@ -39,11 +41,11 @@
 <script type="text/javascript"
 	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 
 <!-- UI specific javascripts -->
-<script type="text/javascript" src="view_js/UI_index.js"></script>	
+<script type="text/javascript" src="view_js/UI_index.js"></script>
 
-<script type="text/javascript" src="view_js/main.js"></script>	
+<script type="text/javascript" src="view_js/main.js"></script>
 
 {% endblock %}
