@@ -113,7 +113,6 @@ const monthEnum = {
 }
 
 $(document).ready(function () {
-
 	timeSlotObjects = createTimeSlotObjects();
 	document.getElementById('timeSlots').remove();
 

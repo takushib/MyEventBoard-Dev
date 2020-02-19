@@ -1,7 +1,7 @@
 <!-- Side bar -->
 <!-- Source: https://bootstrapious.com/p/bootstrap-sidebar -->
 
-    <nav id="sidebar">
+    <div id="sidebar">
 		
 		<div id="dismiss">
 			<button type="button" class="btn-square btn-outline-light" id="sidebarCollapseIcon">
@@ -13,17 +13,22 @@
             <h3>Dashboard</h3>
         </div>
 
-        <ul class="list-unstyled components">
-            <li>
-                <a href="./invite">My Invites</a>
+		
+		
+        <ul class="list-unstyled components side-nav">
+            <li class="mobile" id="browseNav">
+				<a href="./browse"> <i class="fa fa-search" aria-hidden="true"></i> Browse</a>
             </li>
-            <li>
-                <a href="./myevents">My Events</a>
+			<li class="mobile" id="reserveNav">
+                <a href="./invite"><i class="fa fa-calendar" aria-hidden="true"></i> Reservations</a>
             </li>
-            <li>
-                <a href="./create">Create An Event</a>
+            <li class="desktop" id="manageNav">
+                <a href="./myevents"><i class="fas fa-edit"></i> Manage</a>
+            </li>
+			<li class="desktop" id="createNav">
+                <a href="./create"><i class="fas fa-plus"></i> Create</a>
             </li>
         </ul>
-    </nav>
+    </div>
 
 

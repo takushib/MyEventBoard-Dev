@@ -36,3 +36,13 @@ function minutesToFormat(totalMinutes) {
 	return timeString;
 
 }
+
+
+$(document).ready(function(){
+  $('#tableSearch').on('keyup', function() {
+    var value = $(this).val().toLowerCase();
+    $('.tableBody tr').filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});

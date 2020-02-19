@@ -1,29 +1,40 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} {% endblock %}
+{% block page_head %}  <link rel="stylesheet" href="css/eventStyle.css"> {% endblock %}
 
 
 {% block page_content %}
 
 <div class="container objectSpace">
 
+
 	<h2> Your Events </h2>
 
-
+	
 	<div class="container entryField1">
 
-		<div class="yourEvents">
-
-			<table class="table">
-
-				<tr class="row">
+	{{include('partials/search.twig') }}
+	
+		<div class="yourEvents container">
+			
+			<table class="table table-striped">
+				<thead>
+				<tr class="row eventHeader">
 					{% for table_header in table_headers %}
 					<th class="col">{{table_header}}</th>
 					{% endfor %}
+				<th class="col"></th>
+				<th class="col">
+					<button class="eventManageButton deleteSelectButton">
+						<i class="fa fa-trash" aria-hidden="true"></i> 
+						<text> Select </text>
+					</button>
+				</th>
 				</tr>
-
+	
+				</thead>
+				<tbody class="tableBody">
 				{% for table_row in table_rows %}
-
 				<tr class="row">
 
 					{% set first_data = table_row|first %}
@@ -35,17 +46,68 @@
 					{% for table_data in table_row|slice(1) %}
 					<td class="col">{{table_data}}</td>
 					{% endfor %}
-
+					
+					<td class="col">
+						<button class="eventManageButton editEventButton">
+							<i class="fas fa-edit"></i>
+							<text> Edit</text>
+						</button>
+					</td>
+					
+					<td class="col">
+						<input class="massDeleteOn doNotDisplay" type="checkbox">
+						<button class="eventManageButton deleteEvent">
+							<i class="fas fa-times"></i>
+							<text> Delete</text>
+						</button>
+					</td>
 				</tr>
 
 				{% endfor %}
-
+				</tbody>
 			</table>
 
 		</div>
 
 	</div>
+		<!-- Modal -->
+	<div id="deleteConfirm" class="modal fade" role="dialog">
+		<div class="modal-dialog">
 
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1> Confirm Deletion </h1>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-default" id="deleteSubmitButton">Delete</button>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	
+	
+	<!-- Modal FeedBack -->
+	<div id="feedBackModalDelete" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 id="feedbackDelete" class="modal-title">Event Deleted!</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	
 </div>
 
 

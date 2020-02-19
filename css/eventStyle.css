@@ -1,0 +1,11 @@
+.eventManageButton {
+	border: none;
+	background: none;
+	color: #0000EE ;
+}
+
+.toggled {
+	background: #d3d3d3;
+	border: 1px solid grey;
+	border-radius: 2px;
+}
