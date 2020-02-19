@@ -10,6 +10,6 @@
 
     // render page using twig
 
-    echo $twig -> render('views/main.twig');
+    echo $twig -> render('views/create.twig');
 
 ?>

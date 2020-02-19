@@ -1,3 +1,22 @@
+var weekday=new Array(7);
+
+weekday[0]="Sunday";
+weekday[1]="Monday";
+weekday[2]="Tuesday";
+weekday[3]="Wednesday";
+weekday[4]="Thursday";
+weekday[5]="Friday";
+weekday[6]="Saturday";
+
+
+// Returns week day name of a date obj
+function getDayName(dateObj) {
+	var date = dateObj.datepicker('getDate');
+	var dayOfWeek = weekday[date.getUTCDay()];
+	return dayOfWeek;
+}
+
+
 // checks if a time slot has been selected. Return the selected obj if true. Otherwise return false
 
 function getColumnSelect() {
@@ -48,7 +67,7 @@ $("#submitButton").click(function () {
 			url: "reserve_slot.php",
 			data: {
 				key: slotKey,
-				user_id: 0
+				user_id: 1
 			}
 		}).done(function (response) {
 			
@@ -130,14 +149,16 @@ $(function () {
 	highlightCalendar();
 });
 
-
 // Source: https://jsfiddle.net/christianklemp_imt/b20paum2/
 $(document).ready(function () {
 
 	$('#datepicker2').datepicker().on('changeDate', function (e) {
 
 		$('#myModal').modal('toggle');
-		$('.modal-body h2').text(e.format());
+		
+		var dayOfWeek = getDayName($(this));
+		$('.modal-body #dayLabel').text(dayOfWeek);
+		$('.modal-body #dateLabel').text(e.format());
 		createFields();
 
 	});

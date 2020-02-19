@@ -5,6 +5,12 @@
     align-items: stretch;
 }
 
+.side-bar
+{
+	margin-top: 3%;
+	padding: 10px;
+}
+
 .btn-square
 {
   width: 45px !important;
@@ -21,7 +27,7 @@
     min-height: 100vh;
 	
 	background: #7386D5;
-    color: #fff;
+    color: #fff; 
     transition: all 0.3s;
 }
 

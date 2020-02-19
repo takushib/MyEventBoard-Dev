@@ -1,5 +1,8 @@
 {% extends "layout/layout.twig" %}
 
+{% block page_head %} <link rel="stylesheet" href="css/registerStyle.css"> {% endblock %}
+
+
 {% block page_content %}
 
 <div class="container entryFieldRegister objectSpace">
@@ -44,9 +47,10 @@
 				</div>
 
 				<div class="modal-body">
-
-					<h2></h2>
-
+					
+					<h3 id="dayLabel"></h3>
+					<h2 id="dateLabel"></h2>
+					
 					<div class="container timeContainer">
 
 						<table class="table table-bordered align-top slotPicker table-sm" id="slotPicker">

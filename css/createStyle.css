@@ -1,0 +1,71 @@
+label
+{
+	font-weight: bold;
+}
+
+.requiredSign
+{
+	color: red;
+}
+
+.requiredInput
+{
+	border-color: red;
+}
+
+.entryField1
+{
+	padding: 10px;
+}
+
+.entryField2
+{
+	padding: 10px;
+
+}
+.timeSelectionField
+{
+	overflow-x: auto;
+}
+
+.submitField
+{
+	padding: 10px;
+}
+
+.nextBackField
+{
+	float: right;
+}
+
+.timeSelector
+{
+	background-color: white;
+
+}
+
+.timeSelector table
+{
+	table-layout: fixed;
+	border: none;
+}
+
+.timeSelector td
+{
+	cursor: pointer;
+	border: 1px solid black;
+}
+
+.timeSelector th
+{
+	font-size: 10px;
+	padding-top:0 !important;
+	border: none;
+}
+
+
+#timeSelector td.selected
+{
+	background-color:#ccc;
+}
+
