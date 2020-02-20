@@ -67,13 +67,14 @@ window.onload = function () {
     		type: "POST",
     		url: "event.php",
     		data: {
-				 	eventName: $('#eventNameInput').val(),
-				 	eventLocation: $('#locationInput').val(),
-					eventDescription: $('#eventDescriptTextArea').val(),
-					eventDuration: getDuration(),
-	        slotArray: newArr,
-					eventCap: totalCap,
-					sCap: slotCap
+				eventCreator: 2,
+				eventName: $('#eventNameInput').val(),
+				eventLocation: $('#locationInput').val(),
+				eventDescription: $('#eventDescriptTextArea').val(),
+				eventDuration: getDuration(),
+				slotArray: newArr,
+				eventCap: totalCap,
+				sCap: slotCap
 	    	 }
 			}).done(function(response) {
     		alert(response);
