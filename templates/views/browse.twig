@@ -1,54 +1,28 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} {% endblock %}
+{% block page_head %}  <link rel="stylesheet" href="css/browseStyle.css"> {% endblock %}
 
 
 {% block page_content %}
 
 <div class="container objectSpace">
 
-	<h2> Your Invites </h2>
+	<h2> Browse Events </h2>
 
 	<div class="container entryField1">
 
-		{{include('partials/search.twig') }}
-		
-		<div class="yourInvites container">
-		
-			<table class="table table-striped">
-				<thead>
-				<tr class="row">
-					{% for table_header in table_headers|slice(0, -1) %}
-					<th class="col">{{ table_header }}</th>
-					{% endfor %}
-				</tr>
-				</thead>
-				<tbody class="tableBody">
-				{% for table_row in table_rows %}
-
-				<tr class="row">
-
-					<td class="col">{{ table_row|first }}</td>
-
-					{% set event_key = table_row|last %}
-
-					<td class="col">
-						<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
-					</td>
-
-					<td class="col">{{ table_row|slice(2,2)|first }}</td>
-
-				</tr>
-				
-				{% endfor %}
-				</tbody>
-			</table>
+	{{include('partials/search.twig') }}
+	
+		<div class="browseEvents container">
+			
 
 		</div>
 
 	</div>
-
+	
+	
 </div>
+
 
 <!-- jQuery -->
 <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -76,6 +50,6 @@
 <script type="text/javascript" src="view_js/UI_index.js"></script>
 
 <!-- JavaScript specific to this page -->
-<script type="text/javascript" src="view_js/invite_index.js"></script>
+<script type="text/javascript" src="view_js/browse_index.js"></script>
 
 {% endblock %}

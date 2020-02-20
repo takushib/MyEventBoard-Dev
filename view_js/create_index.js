@@ -156,10 +156,14 @@ $("#menu-toggle").click(function (e) {
 });
 
 
+$(document).ready(function () {
+	$('#createNav').addClass('activeNavItem');
+});
+
 // Source: https://jsfiddle.net/christianklemp_imt/b20paum2/
 
 $(document).ready(function () {
-
+	
 	$('#datepicker').datepicker({
 
 		startDate: new Date(),

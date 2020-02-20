@@ -12,3 +12,7 @@ $(document).ready(function () {
     });
 
 });
+
+$(document).ready(function () {
+	$('#reserveNav').addClass('activeNavItem');
+});
