@@ -1,3 +1,5 @@
+const eventNameIndex = 1; // Index of event name on table. If table structure changes, this needs to be changed accordingly.
+
 $( document ).ready(function() {
     console.log( "ready!" );
 	
@@ -6,7 +8,7 @@ $( document ).ready(function() {
 $('.deleteEvent').on('click', function () {
   $('#deleteConfirm').modal('toggle');
   
-  var listItem = $('<li> '+ $(this).parent().parent().children().eq(1).text() +' </li>');
+  var listItem = $('<li> '+ $(this).parent().parent().children().eq(eventNameIndex).text() +' </li>');
   listItem.addClass('list-group-item');
   $('.containerForEventsToDelete ul').append(listItem);
   
@@ -17,7 +19,6 @@ $('.deleteEvent').on('click', function () {
 	$('#deleteConfirm').modal('toggle');
 	$('#feedBackModalDelete').modal('toggle');
 	currentEvent.parent().parent().remove();
-	$('.list-group-item').remove();
   })
   
 })
@@ -27,7 +28,7 @@ function massDelete(arrayWithReadyToDeleteEvents)
 	$('#deleteConfirm').modal('toggle');
 	
 	arrayWithReadyToDeleteEvents.forEach(number => {
-		var listItem = $('<li> '+ number.parent().children().eq(1).text() +' </li>');
+		var listItem = $('<li> '+ number.parent().children().eq(eventNameIndex).text() +' </li>');
 		listItem.addClass('list-group-item');
 		$('.containerForEventsToDelete ul').append(listItem);
 	});
@@ -39,15 +40,13 @@ function massDelete(arrayWithReadyToDeleteEvents)
 		arrayWithReadyToDeleteEvents.forEach(number => {
 			number.parent().remove();
 		});
-		
-		$('.list-group-item').remove();
 	})
 }
 
-$('#deleteCancelButton').on('click', function () {
-		$('.list-group-item').remove();
-})
 
+$('#deleteConfirm').on('hidden.bs.modal', function () {
+  $('.list-group-item').remove();
+});
 
 $('.deleteSelectButton').on('click', function () {
   $('.deleteSelectButton').toggleClass('toggled');
