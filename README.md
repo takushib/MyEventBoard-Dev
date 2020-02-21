@@ -17,7 +17,7 @@ There are a few things to install. Run the Bash shell scripts to install Compose
 Install Composer first, and then install the packages.
 
 Remember to also set permissions for everything inside the repository.  
-While inside the 'public_html' folder, run the script named 'chmod.sh'.
+While inside the 'public_html' folder, run the script named 'set_permissions.sh'.
 
 ## Resources for Development
 
