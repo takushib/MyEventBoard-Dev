@@ -55,12 +55,12 @@ phpCAS::setNoCasServerValidation();
 // Override the proxy validation url for any (ST and PT) any CAS 1.0, 2.0 and 3.0 validation
 // Example of the URL for the version of CAS 2.0 validation
 
-phpCAS::setServerProxyValidateURL('https://login.oregonstate.edu/idp/profile/cas/serviceValidate');
+// phpCAS::setServerProxyValidateURL('https://login.oregonstate.edu/idp/profile/cas/serviceValidate');
 
 // Override the validation url for any CAS 1.0, 2.0 and 3.0 validation
 // Example of the URL for the version of CAS 2.0 validation
 
-// phpCAS::setServerServiceValidateURL('https://cas.example.org:1443/serviceValidate');
+phpCAS::setServerServiceValidateURL('https://login.oregonstate.edu/idp/profile/cas/serviceValidate');
 
 // Override the validation url for any SAML11 validation
 
