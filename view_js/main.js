@@ -52,6 +52,25 @@ function createEventBlock(eventName, creatorName, slotsRemaining, eventTime)
 	return newEvent;
 }
 
+function formatTime(time) {
+	var temp = time.slice(11,13);
+	var hour = parseInt(temp);
+	//console.log(hour);
+	if(hour > 12) {
+		var newHour = hour - 12;
+		var newTime = newHour.toString() + time.slice(13,16) + " PM";
+		return newTime;
+	}
+	else if(hour === 12) {
+		var newTime = hour.toString() + time.slice(13,16) + " PM";
+		return newTime;
+	}
+	else {
+		var newTime = hour.toString() + time.slice(13,16) + " AM";
+		return newTime;
+	}
+}
+
 $(document).ready(function () {
 	var events;
 	$.ajax({
@@ -63,7 +82,8 @@ $(document).ready(function () {
 		console.log(events.length);
 		for (let i = 0; i < events.length; i++) {
 			var newEvent;
-			newEvent = createEventBlock(events[i].event_name, events[i].ec_first_name, events[i].slots_remaining,  events[i].start_time);
+			newEvent = createEventBlock(events[i].event_name, events[i].ec_first_name, events[i].slots_remaining,  formatTime(events[i].start_time));
+			formatTime(events[i].start_time)
 			$('.eventsContainer').append(newEvent);
 		}
 	});
