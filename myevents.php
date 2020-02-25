@@ -1,9 +1,8 @@
 <?php
 
-    require 'vendor/autoload.php';
+    // set up twig
 
-    $loader = new Twig_Loader_Filesystem('templates');
-    $twig = new Twig_Environment($loader);
+	include 'php/twig.php';
 
     // set up connection to database via MySQLi
 

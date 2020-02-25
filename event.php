@@ -1,57 +1,73 @@
 <?php
 
-    // set up twig
-
-    include 'php/twig.php';
-
     // set up connection to database via MySQLi
 
     include 'php/database.php';
 
-    //echo "<script>alert('1st')</script>";
+	// insert event data and time slot data into database
+	// if something was submitted via HTTP POST
+
     if (!empty($_POST)) {
-      //echo "<script>alert('The application failed to connect to the database!')</script>";
-      $slots = json_decode($_POST['slotArray'], true);
+		
+		$slots = json_decode($_POST['slotArray'], true);
 
-      $stmtE = $database->prepare("INSERT INTO Event (name, description, fk_event_creator, location, capacity, open_slots) VALUES (?,?,?,?,?,?)");
-      $stmtE->bind_param("ssisii", $eName, $eDesc, $eCreator, $eLocation, $cp, $oSlots);
-      $eName = $_POST['eventName'];
-      $eDesc = $_POST['eventDescription'];
-      $sCap = $_POST['sCap'];
-      $eCreator = 2;
-      $eLocation = $_POST['eventLocation'];
-      $duration = $_POST['eventDuration'];
-      $cp = $_POST['eventCap'];
-      $oSlots = $cp;
+		$statement = $database -> prepare("
 
-      $stmtE->execute();
+			INSERT INTO Event 
+				(name, description, fk_event_creator, location, capacity, open_slots) 
+			VALUES (?, ?, ?, ?, ?, ?)
+			
+		");
 
-      $last_id = $database->insert_id;
+		$statement -> bind_param(
+			"ssisii", 
+			$eName, $eDescription, $eCreator, $eLocation, $eCapacity, $eOpenSlots
+		);
+
+		$eName = $_POST['eventName'];
+		$eDescription = $_POST['eventDescription'];
+		$eCreator = $_POST['eventCreator'];
+		$eLocation = $_POST['eventLocation'];
+		$eCapacity = $_POST['eventCap'];
+		$eOpenSlots = $eCapacity;
+
+		$statement -> execute();
+
+		$newEventID = $database -> insert_id;
 
 
+		$statement = $database -> prepare("
 
-      $stmt = $database->prepare("INSERT INTO Timeslot (start_time, end_time, duration, slot_capacity, spaces_available, is_full, fk_event_id) VALUES (?,?,?,?,?,?,?)");
-      $stmt->bind_param("ssiiiii", $val1, $val2, $val3, $val4, $val5, $val6, $val7);
-      foreach($slots as $item){
-        $sd = $item['startDate'];
-        $ed = $item['endDate'];
-        $val1 = $sd;
-        $val2 = $ed;
-        $val3 = $duration;
-        $val4 = $sCap;
-        $val5 = $sCap;
-        $val6 = 0;
-        $val7 = $last_id;
-        /* Execute the statement */
-        $stmt->execute();
+			INSERT INTO Timeslot 
+				(start_time, end_time, duration, slot_capacity, spaces_available, is_full, fk_event_id) 
+			VALUES (?, ?, ?, ?, ?, ?, ?)
 
-      }
-      $stmt->close();
-      echo "EVENTS have been submitted ";
-      exit;
+		");
+
+		$statement -> bind_param(
+			"ssiiiii", 
+			$sStartDate, $sEndDate, $sDuration, $sCapacity, $sSpaces, $sFull, $sEventID
+		);
+		
+		foreach($slots as $item){
+
+			$sStartDate = $item['startDate'];
+			$sEndDate = $item['endDate'];
+			$sDuration = $_POST['eventDuration'];
+			$sCapacity = $_POST['sCap'];
+			$sSpaces = $_POST['sCap'];
+			$sFull = 0;
+			$sEventID = $newEventID;
+
+			$statement -> execute();
+
+		}
+		  
+		$statement -> close();
+
+		echo "DEBUG: Data has been submitted!";
+		exit;
 
     }
-
-     echo $twig -> render('views/event.twig');
 
 ?>

@@ -2,18 +2,15 @@
 
     // set up twig
 
-    require 'vendor/autoload.php';
-
-    $loader = new Twig_Loader_Filesystem('templates');
-    $twig = new Twig_Environment($loader);
-
-    // get key for event from URL
-
-    $event_key = ($_GET["key"]);
+    include 'php/twig.php';
 
     // set up connection to database via MySQLi
 
     include 'php/database.php';
+
+    // get key for event from URL
+
+    $event_key = ($_GET["key"]);
 
     // get event data from database
 
