@@ -1,12 +1,16 @@
 <?php
 
-    // set up twig
+    // set up session
 
-    include 'php/twig.php';
+    require_once 'php/session.php';
 
     // set up connection to database via MySQLi
 
-    include 'php/database.php';
+    require_once 'php/database.php';
+
+    // set up twig
+
+    require_once 'php/twig.php';
 
     // get invitation data from database
 
@@ -45,7 +49,11 @@
 
     echo $twig -> render(
         'views/invites_index.twig', 
-        ['table_headers' => $result_keys, 'table_rows' => $result_array]
+        [
+            'user_ONID' => $_SESSION['user'],
+            'table_headers' => $result_keys, 
+            'table_rows' => $result_array
+        ]
     ); 
 
 ?>
