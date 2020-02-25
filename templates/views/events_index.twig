@@ -12,19 +12,19 @@
 
 	
 	<div class="container entryField1">
-
+	
 	{{include('partials/search.twig') }}
 	
-		<div class="yourEvents container">
+		<div class="yourEvents table-responsive">
 			
-			<table class="table table-striped" id="eventsTable">
+		<table class="table table-striped eventsTable" id="eventsTable">  
 				<thead>
-				<tr class="row eventHeader">
+				<tr scope="row eventHeader">
 					{% for table_header in table_headers %}
-					<th class="col">{{table_header}}</th>
+					<th scope="col">{{table_header}}</th>
 					{% endfor %}
-				<th class="col"></th>
-				<th class="col">
+				<th scope="col"></th>
+				<th scope="col">
 					<button class="eventManageButton deleteSelectButton">
 						<i class="fa fa-trash selectTrash" aria-hidden="true"></i> 
 						<text> Select </text>
@@ -35,26 +35,26 @@
 				</thead>
 				<tbody class="tableBody">
 				{% for table_row in table_rows %}
-				<tr class="row">
+				<tr scope="row">
 
 					{% set first_data = table_row|first %}
 
-					<td class="col">
+					<td>
 						<a class="text-info" href="./register?key={{first_data}}">{{first_data}}</a>
 					</td>
 
 					{% for table_data in table_row|slice(1) %}
-					<td class="col">{{table_data}}</td>
+					<td>{{table_data}}</td>
 					{% endfor %}
 					
-					<td class="col">
+					<td>
 						<button class="eventManageButton editEventButton">
 							<i class="fas fa-edit"></i>
 							<text> Edit</text>
 						</button>
 					</td>
 					
-					<td class="col">
+					<td>
 						<input class="massDeleteOn doNotDisplay" type="checkbox" unchecked>
 						<button class="eventManageButton deleteEvent">
 							<i class="fas fa-times"></i>
@@ -67,14 +67,14 @@
 				</tbody>
 			</table>
 
-			<div id="deleteSelectedConfirmBox">
+		</div>
+
+		<div id="deleteSelectedConfirmBox">
 				<button class="doNotDisplay btn btn-dark deleteSelectButtonConfirm">
 						<i class="fa fa-trash" aria-hidden="true"></i> 
 						<text> Delete Selected Events </text>
 				</button>
-			</div>		
-		</div>
-	
+		</div>		
 	
 	</div>
 		<!-- Modal -->
