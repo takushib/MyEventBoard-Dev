@@ -9,3 +9,27 @@
 	border: 1px solid grey;
 	border-radius: 2px;
 }
+
+#deleteSelectedConfirmBox {
+	float: none !important;
+	text-align: right !important;
+}
+
+.containerForEventsToDelete {
+	padding: 10px;
+	border: none !important;
+	background: white !important;
+}
+
+.containerForEventsToDelete > ul > li {
+	background-color: orange;
+	font-weight: bold;
+	border: 1px solid black;
+	margin-top: 3px;
+}
+
+.containerForEventsToDelete > ul {
+	background-color: white;
+	padding: 10px;
+	margin: 10px;
+}
