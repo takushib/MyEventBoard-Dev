@@ -7,7 +7,7 @@
     // get data for dashboard, including
     // user data, event data, time slot data
     
-    $id = $_POST['user_id'];
+    $user_ONID = $_POST['userONID'];
 
     $q = "
 
@@ -36,7 +36,7 @@
     ";
 
     $statement = $database->prepare($q);
-    $statement->bind_param("s", $id);
+    $statement->bind_param("s", $user_ONID);
     $statement->execute();
     
     $result = $statement->get_result();

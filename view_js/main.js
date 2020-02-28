@@ -177,7 +177,7 @@ $(document).ready(function () {
 	$.ajax({
 		url: "fill_dashboard.php",
 		type: "POST",
-		data: {user_id: 'takushib'},
+		data: { userONID: myONID },
 	}).done(function(response) {
 		events = JSON.parse(response);
 		console.log(events.length);
