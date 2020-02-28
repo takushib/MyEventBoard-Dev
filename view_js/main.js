@@ -55,14 +55,23 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	return newEvent;
 }
 
-function buildContainer(events)
+function buildContainer(events, todaysDate)
 {
+	console.log(events);
 	var newEvent;
 	var weekEventsContainer = $('.weeksEvent');
 	
 	
 	var eventContainer = $('<div></div>');
-	eventContainer.addClass("todayDateBorder");
+	
+	if (formatDate(events[0].start_time) == todaysDate)
+	{
+		eventContainer.addClass("todayContainerStyle");
+	}
+	eventContainer.addClass("containerStyle");
+	
+
+	
 	eventContainer.addClass("container");
 	
 	
@@ -127,14 +136,6 @@ function getDate(dateObj) {
 
 }
 
-$(document).ready(function () {
-	var fullDate = new Date();
-	
-	var todaysDate = getDate(fullDate);
-	
-	var nameDate = daysOfWeek[fullDate.getDay()] + "   " + todaysDate;
-	$('.todaysDate').text(nameDate);
-})
 
 function getMonday(d) {
   d = new Date(d);
@@ -170,6 +171,8 @@ $(document).ready(function () {
 	var minWeekDate;
 	var maxWeekDate;
 	
+	$('.todaysDate').text("Today's Date:  "+ daysOfWeek[fullDate.getDay()] +"  "+ getDate(fullDate) +" ");
+	
 	var events;
 	$.ajax({
 		url:"main_dashboard.php",
@@ -188,6 +191,8 @@ $(document).ready(function () {
 		for (let i = 0; i < events.length; i++) {
 			//var today = getDate(fullDate);
 			
+			console.log(events[i].start_time)
+			
 			if (isInBetween(formatDate(events[i].start_time), minWeekDate, maxWeekDate) == false)
 				continue;
 			
@@ -197,13 +202,14 @@ $(document).ready(function () {
 			}
 			else
 			{
-				buildContainer(tempDayHolder);
+				buildContainer(tempDayHolder, getDate(new Date()));
 				tempDayHolder = [];
 				curDay = formatDate(events[i].start_time);
 				tempDayHolder.push(events[i]);
 			}
 		
 		}
+		
 		if (tempDayHolder.length != 0)
 			buildContainer(tempDayHolder);
 		
