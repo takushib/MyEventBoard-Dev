@@ -19,8 +19,9 @@
 			
 		<table class="table table-striped eventsTable" id="eventsTable">  
 				<thead>
-				<tr scope="row eventHeader">
+				<tr scope="row" class="eventHeader">
 					{% for table_header in table_headers %}
+					
 					<th scope="col">{{table_header}}</th>
 					{% endfor %}
 				<th scope="col"></th>

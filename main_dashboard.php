@@ -27,7 +27,8 @@
               INNER JOIN Timeslot T on Bookings.fk_timeslot_id = T.id
               INNER JOIN Event E on T.fk_event_id = E.id
               INNER JOIN User U1 on E.fk_event_creator = U1.id
-              WHERE U.onid = ?";
+              WHERE U.onid = ?
+			  ORDER BY T.start_time";
     $statement = $database->prepare($q);
     $statement->bind_param("s", $id);
     $statement->execute();
