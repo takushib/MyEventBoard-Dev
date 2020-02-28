@@ -60,20 +60,21 @@ $("#submitButton").click(function () {
 	else {
 
 		var slotKey = selectedSlot.parent().attr('id');
-		console.log(selectedSlot.parent().attr('id'));
-
 		$.ajax({
 			type: "POST",
 			url: "reserve_slot.php",
 			data: {
 				key: slotKey,
-				user_id: 1
+				user_id: 1,
+				start_time: $('.slotSelected').prev().children().text(),
+				date: $('#dateLabel').text(),
+				duration: "ffds"
 			}
 		}).done(function (response) {
-			
+
 			if (response <= -1) {
 				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
-				document.getElementById('feedbackMessage').textContent = 
+				document.getElementById('feedbackMessage').textContent =
 					"The time slot was full! Please select another one!";
 				$('#feedBackModal').modal('toggle');
 			}
@@ -154,7 +155,7 @@ $(document).ready(function () {
 	$('#datepicker2').datepicker().on('changeDate', function (e) {
 
 		$('#myModal').modal('toggle');
-		
+
 		var dayOfWeek = getDayName($(this));
 		$('.modal-body #dayLabel').text(dayOfWeek);
 		$('.modal-body #dateLabel').text(e.format());
@@ -190,7 +191,7 @@ function createFields() {
 
 	var timeSlotKeys = Object.keys(timeSlotObjects);
 	var selectedDuration = timeSlotObjects[timeSlotKeys[0]].duration;
-	
+
 	var selectedDate = $('.modal-body h2').text();
 	var tempDateHolder;   // checks for the selected Date
 

@@ -82,7 +82,7 @@ $(document).ready(function () {
 		console.log(events.length);
 		for (let i = 0; i < events.length; i++) {
 			var newEvent;
-			newEvent = createEventBlock(events[i].event_name, events[i].ec_first_name, events[i].slots_remaining,  formatTime(events[i].start_time));
+			newEvent = createEventBlock(events[i].event_name, events[i].ec_first_name + " " + events[i].ec_last_name, events[i].slots_remaining,  formatTime(events[i].start_time));
 			formatTime(events[i].start_time)
 			$('.eventsContainer').append(newEvent);
 		}
