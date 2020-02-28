@@ -33,6 +33,8 @@
         INNER JOIN User AS t4
             ON t2.fk_event_creator = t4.id
         WHERE t3.onid = ?
+        ORDER BY
+            t1.start_time
 
     ";
 
