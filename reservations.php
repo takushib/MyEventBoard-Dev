@@ -12,15 +12,15 @@
 
     require_once 'php/twig.php';
 
-    // get invitation data from database
+    // get data for time slots reserved by user from database
 
     $query = "
         
         SELECT
             t2.name AS 'Event Name', 
+            t1.start_time AS 'Start Time',
             CONCAT(t4.first_name, ' ', t4.last_name) AS 'Creator Name',
             t4.onid AS 'Creator ONID',
-            t1.start_time AS 'Start Time',
             t2.id AS 'Event ID'
         FROM 
             Bookings AS t0

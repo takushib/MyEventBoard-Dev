@@ -8,17 +8,16 @@
 
     require_once 'php/get_user.php';
 
-	  $userKey = getUserKeyFromDB($_POST['userONID'], $database);
+	$user_key = getUserKeyFromDB($_POST['userONID'], $database);
 
     // reserve time slot for event using stored procedure
 
-    $slot_id = $_POST["key"];
-    $user_id = $userKey;
+    $slot_key = $_POST["key"];
 
     $query = 'CALL insert_booking(?, ?, @res1)';
 
     $statement = $database -> prepare($query);
-    $statement -> bind_param("ii", $slot_id, $user_id);
+    $statement -> bind_param("ii", $slot_key, $user_key);
     $statement -> execute();
 
     // stored procedure returns number of remaining spaces
@@ -32,19 +31,18 @@
     // send confirmation e-mail if successful
 
     if ($row[0] != -1) {
-      $queryUser = 'SELECT email, first_name FROM User WHERE id = ?';
-      $statement2 = $database->prepare($queryUser);
-      $statement2->bind_param("i", $user_id);
-      $statement2->execute();
-      $res = $statement2->get_result();
-      $user = $res->fetch_object();
-      $format = "Hi %s,\nYou have successfully reserved a timeslot.\n";
-      $headers = "From: MyEventBoard"
-      . "\r\n" .
-      "CC: louiesi@oregonstate.edu, liaoto@oregonstate.edu";
-      $msg = sprintf($format, $user->first_name);
-	  mail($user->email,"Confirmation",$msg,$headers);
+
+        $queryUser = 'SELECT email, first_name FROM User WHERE id = ?';
+        $statement2 = $database->prepare($queryUser);
+        $statement2->bind_param("i", $user_key);
+        $statement2->execute();
+        $res = $statement2->get_result();
+        $user = $res->fetch_object();
+        $format = "Hi %s,\nYou have successfully reserved a timeslot.\n";
+        $headers = "From: MyEventBoard" . "\r\n";
+        $msg = sprintf($format, $user->first_name);
+        mail($user->email,"Confirmation",$msg,$headers);
 	  
-  }
+	}
 
 ?>
