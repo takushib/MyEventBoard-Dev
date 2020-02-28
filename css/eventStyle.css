@@ -33,3 +33,11 @@
 	padding: 10px;
 	margin: 10px;
 }
+
+
+/* Hide Event ID column */ /*
+#eventsTable td { display: none; }
+#eventsTable th { display: none; }
+#eventsTable th + th { display: table-cell; }
+#eventsTable td + td { display: table-cell; }
+*/
