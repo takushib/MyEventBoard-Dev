@@ -11,11 +11,41 @@
 
 	<div class="container entryField1">
 
-	{{include('partials/search.twig') }}
+	{{ include('partials/search.twig') }}
 	
 		<div class="browseEvents container">
-			
 
+			<table class="table table-striped">
+				<thead>
+				<tr class="row">
+					{% for table_header in table_headers|slice(0, -1) %}
+					<th class="col">{{ table_header }}</th>
+					{% endfor %}
+				</tr>
+				</thead>
+				<tbody class="tableBody">
+				{% for table_row in table_rows %}
+
+				<tr class="row">
+
+					{% set event_key = table_row|last %}
+
+					<td class="col">
+						<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|first }}</a>
+					</td>
+
+					{% for column in table_row|slice(1, -1) %}
+
+					<td class="col">{{ column }}</td>
+
+					{% endfor %}
+
+				</tr>
+				
+				{% endfor %}
+				</tbody>
+			</table>
+			
 		</div>
 
 	</div>
