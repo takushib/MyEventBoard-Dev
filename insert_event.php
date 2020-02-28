@@ -2,8 +2,14 @@
 
     // set up connection to database via MySQLi
 
-    include 'php/database.php';
+	require_once 'php/database.php';
+	
+	// get user ID using ONID from database
 
+    require_once 'php/get_user.php';
+
+	$userKey = getUserKeyFromDB($_POST['eventCreator'], $database);
+	
 	// insert event data and time slot data into database
 	// if something was submitted via HTTP POST
 
@@ -26,7 +32,7 @@
 
 		$eName = $_POST['eventName'];
 		$eDescription = $_POST['eventDescription'];
-		$eCreator = $_POST['eventCreator'];
+		$eCreator = $userKey;
 		$eLocation = $_POST['eventLocation'];
 		$eCapacity = $_POST['eventCap'];
 		$eOpenSlots = $eCapacity;

@@ -64,18 +64,18 @@ window.onload = function () {
 			var slotCap = timeslotCapInput.value;
 			var newArr = JSON.stringify(slots);
 			$.ajax({
-    		type: "POST",
-    		url: "event.php",
-    		data: {
-				eventCreator: 2,
-				eventName: $('#eventNameInput').val(),
-				eventLocation: $('#locationInput').val(),
-				eventDescription: $('#eventDescriptTextArea').val(),
-				eventDuration: getDuration(),
-				slotArray: newArr,
-				eventCap: totalCap,
-				sCap: slotCap
-	    	 }
+				type: "POST",
+				url: "insert_event.php",
+				data: {
+					eventCreator: myONID,
+					eventName: $('#eventNameInput').val(),
+					eventLocation: $('#locationInput').val(),
+					eventDescription: $('#eventDescriptTextArea').val(),
+					eventDuration: getDuration(),
+					slotArray: newArr,
+					eventCap: totalCap,
+					sCap: slotCap
+				}
 			}).done(function(response) {
     		alert(response);
 			});

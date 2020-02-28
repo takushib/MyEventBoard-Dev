@@ -16,26 +16,28 @@
 
     $query = "
         
-        SELECT 
-            t1.onid AS 'ONID',
-            t2.name AS 'Event Name',
-            t3.onid AS 'Event Creator\'s ONID',
-            t0.fk_event_id
+        SELECT
+            t2.name AS 'Event Name', 
+            CONCAT(t4.first_name, ' ', t4.last_name) AS 'Creator Name',
+            t4.onid AS 'Creator ONID',
+            t1.start_time AS 'Start Time',
+            t2.id AS 'Event ID'
         FROM 
-            Invitations AS t0
-        INNER JOIN 
-            User AS t1 
-            ON t1.id = t0.fk_user_id
-        INNER JOIN 
-            Event AS t2 
-            ON t2.id = t0.fk_event_id
-        INNER JOIN 
-            User AS t3 
-            ON t3.id = t2.fk_event_creator
+            Bookings AS t0
+        INNER JOIN Timeslot AS t1 
+            ON t0.fk_timeslot_id = t1.id 
+        INNER JOIN Event AS t2 
+            ON t1.fk_event_id = t2.id
+        INNER JOIN User AS t3
+            ON t0.fk_user_id = t3.id
+        INNER JOIN User AS t4
+            ON t2.fk_event_creator = t4.id
+        WHERE t3.onid = ?
 
     ";
 
     $statement = $database -> prepare($query);
+    $statement -> bind_param("s", $_SESSION['user']);
     $statement -> execute();
 
     $result = $statement -> get_result();
@@ -48,7 +50,7 @@
     // render page using twig
 
     echo $twig -> render(
-        'views/invites_index.twig', 
+        'views/reservations.twig', 
         [
             'user_ONID' => $_SESSION['user'],
             'table_headers' => $result_keys, 

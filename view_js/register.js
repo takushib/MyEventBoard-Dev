@@ -67,7 +67,7 @@ $("#submitButton").click(function () {
 			url: "reserve_slot.php",
 			data: {
 				key: slotKey,
-				user_id: 1
+				userONID: myONID
 			}
 		}).done(function (response) {
 			

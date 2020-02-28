@@ -74,7 +74,7 @@ function formatTime(time) {
 $(document).ready(function () {
 	var events;
 	$.ajax({
-		url:"main_dashboard.php",
+		url: "fill_dashboard.php",
 		type: "POST",
 		data: {user_id: 'takushib'},
 	}).done(function(response) {
@@ -93,4 +93,4 @@ $(document).ready(function () {
 	$('.eventBlock').click(function () {
 		console.log("Redirect to respective Event Page Here");
 	});
-})
+});
