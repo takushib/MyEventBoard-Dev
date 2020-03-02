@@ -35,11 +35,18 @@
     $statement2->execute();
     $res = $statement2->get_result();
     $user = $res->fetch_object();
-    $format = "Hi %s,\n\nYou have successfully reserved a timeslot.\nDate: %s\nTime: %s\nDuration: %s\nLocation: Kelley\n";
-    $headers = "From: MyEventBoard";
+		//fetch location
+		$queryLoc = "SELECT E.location as 'location' FROM Timeslot INNER JOIN Event E ON Timeslot.fk_event_id = E.id WHERE Timeslot.id = ?";
+		$locStatement = $database->prepare($queryLoc);
+		$locStatement->bind_param("i", $slot_id);
+		$locStatement->execute();
+		$locRes = $locStatement->get_result();
+		$locationObj = $locRes->fetch_object();
+    $format = "Hi %s,\n\nYou have successfully reserved a timeslot.\nDate: %s\nTime: %s\nDuration: %s\nLocation: %s\n";
+    $headers = "From: MyEventBoard" . "\r\n";
     // . "\r\n" .
     // "CC: louiesi@oregonstate.edu, liaoto@oregonstate.edu";
-    $msg = sprintf($format, $user->first_name, $date, $s_time, $duration);
+    $msg = sprintf($format, $user->first_name, $date, $s_time, $duration, $locationObj->location);
     mail($user->email,"Confirmation",$msg,$headers);
   }
 
