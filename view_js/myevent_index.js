@@ -44,9 +44,15 @@ function massDelete(arrayWithReadyToDeleteEvents)
 	$('#deleteSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
     arrayWithReadyToDeleteEvents.forEach(number => {
-
+      $.ajax({
+    		url:"delete_event.php",
+    		type: "POST",
+    		data: {eid: number.parent().eq(currPosition).text()},
+    	}).done(function(response) {
+        console.log(response);
+    	});
 			number.parent().remove();
-      //delete here
+
 		});
 		$('#feedBackModalDelete').modal('toggle');
 	})
