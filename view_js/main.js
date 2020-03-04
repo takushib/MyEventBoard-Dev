@@ -71,7 +71,6 @@ function buildContainer(events, todaysDate)
 	var newEvent;
 	var weekEventsContainer = $('.weeksEvent');
 	
-	
 	var eventContainer = $('<div></div>');
 	
 	if (formatDate(events[0].start_time) == todaysDate)
@@ -173,6 +172,11 @@ function isInBetween(currDate, minDate, maxDate)
  
 }
 
+function noEvents()
+{
+	$('.weeksEvent').append(('<div><h2> No Upcoming Events for this Week </h2></div>'));
+}
+
 $(document).ready(function () {
 	var fullDate = new Date();
 	var tempDayHolder = [];
@@ -180,6 +184,7 @@ $(document).ready(function () {
 	var tempDay;
 	var minWeekDate;
 	var maxWeekDate;
+	var isThereEvents = false;
 	
 	$('.todaysDate').text("Today's Date:  "+ daysOfWeek[fullDate.getDay()] +"  "+ getDate(fullDate) +" ");
 	
@@ -192,7 +197,13 @@ $(document).ready(function () {
 		events = JSON.parse(response);
 		console.log(events.length);
 		
-		curDay = formatDate(events[0].start_time);
+		if (events.length < 1)
+		{	
+			noEvents();
+			return;
+		}
+		
+	    curDay = formatDate(events[0].start_time);
 		
 		minWeekDate = getDate(getMonday(new Date()));
 		maxWeekDate = getDate(getSunday(getMonday(new Date())));
@@ -206,13 +217,18 @@ $(document).ready(function () {
 			if (isInBetween(formatDate(events[i].start_time), minWeekDate, maxWeekDate) == false)
 				continue;
 			
+			
 			if (curDay == formatDate(events[i].start_time))
 			{
 				tempDayHolder.push(events[i]);
 			}
 			else
 			{
-				buildContainer(tempDayHolder, getDate(new Date()));
+				if (tempDayHolder.length > 0)
+				{
+					buildContainer(tempDayHolder, getDate(new Date()));
+					isThereEvents = true;
+				}
 				tempDayHolder = [];
 				curDay = formatDate(events[i].start_time);
 				tempDayHolder.push(events[i]);
@@ -220,8 +236,16 @@ $(document).ready(function () {
 
 		}
 		
-		if (tempDayHolder.length != 0)
+		if (tempDayHolder.length > 0) {
 			buildContainer(tempDayHolder);
+		}
+		
+		if (isThereEvents == false)
+		{	
+			noEvents();
+			return;
+		}
+		
 		
 	});
 })
