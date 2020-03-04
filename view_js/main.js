@@ -71,8 +71,13 @@ function buildContainer(events, todaysDate)
 	var newEvent;
 	var weekEventsContainer = $('.weeksEvent');
 	
-	
 	var eventContainer = $('<div></div>');
+	
+	if (events.length == 0)
+	{
+		eventContainer.append(('<div><h2> No Events for this Week </h2></div>'));
+		return;
+	}
 	
 	if (formatDate(events[0].start_time) == todaysDate)
 	{
