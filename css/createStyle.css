@@ -49,6 +49,7 @@ label
 .timeSelector table
 {
 	table-layout: fixed;
+	min-width: 100%;
 	border: none;
 }
 

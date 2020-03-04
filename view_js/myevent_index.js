@@ -76,7 +76,7 @@ $('.deleteSelectButtonConfirm').on('click', function () {
 	var atLeastOnSelected = false;
 	var tempHolder = [];
 
-	$("#eventsTable tr td:nth-last-child(1)").each(function () {
+	$("#eventsTable tr td:nth-last-child( "+ eventNameIndex +" )").each(function () {
 		if ($(this).children().prop("checked")) {
 			tempHolder.push($(this));
 			atLeastOnSelected = true;
