@@ -207,7 +207,7 @@ $(document).ready(function () {
 				curDay = formatDate(events[i].start_time);
 				tempDayHolder.push(events[i]);
 			}
-		
+
 		}
 		
 		if (tempDayHolder.length != 0)
