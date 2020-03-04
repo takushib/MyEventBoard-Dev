@@ -12,7 +12,7 @@
 
     // reserve time slot for event using stored procedure
 
-    $slot_key = $_POST["key"];
+	$slot_key = $_POST["key"];
 
     $query = 'CALL insert_booking(?, ?, @res1)';
 
@@ -31,7 +31,11 @@
 	// send confirmation e-mail if successful
 
 	if ($row[0] != -1) {
-		
+
+		$date = $_POST["date"];
+		$s_time = $_POST["start_time"];
+		$duration = $_POST["duration"];
+			
 		$queryUser = 'SELECT email, first_name FROM User WHERE id = ?';
 		$statement2 = $database->prepare($queryUser);
 		$statement2->bind_param("i", $user_key);
@@ -39,9 +43,18 @@
 		$res = $statement2->get_result();
 		$user = $res->fetch_object();
 			
-		//fetch location
+		// fetch location
 
-		$queryLoc = "SELECT E.location as 'location' FROM Timeslot INNER JOIN Event E ON Timeslot.fk_event_id = E.id WHERE Timeslot.id = ?";
+		$queryLoc = "
+
+			SELECT E.location AS 'location' 
+			FROM Timeslot 
+			INNER JOIN Event E 
+				ON Timeslot.fk_event_id = E.id 
+			WHERE Timeslot.id = ?
+			
+		";
+
 		$locStatement = $database->prepare($queryLoc);
 		$locStatement->bind_param("i", $slot_key);
 		$locStatement->execute();
@@ -50,7 +63,7 @@
 
 		// create then send e-mail
 
-		$format = "Hi %s,\n\nYou have successfully reserved a timeslot.\nDate: %s\nTime: %s\nDuration: %s\nLocation: %s\n";
+		$format = "Hi %s,\n\nYou have successfully reserved a timeslot.\n\nDate: %s\nTime: %s\nDuration: %s\nLocation: %s\n";
 		$headers = "From: MyEventBoard" . "\r\n";
 		$msg = sprintf($format, $user->first_name, $date, $s_time, $duration, $locationObj->location);
 		mail($user->email,"Confirmation", $msg, $headers);

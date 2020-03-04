@@ -58,7 +58,6 @@ $("#submitButton").click(function () {
 	if (selectedSlot === false)
 		alert("Please pick a slot.");
 	else {
-
 		var slotKey = selectedSlot.parent().attr('id');
 		$.ajax({
 			type: "POST",
@@ -68,6 +67,7 @@ $("#submitButton").click(function () {
 				key: slotKey,
 				start_time: $('.slotSelected').prev().children().text(),
 				date: $('#dateLabel').text(),
+				duration: timeSlotObjects[slotKey].duration + " minutes",
 			}
 		}).done(function (response) {
 
