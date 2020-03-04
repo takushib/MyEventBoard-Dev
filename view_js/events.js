@@ -1,8 +1,26 @@
 const eventNameIndex = 1; // Index of event name on table. If table structure changes, this needs to be changed accordingly.
 const currPosition = 0;
+
 $( document ).ready(function() {
     console.log( "ready!" );
+	
+	displayNoEventsHeader();
+	
 });
+
+function displayNoEventsHeader() {
+	if ($('.tableBody').children().length == 0)
+	{
+		$('#eventsTable').addClass('doNotDisplay');
+		var noEventsLabel = $('<h3>No Events Created </h3>');
+		noEventsLabel.addClass('noEvents');
+		$('.yourEvents').append(noEventsLabel);
+		
+		if ($('#deleteSelectedConfirmBox').hasClass('doNotDisplay') != true) {
+			$('#deleteSelectedConfirmBox').toggleClass('doNotDisplay');
+		};
+	}
+}
 
 $('.deleteEvent').on('click', function () {
   $('#deleteConfirm').modal('toggle');
@@ -27,6 +45,7 @@ $('.deleteEvent').on('click', function () {
   	});
   	$('#feedBackModalDelete').modal('toggle');
   	currentEvent.parent().parent().remove();
+	displayNoEventsHeader();
   })
 
 })
@@ -52,7 +71,7 @@ function massDelete(arrayWithReadyToDeleteEvents)
         console.log(response);
     	});
 			number.parent().remove();
-
+			displayNoEventsHeader();
 		});
 		$('#feedBackModalDelete').modal('toggle');
 	})

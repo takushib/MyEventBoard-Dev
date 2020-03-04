@@ -34,6 +34,9 @@
 	margin: 10px;
 }
 
+.noEvents {
+	text-align: center;
+}
 
 /* Hide Event ID column */ /*
 #eventsTable td { display: none; }

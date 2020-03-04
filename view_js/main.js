@@ -238,6 +238,7 @@ $(document).ready(function () {
 		
 		if (tempDayHolder.length > 0) {
 			buildContainer(tempDayHolder);
+			isThereEvents = true;
 		}
 		
 		if (isThereEvents == false)
