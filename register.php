@@ -62,7 +62,7 @@
     // render page using twig
 
     echo $twig -> render(
-        'views/register_index.twig',
+        'views/register.twig',
         [
             'user_ONID' => $_SESSION['user'],
             'event_name' => $event_name,

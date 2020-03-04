@@ -2,7 +2,7 @@
 
     // set up connection to database via MySQLi
 
-	include 'php/database.php';
+	require 'php/database.php';
 	
 	// get time slot data for event from database
 

@@ -7,7 +7,7 @@
 
 <div class="container objectSpace">
 
-	<h2> Your Invites </h2>
+	<h2> Your Reservations </h2>
 
 	<div class="container entryField1">
 
@@ -28,15 +28,17 @@
 
 				<tr class="row">
 
-					<td class="col">{{ table_row|first }}</td>
-
 					{% set event_key = table_row|last %}
 
 					<td class="col">
-						<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
+						<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|first }}</a>
 					</td>
 
-					<td class="col">{{ table_row|slice(2,2)|first }}</td>
+					{% for column in table_row|slice(1, -1) %}
+
+					<td class="col">{{ column }}</td>
+
+					{% endfor %}
 
 				</tr>
 				
@@ -73,9 +75,9 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 
 <!-- UI specific javascripts -->
-<script type="text/javascript" src="view_js/UI_index.js"></script>
+<script type="text/javascript" src="view_js/ui.js"></script>
 
 <!-- JavaScript specific to this page -->
-<script type="text/javascript" src="view_js/invite_index.js"></script>
+<script type="text/javascript" src="view_js/reservations.js"></script>
 
 {% endblock %}

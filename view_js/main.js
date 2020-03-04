@@ -185,9 +185,9 @@ $(document).ready(function () {
 	
 	var events;
 	$.ajax({
-		url:"main_dashboard.php",
+		url: "fill_dashboard.php",
 		type: "POST",
-		data: {user_id: 'takushib'},
+		data: { userONID: myONID },
 	}).done(function(response) {
 		events = JSON.parse(response);
 		console.log(events.length);
@@ -230,4 +230,4 @@ $(document).ready(function () {
 	$('.eventBlock').click(function () {
 		console.log("Redirect to respective Event Page Here");
 	});
-})
+});

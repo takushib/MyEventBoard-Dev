@@ -1,6 +1,7 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %}  <link rel="stylesheet" href="css/eventStyle.css"> {% endblock %}
+{% block page_head %}
+<link rel="stylesheet" href="css/eventStyle.css"> {% endblock %}
 
 
 {% block page_content %}
@@ -10,75 +11,80 @@
 
 	<h2> Your Events </h2>
 
-	
+
 	<div class="container entryField1">
-	
-	{{include('partials/search.twig') }}
-	
+
+		{{include('partials/search.twig') }}
+
 		<div class="yourEvents table-responsive">
-			
-		<table class="table table-striped eventsTable" id="eventsTable">  
+
+			<table class="table table-striped eventsTable" id="eventsTable">
+
 				<thead>
-				<tr scope="row" class="eventHeader">
-					{% for table_header in table_headers %}
-					
-					<th scope="col">{{table_header}}</th>
-					{% endfor %}
-				<th scope="col"></th>
-				<th scope="col">
-					<button class="eventManageButton deleteSelectButton">
-						<i class="fa fa-trash selectTrash" aria-hidden="true"></i> 
-						<text> Select </text>
-					</button>
-				</th>
-				</tr>
-	
+					<tr scope="row" class="eventHeader">
+						{% for table_header in table_headers|slice(0, -1) %}
+						<th scope="col">{{ table_header }}</th>
+						{% endfor %}
+
+						<th scope="col"></th>
+
+						<th scope="col">
+							<button class="eventManageButton deleteSelectButton">
+								<i class="fa fa-trash selectTrash" aria-hidden="true"></i>
+								<text> Select </text>
+							</button>
+						</th>
+					</tr>
 				</thead>
+
 				<tbody class="tableBody">
-				{% for table_row in table_rows %}
-				<tr scope="row">
 
-					{% set first_data = table_row|first %}
+					{% for table_row in table_rows %}
+					<tr scope="row">
 
-					<td>
-						<a class="text-info" href="./register?key={{first_data}}">{{first_data}}</a>
-					</td>
+						{% set event_key = table_row|last %}
 
-					{% for table_data in table_row|slice(1) %}
-					<td>{{table_data}}</td>
+						<td scope="col">
+							<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|first }}</a>
+						</td>
+
+						{% for column in table_row|slice(1, -1) %}
+
+						<td scope="col">{{ column }}</td>
+
+						{% endfor %}
+
+						<td scope="col">
+							<button class="eventManageButton editEventButton">
+								<i class="fas fa-edit"></i>
+								<text> Edit</text>
+							</button>
+						</td>
+
+						<td scope="col">
+							<input class="massDeleteOn doNotDisplay" type="checkbox" unchecked>
+							<button class="eventManageButton deleteEvent">
+								<i class="fas fa-times"></i>
+								<text> Delete</text>
+							</button>
+						</td>
+					</tr>
 					{% endfor %}
-					
-					<td>
-						<button class="eventManageButton editEventButton">
-							<i class="fas fa-edit"></i>
-							<text> Edit</text>
-						</button>
-					</td>
-					
-					<td>
-						<input class="massDeleteOn doNotDisplay" type="checkbox" unchecked>
-						<button class="eventManageButton deleteEvent">
-							<i class="fas fa-times"></i>
-							<text> Delete</text>
-						</button>
-					</td>
-				</tr>
 
-				{% endfor %}
 				</tbody>
 			</table>
 
 		</div>
 
 		<div id="deleteSelectedConfirmBox">
-				<button class="doNotDisplay btn btn-dark deleteSelectButtonConfirm">
-						<i class="fa fa-trash" aria-hidden="true"></i> 
-						<text> Delete Selected Events </text>
-				</button>
-		</div>		
-	
+			<button class="doNotDisplay btn btn-dark deleteSelectButtonConfirm">
+				<i class="fa fa-trash" aria-hidden="true"></i>
+				<text> Delete Selected Events </text>
+			</button>
+		</div>
+
 	</div>
-		<!-- Modal -->
+	<!-- Modal -->
 	<div id="deleteConfirm" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 
@@ -88,15 +94,16 @@
 					<h1> Confirm Deletion </h1>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
-				
+
 				<div class="containerForEventsToDelete">
-					<h4 id="deleteEventsHeader"> Event(s) to be Deleted:  </h4>
-					
+					<h4 id="deleteEventsHeader"> Event(s) to be Deleted: </h4>
+
 					<ul class="list-group"></ul>
 				</div>
-				
+
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" id="deleteCancelButton" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-default" id="deleteCancelButton"
+						data-dismiss="modal">Cancel</button>
 					<button type="button" class="btn btn-default" id="deleteSubmitButton">Delete</button>
 				</div>
 			</div>
@@ -104,8 +111,8 @@
 		</div>
 
 	</div>
-	
-	
+
+
 	<!-- Modal FeedBack -->
 	<div id="feedBackModalDelete" class="modal fade" role="dialog">
 		<div class="modal-dialog">
@@ -121,7 +128,7 @@
 		</div>
 
 	</div>
-	
+
 </div>
 
 
@@ -148,9 +155,9 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 
 <!-- UI specific javascripts -->
-<script type="text/javascript" src="view_js/UI_index.js"></script>
+<script type="text/javascript" src="view_js/ui.js"></script>
 
 <!-- JavaScript specific to this page -->
-<script type="text/javascript" src="view_js/myevent_index.js"></script>
+<script type="text/javascript" src="view_js/events.js"></script>
 
 {% endblock %}

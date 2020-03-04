@@ -1,6 +1,12 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} <link rel="stylesheet" href="css/createStyle.css"> {% endblock %}
+{% block page_head %} 
+	
+	<link rel="stylesheet" href="css/createStyle.css"> 
+
+	{% if user_ONID %} <script>var myONID ='{{user_ONID}}';</script> {% endif %}
+
+{% endblock %}
 
 
 {% block page_content %}
@@ -192,9 +198,9 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 
 <!-- UI specific javascripts -->
-<script type="text/javascript" src="view_js/UI_index.js"></script>	
+<script type="text/javascript" src="view_js/ui.js"></script>	
 	
 <!-- JavaScript specific to this page -->
-<script type="text/javascript" src="view_js/create_index.js"></script>
+<script type="text/javascript" src="view_js/create.js"></script>
 
 {% endblock %}

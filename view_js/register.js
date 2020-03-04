@@ -64,11 +64,10 @@ $("#submitButton").click(function () {
 			type: "POST",
 			url: "reserve_slot.php",
 			data: {
+				userONID: myONID,
 				key: slotKey,
-				user_id: 1,
 				start_time: $('.slotSelected').prev().children().text(),
 				date: $('#dateLabel').text(),
-				duration: "ffds"
 			}
 		}).done(function (response) {
 
