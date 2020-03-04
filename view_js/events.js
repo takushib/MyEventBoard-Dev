@@ -15,6 +15,10 @@ function displayNoEventsHeader() {
 		var noEventsLabel = $('<h3>No Events Created </h3>');
 		noEventsLabel.addClass('noEvents');
 		$('.yourEvents').append(noEventsLabel);
+		
+		if ($('#deleteSelectedConfirmBox').hasClass('doNotDisplay') != true) {
+			$('#deleteSelectedConfirmBox').toggleClass('doNotDisplay');
+		};
 	}
 }
 
