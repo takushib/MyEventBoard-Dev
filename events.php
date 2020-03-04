@@ -23,10 +23,10 @@
     $query = "
     
         SELECT
+            Event.id AS 'Event ID',
             Event.name AS 'Event Name',
             Event.capacity AS 'Capacity',
-            Event.open_slots AS 'Available Slots',
-            Event.id AS 'Event ID'
+            Event.open_slots AS 'Available Slots'
         FROM 
             Event, User
         WHERE

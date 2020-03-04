@@ -1,7 +1,6 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %}
-<link rel="stylesheet" href="css/eventStyle.css"> {% endblock %}
+{% block page_head %} <link rel="stylesheet" href="css/eventStyle.css"> {% endblock %}
 
 
 {% block page_content %}
@@ -22,7 +21,10 @@
 
 				<thead>
 					<tr scope="row" class="eventHeader">
-						{% for table_header in table_headers|slice(0, -1) %}
+
+						<th class="d-none" scope="col">{{ table_headers|first }}</th>
+
+						{% for table_header in table_headers|slice(1) %}
 						<th scope="col">{{ table_header }}</th>
 						{% endfor %}
 
@@ -34,6 +36,7 @@
 								<text> Select </text>
 							</button>
 						</th>
+
 					</tr>
 				</thead>
 
@@ -42,13 +45,15 @@
 					{% for table_row in table_rows %}
 					<tr scope="row">
 
-						{% set event_key = table_row|last %}
+						{% set event_key = table_row|first %}
+
+						<td class="d-none" scope="col">{{ event_key }}</td>
 
 						<td scope="col">
-							<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|first }}</a>
+							<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
 						</td>
 
-						{% for column in table_row|slice(1, -1) %}
+						{% for column in table_row|slice(2) %}
 
 						<td scope="col">{{ column }}</td>
 
