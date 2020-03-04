@@ -204,7 +204,6 @@ $(document).ready(function () {
 		}
 		
 	    curDay = formatDate(events[0].start_time);
-		tempDayHolder.push(events[0]);
 		
 		minWeekDate = getDate(getMonday(new Date()));
 		maxWeekDate = getDate(getSunday(getMonday(new Date())));
@@ -217,6 +216,7 @@ $(document).ready(function () {
 			
 			if (isInBetween(formatDate(events[i].start_time), minWeekDate, maxWeekDate) == false)
 				continue;
+			
 			
 			if (curDay == formatDate(events[i].start_time))
 			{
@@ -238,7 +238,6 @@ $(document).ready(function () {
 		
 		if (tempDayHolder.length > 0) {
 			buildContainer(tempDayHolder);
-			isThereEvents = true;
 		}
 		
 		if (isThereEvents == false)
