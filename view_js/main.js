@@ -1,6 +1,6 @@
 const daysOfWeek = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
-function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eventTime)
+function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eventTime, eventLocation)
 {
 	//console.log(eventDate);
 	var titleContainer = $('<div></div>');
@@ -18,6 +18,7 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	var creatorText = creatorName;
 
 	var timeOfEvent = $('<div><text></text></div>');
+	var locationOfEvent = $('<div><text></text></div>');
 
 	var newEventAvailSlot = $('<div><text></text></div>');
 	var slotsText = "Slots: ";
@@ -34,10 +35,19 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	newEventCreator.addClass("eventBlockCreator");
 	newEventCreator.addClass("Container");
 
+	locationOfEvent.text(eventLocation);
+	locationOfEvent.addClass("eventBlockSpace");
+	locationOfEvent.addClass("Container");
+	
 	timeOfEvent.text(eventTime);
 	timeOfEvent.addClass("eventBlockSpace");
 	timeOfEvent.addClass("Container");
 
+	var eventInfo = $('<div></div>');
+	eventInfo.append(locationOfEvent);
+	eventInfo.append(timeOfEvent);
+	eventInfo.addClass("container infoHolder");
+	
 	//newEventAvailSlot.text(slotsText);
 	//newEventAvailSlot.addClass("eventBlockSpace");
 
@@ -47,7 +57,7 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	//newEvent.append(newEventIcon);
 	newEvent.append(titleContainer);
 	newEvent.append(newEventCreator);
-	newEvent.append(timeOfEvent);
+	newEvent.append(eventInfo);
 	//newEvent.append(newEventAvailSlot);
 
 
@@ -89,7 +99,7 @@ function buildContainer(events, todaysDate)
 	
 	for (let i = 0; i < events.length; i++)
 	{
-		newEvent = createEventBlock(events[i].event_name, formatDate(events[i].start_time), events[i].ec_first_name, events[i].slots_remaining,  formatTime(events[i].start_time));
+		newEvent = createEventBlock(events[i].event_name, formatDate(events[i].start_time), events[i].ec_first_name, events[i].slots_remaining,  formatTime(events[i].start_time), events[i].event_location);
 		dayEventContainer.append(newEvent);
 	}
 	
@@ -191,7 +201,7 @@ $(document).ready(function () {
 		for (let i = 0; i < events.length; i++) {
 			//var today = getDate(fullDate);
 			
-			console.log(events[i].start_time)
+			console.log(events[i])
 			
 			if (isInBetween(formatDate(events[i].start_time), minWeekDate, maxWeekDate) == false)
 				continue;
