@@ -1,7 +1,19 @@
 const eventNameIndex = 1; // Index of event name on table. If table structure changes, this needs to be changed accordingly.
 const currPosition = 0;
+const noEventsTableItemCount = 2;
+
 $( document ).ready(function() {
     console.log( "ready!" );
+	
+	console.log($('.eventHeader').children().length);
+	
+    if ($('.eventHeader').children().length == noEventsTableItemCount)
+	{
+		$('#eventsTable').addClass('doNotDisplay');
+		var noEventsLabel = $('<h3>No Events Created </h3>');
+		noEventsLabel.addClass('noEvents');
+		$('.yourEvents').append(noEventsLabel);
+	}
 });
 
 $('.deleteEvent').on('click', function () {
