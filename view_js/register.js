@@ -136,7 +136,7 @@ $(function () {
 	$('#eventLocation').append(eventLocation);
 	var eventDescription = timeSlotObjects[timeSlotKeys[0]].description;
 	
-	if (eventDescription == "" || eventDescription == undefined || eventDescription == null);
+	if (eventDescription == "" || eventDescription == undefined || eventDescription == null)
 	{
 		// do nothing
 	}
