@@ -127,8 +127,27 @@ function formatDate(d) {
 }
 
 $(function () {
+	
+	var timeSlotKeys = Object.keys(timeSlotObjects);
+	var eventLocation = timeSlotObjects[timeSlotKeys[0]].event_location;
+	
+	var eventDesLabel = "Event Description "; 
+	
+	$('#eventLocation').append(eventLocation);
+	var eventDescription = timeSlotObjects[timeSlotKeys[0]].description;
+	
+	if (eventDescription == "" || eventDescription == undefined || eventDescription == null)
+	{
+		// do nothing
+	}
+	else	
+	{
+		$('#eventDescriptionLabel').append(eventDesLabel);
+		$('#eventDescription').append(eventDescription);
+	}
+	
+	
 	var selectableDates = getSelectableDates();
-	console.log(selectableDates);
 
 	$("#datepicker2").datepicker({
 		startDate: new Date(),
@@ -363,7 +382,9 @@ function createTimeSlotObjects() {
 			duration: row.children[2].textContent,
 			capacity: row.children[3].textContent,
 			space: row.children[4].textContent,
-			full: row.children[5].textContent
+			full: row.children[5].textContent,
+			description: row.children[6].textContent,
+			event_location: row.children[7].textContent
 		}
 
 		timeSlotObjects[timeSlot.id] = timeSlot;

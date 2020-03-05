@@ -12,9 +12,17 @@
 {% block page_content %}
 
 <div class="container entryFieldRegister objectSpace">
-
-	<h2 id="eventName">{{event_name}}</h2>
-
+	
+	<div class="descriptor container">
+		<h2 id="eventName">{{event_name}}</h2>
+		<br>
+		<text id="eventLocation">{{location}}</text>
+		<br><br>
+		<text id="eventDescriptionLabel"></text>
+		<p id="eventDescription"></p>
+	</div>
+	<br>
+	
 	<div class="calendarField container">
 		<div id="datepicker2"></div>
 	</div>

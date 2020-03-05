@@ -42,9 +42,9 @@
 
     $query = "
 
-        SELECT id, start_time, duration, slot_capacity, spaces_available, is_full
-        FROM Timeslot
-        WHERE fk_event_id = (?)
+        SELECT T.id, T.start_time, T.duration, T.slot_capacity, T.spaces_available, T.is_full, E.description, E.location from Timeslot T
+		INNER JOIN Event E on T.fk_event_id = E.id
+        WHERE fk_event_id =  (?)
 
     ";
 
