@@ -68,12 +68,13 @@
 	border: 1px solid black;
 }
 
+
 .blank > th
 {
 	border: none !important;
 }
 
-.fullSlot > td
+.fullSlot > td, .mySlot > td
 {
 	cursor: not-allowed !important;
 }
@@ -82,6 +83,11 @@
 {
 	background-color: #ffb6c1;
 }
+
+.mySlot {
+	background-color: #7fff7f;
+}
+
 
 .modal-open {
  overflow: auto; 

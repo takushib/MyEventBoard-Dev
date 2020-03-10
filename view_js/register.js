@@ -1,4 +1,4 @@
-var weekday=new Array(7);
+var weekday = new Array(7);
 
 weekday[0]="Sunday";
 weekday[1]="Monday";
@@ -7,7 +7,6 @@ weekday[3]="Wednesday";
 weekday[4]="Thursday";
 weekday[5]="Friday";
 weekday[6]="Saturday";
-
 
 // Returns week day name of a date obj
 function getDayName(dateObj) {
@@ -50,6 +49,18 @@ function setFullSlot(modalTimeSlot, timeSlotObject) {
 
 }
 
+// for time slot in modal, set its color to green and replace number with checkmark
+// for time slot object, mark it as taken by current user
+
+function setMySlot(modalTimeSlot, timeSlotObject) {
+
+	modalTimeSlot.parent().addClass("mySlot");
+	modalTimeSlot[0].textContent = '✔';
+
+	timeSlotObject.my_slot = 1;
+
+}
+
 
 $("#submitButton").click(function () {
 
@@ -79,16 +90,18 @@ $("#submitButton").click(function () {
 			}
 			else if (response == 0) {
 				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
+				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				document.getElementById('feedbackMessage').textContent = "You have been registered!";
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
 			}
 			else {
+				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
 				timeSlotObjects[slotKey].space = response;
 			}
-
+			
 			selectedSlot[0].classList.remove('slotSelected');
 
 		});
@@ -217,6 +230,7 @@ function createFields() {
 	var spaces = [];
 	var isAvailable = [];
 	var slotIDs = [];
+	var isMySlot = [];
 
 
 	for (var timeSlotKey of timeSlotKeys) // store current day times into an array to loop through
@@ -231,6 +245,7 @@ function createFields() {
 			spaces.push(timeSlot.space);
 			isAvailable.push(timeSlot.full);
 			slotIDs.push(timeSlot.id);
+			isMySlot.push(timeSlot.my_slot);
 		}
 
 	}
@@ -238,17 +253,17 @@ function createFields() {
 	for (var i = 0; i < times.length; i++) {
 
 		if (i === 0) {
-			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i]);
+			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i], isMySlot[i]);
 			selectASlot();
 			continue;
 		}
 
 		if (parseInt(times[i - 1], 10) + parseInt(selectedDuration, 10) !== parseInt(times[i], 10)) {
 			addBlankSpace();
-			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i]);
+			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i], isMySlot[i]);
 		}
 		else {
-			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i]);
+			createCells(times[i], spaces[i], isAvailable[i], slotIDs[i], isMySlot[i]);
 		}
 
 		selectASlot();
@@ -262,17 +277,28 @@ function addBlankSpace() {
 	$('#slotPicker tbody').append(newRow);
 }
 
-function createCells(startTime, spaceAvailable, isFull, id) {
-
+function createCells(startTime, spaceAvailable, isFull, id, isMySlot) {
+	
 	var rowContent = '<tr><th><div>' + totalMinutesToFormat(startTime);
-	rowContent += '</div></th><td>' + spaceAvailable +'</td></tr>'
+	if (isMySlot != 1) {
+		rowContent += '</div></th><td>' + spaceAvailable +'</td></tr>';
+	}
+	else {
+		rowContent += '</div></th><td>' + '✔' +'</td></tr>';
+	}
 
 	var newRow = $(rowContent);
 	newRow.attr('id', id);
 	newRow.addClass("removeOnClear");
+
 	if (isFull == 1) {
 		newRow.addClass("fullSlot");
 	}
+
+	if (isMySlot == 1) {
+		newRow.addClass("mySlot");
+	}
+
 	newRow.attr("scope", "row");
 
 	var minutesVal = $('<span>' + startTime + '</span>');
@@ -286,8 +312,7 @@ function createCells(startTime, spaceAvailable, isFull, id) {
 function selectASlot() {
 	$("#slotPicker td").click(function () {
 
-		if ($(this).parent().hasClass('fullSlot'))
-			return;
+		if ($(this).parent().hasClass('fullSlot') || $(this).parent().hasClass('mySlot')) return;
 
 		var check = getColumnSelect();
 
@@ -384,7 +409,8 @@ function createTimeSlotObjects() {
 			space: row.children[4].textContent,
 			full: row.children[5].textContent,
 			description: row.children[6].textContent,
-			event_location: row.children[7].textContent
+			event_location: row.children[7].textContent,
+			my_slot: row.children[8].textContent
 		}
 
 		timeSlotObjects[timeSlot.id] = timeSlot;

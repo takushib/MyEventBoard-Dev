@@ -42,14 +42,25 @@
 
     $query = "
 
-        SELECT T.id, T.start_time, T.duration, T.slot_capacity, T.spaces_available, T.is_full, E.description, E.location from Timeslot T
-		INNER JOIN Event E on T.fk_event_id = E.id
-        WHERE fk_event_id =  (?)
+        SELECT 
+            T.id, T.start_time, T.duration, 
+            T.slot_capacity, T.spaces_available, T.is_full, 
+            E.description, E.location, 
+            IF(U.onid = ?, TRUE, FALSE)
+        FROM Timeslot T
+        INNER JOIN Event E 
+            ON T.fk_event_id = E.id
+        LEFT JOIN Bookings B
+            ON T.id = B.fk_timeslot_id
+        LEFT JOIN User U 
+            ON B.fk_user_id = U.id
+        WHERE 
+            fk_event_id = ?
 
     ";
 
     $statement = $database -> prepare($query);
-    $statement -> bind_param("i", $event_key);
+    $statement -> bind_param("si", $_SESSION['user'], $event_key);
     $statement -> execute();
 
     $result = $statement -> get_result();
