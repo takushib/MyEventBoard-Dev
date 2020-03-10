@@ -1,0 +1,86 @@
+{% extends "layout/layout.twig" %}
+
+{% block page_head %} {% endblock %}
+
+
+{% block page_content %}
+
+<div class="container objectSpace">
+
+	<div>
+		<h2 class="d-inline" id="eventName">{{ event_name }}</h2>
+		<span class="mx-1"></span>
+		<a class="text-info" href="./register?key={{ event_key }}">
+			<i class="fas fa-external-link-alt"></i>
+		</a>
+	</div>
+	
+	<div class="container entryField1">
+		
+		<div class="container">
+
+			{% if table_headers %}
+			
+			{{ include('partials/search.twig') }}
+
+			{% else %}
+			
+			<br><br><h3 class="text-center">No one has signed up for this event yet.</h4>
+
+			{% endif %}
+		
+			<table class="table table-striped">
+
+				<thead>
+					<tr class="row">
+						{% for table_header in table_headers|slice(0, -1) %}
+						<th class="col">{{ table_header }}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+
+				<tbody class="tableBody">
+					{% for table_row in table_rows %}
+
+					<tr class="row">
+						{% for column in table_row|slice(0, -1) %}
+						<td class="col">{{ column }}</td>
+						{% endfor %}
+					</tr>
+					
+					{% endfor %}
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+
+</div>
+
+<!-- jQuery -->
+<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="js/popper.min.js"></script>
+
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="js/mdb.min.js"></script>
+
+<!-- Your custom scripts (optional) -->
+<script type="text/javascript"></script>
+
+<!-- Date Range Picker -->
+
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+<!-- UI specific javascripts -->
+<script type="text/javascript" src="view_js/ui.js"></script>
+
+{% endblock %}
