@@ -1,52 +1,54 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} 
-
-<link rel="stylesheet" href="css/reservationsStyle.css"> 
-
-{% endblock %}
+{% block page_head %} {% endblock %}
 
 
 {% block page_content %}
 
 <div class="container objectSpace">
 
-	<h2> Your Reservations </h2>
-
+	<div>
+		<h2 class="d-inline" id="eventName">{{ event_name }}</h2>
+		<span class="mx-1"></span>
+		<a class="text-info" href="./register?key={{ event_key }}">
+			<i class="fas fa-external-link-alt"></i>
+		</a>
+	</div>
+	
 	<div class="container entryField1">
-
-		{{include('partials/search.twig') }}
 		
-		<div class="yourInvites table-responsive">
+		<div class="container">
+
+			{% if table_headers %}
+			
+			{{ include('partials/search.twig') }}
+
+			{% else %}
+			
+			<br><br><h3 class="text-center">No one has signed up for this event yet.</h4>
+
+			{% endif %}
 		
 			<table class="table table-striped">
+
 				<thead>
-				<tr scope="row">
-					{% for table_header in table_headers|slice(0, -1) %}
-					<th scope="col">{{ table_header }}</th>
-					{% endfor %}
-				</tr>
+					<tr class="row">
+						{% for table_header in table_headers|slice(0, -1) %}
+						<th class="col">{{ table_header }}</th>
+						{% endfor %}
+					</tr>
 				</thead>
+
 				<tbody class="tableBody">
-				{% for table_row in table_rows %}
+					{% for table_row in table_rows %}
 
-				<tr scope="row">
-
-					{% set event_key = table_row|last %}
-
-					<td>
-						<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|first }}</a>
-					</td>
-
-					{% for column in table_row|slice(1, -1) %}
-
-					<td>{{ column }}</td>
-
+					<tr class="row">
+						{% for column in table_row|slice(0, -1) %}
+						<td class="col">{{ column }}</td>
+						{% endfor %}
+					</tr>
+					
 					{% endfor %}
-
-				</tr>
-				
-				{% endfor %}
 				</tbody>
 			</table>
 
@@ -82,6 +84,6 @@
 <script type="text/javascript" src="view_js/ui.js"></script>
 
 <!-- JavaScript specific to this page -->
-<script>$(document).ready( function(){ formatTableDateTime(1); }); </script>
+<script>$(document).ready( function(){ formatTableDateTime(0); }); </script>
 
 {% endblock %}
