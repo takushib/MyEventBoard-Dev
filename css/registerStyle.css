@@ -86,3 +86,21 @@
 .modal-open {
  overflow: auto; 
 }
+
+.descriptor {
+	background-color: #333;
+	border-radius: 5px;
+	padding: 5px;
+	color: white;
+	width: 100%;
+	
+}
+
+#eventLocation {
+	font-weight: bold;
+}
+
+#eventDescriptionLabel {
+	font-style: italic;
+	font-weight: bold;
+}

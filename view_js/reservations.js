@@ -1,7 +1,6 @@
 $(document).ready(function () {
 	
 	var test = $('#selectInvite').click(function() { 
-		console.log("hi");
 		$.ajax({
 			url:"/php/get_slots.php",
 			type: "POST",

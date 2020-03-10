@@ -12,7 +12,7 @@ function displayNoEventsHeader() {
 	if ($('.tableBody').children().length == 0)
 	{
 		$('#eventsTable').addClass('doNotDisplay');
-		var noEventsLabel = $('<h3>No Events Created </h3>');
+		var noEventsLabel = $('<h3> No Events Created <img src="./NoEventsImg.png" height="100" width="100"></h3>');
 		noEventsLabel.addClass('noEvents');
 		$('.yourEvents').append(noEventsLabel);
 		

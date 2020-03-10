@@ -1,6 +1,10 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} {% endblock %}
+{% block page_head %} 
+
+<link rel="stylesheet" href="css/reservationsStyle.css"> 
+
+{% endblock %}
 
 
 {% block page_content %}
@@ -13,30 +17,30 @@
 
 		{{include('partials/search.twig') }}
 		
-		<div class="yourInvites container">
+		<div class="yourInvites table-responsive">
 		
 			<table class="table table-striped">
 				<thead>
-				<tr class="row">
+				<tr scope="row">
 					{% for table_header in table_headers|slice(0, -1) %}
-					<th class="col">{{ table_header }}</th>
+					<th scope="col">{{ table_header }}</th>
 					{% endfor %}
 				</tr>
 				</thead>
 				<tbody class="tableBody">
 				{% for table_row in table_rows %}
 
-				<tr class="row">
+				<tr scope="row">
 
 					{% set event_key = table_row|last %}
 
-					<td class="col">
+					<td>
 						<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|first }}</a>
 					</td>
 
 					{% for column in table_row|slice(1, -1) %}
 
-					<td class="col">{{ column }}</td>
+					<td>{{ column }}</td>
 
 					{% endfor %}
 

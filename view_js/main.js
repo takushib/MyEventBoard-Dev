@@ -195,7 +195,6 @@ $(document).ready(function () {
 		data: { userONID: myONID },
 	}).done(function(response) {
 		events = JSON.parse(response);
-		console.log(events.length);
 		
 		if (events.length < 1)
 		{	
@@ -210,13 +209,11 @@ $(document).ready(function () {
 	
 		
 		for (let i = 0; i < events.length; i++) {
-			//var today = getDate(fullDate);
-			
-			console.log(events[i])
 			
 			if (isInBetween(formatDate(events[i].start_time), minWeekDate, maxWeekDate) == false)
+			{
 				continue;
-			
+			}
 			
 			if (curDay == formatDate(events[i].start_time))
 			{
@@ -235,9 +232,8 @@ $(document).ready(function () {
 			}
 
 		}
-		
 		if (tempDayHolder.length > 0) {
-			buildContainer(tempDayHolder);
+			buildContainer(tempDayHolder, getDate(new Date()));
 			isThereEvents = true;
 		}
 		
@@ -246,7 +242,7 @@ $(document).ready(function () {
 			noEvents();
 			return;
 		}
-		
+
 		
 	});
 })
