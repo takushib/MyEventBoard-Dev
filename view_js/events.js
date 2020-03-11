@@ -1,21 +1,20 @@
 const eventNameIndex = 1; // Index of event name on table. If table structure changes, this needs to be changed accordingly.
 const currPosition = 0;
 
-$( document ).ready(function() {
-    console.log( "ready!" );
-	
+$(document).ready(function () {
+	console.log("ready!");
+
 	displayNoEventsHeader();
-	
+
 });
 
 function displayNoEventsHeader() {
-	if ($('.tableBody').children().length == 0)
-	{
+	if ($('.tableBody').children().length == 0) {
 		$('#eventsTable').addClass('doNotDisplay');
 		var noEventsLabel = $('<h3> No Events Created <img src="./NoEventsImg.png" height="100" width="100"></h3>');
 		noEventsLabel.addClass('noEvents');
 		$('.yourEvents').append(noEventsLabel);
-		
+
 		if ($('#deleteSelectedConfirmBox').hasClass('doNotDisplay') != true) {
 			$('#deleteSelectedConfirmBox').toggleClass('doNotDisplay');
 		};
@@ -23,70 +22,72 @@ function displayNoEventsHeader() {
 }
 
 $('.deleteEvent').on('click', function () {
-  $('#deleteConfirm').modal('toggle');
 
-  var listItem = $('<li> '+ $(this).parent().parent().children().eq(eventNameIndex).text() +' </li>');
-  listItem.addClass('list-group-item');
-  $('.containerForEventsToDelete ul').append(listItem);
+	$('#deleteConfirm').modal('toggle');
 
-  var currentEvent = $(this);
+	var listItem = $('<li> ' + $(this).parent().parent().children().eq(eventNameIndex).text() + ' </li>');
+	listItem.addClass('list-group-item');
+	$('.containerForEventsToDelete ul').append(listItem);
 
-  console.log();
-  $('.containerForEventsToDelete ul').append(listItem);
-  $('#deleteSubmitButton').on('click', function () {
-  	$('#deleteConfirm').modal('toggle');
-    //delete here
-    $.ajax({
-  		url:"delete_event.php",
-  		type: "POST",
-  		data: {eid: currentEvent.parent().parent().eq(currPosition).text()},
-  	}).done(function(response) {
-      console.log(response);
-  	});
-  	$('#feedBackModalDelete').modal('toggle');
-  	currentEvent.parent().parent().remove();
-	displayNoEventsHeader();
-  })
+	var currentEvent = $(this);
+
+	$('.containerForEventsToDelete ul').append(listItem);
+
+	$('#deleteSubmitButton').on('click', function () {
+		$('#deleteConfirm').modal('toggle');
+		$.ajax({
+			url: "delete_event.php",
+			type: "POST",
+			data: { key: currentEvent.parent().parent().children().eq(currPosition).text() },
+		}).done(function (response) {
+			console.log(response);
+		});
+
+		$('#feedBackModalDelete').modal('toggle');
+		currentEvent.parent().parent().remove();
+		displayNoEventsHeader();
+	})
 
 })
 
-function massDelete(arrayWithReadyToDeleteEvents)
-{
+function massDelete(arrayWithReadyToDeleteEvents) {
+
 	$('#deleteConfirm').modal('toggle');
 
 	arrayWithReadyToDeleteEvents.forEach(number => {
-		var listItem = $('<li> '+ number.parent().children().eq(eventNameIndex).text() +' </li>');
+		var listItem = $('<li> ' + number.parent().children().eq(eventNameIndex).text() + ' </li>');
 		listItem.addClass('list-group-item');
 		$('.containerForEventsToDelete ul').append(listItem);
 	});
 
 	$('#deleteSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
-    arrayWithReadyToDeleteEvents.forEach(number => {
-      $.ajax({
-    		url:"delete_event.php",
-    		type: "POST",
-    		data: {eid: number.parent().eq(currPosition).text()},
-    	}).done(function(response) {
-        console.log(response);
-    	});
+		arrayWithReadyToDeleteEvents.forEach(number => {
+			$.ajax({
+				url: "delete_event.php",
+				type: "POST",
+				data: { key: number.parent().children().eq(currPosition).text() },
+			}).done(function (response) {
+				console.log(response);
+			});
 			number.parent().remove();
 			displayNoEventsHeader();
 		});
 		$('#feedBackModalDelete').modal('toggle');
 	})
+	
 }
 
 
 $('#deleteConfirm').on('hidden.bs.modal', function () {
-  $('.list-group-item').remove();
+	$('.list-group-item').remove();
 });
 
 $('.deleteSelectButton').on('click', function () {
-  $('.deleteSelectButton').toggleClass('toggled');
-  $('.massDeleteOn').toggleClass('doNotDisplay');
-  $('.deleteEvent').toggleClass('doNotDisplay');
-  $('.deleteSelectButtonConfirm').toggleClass('doNotDisplay');
+	$('.deleteSelectButton').toggleClass('toggled');
+	$('.massDeleteOn').toggleClass('doNotDisplay');
+	$('.deleteEvent').toggleClass('doNotDisplay');
+	$('.deleteSelectButtonConfirm').toggleClass('doNotDisplay');
 })
 
 $('.deleteSelectButtonConfirm').on('click', function () {
@@ -95,7 +96,7 @@ $('.deleteSelectButtonConfirm').on('click', function () {
 	var atLeastOnSelected = false;
 	var tempHolder = [];
 
-	$("#eventsTable tr td:nth-last-child( "+ eventNameIndex +" )").each(function () {
+	$("#eventsTable tr td:nth-last-child( " + eventNameIndex + " )").each(function () {
 		if ($(this).children().prop("checked")) {
 			tempHolder.push($(this));
 			atLeastOnSelected = true;

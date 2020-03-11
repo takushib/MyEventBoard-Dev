@@ -21,7 +21,7 @@
             t1.start_time AS 'Start Time',
             CONCAT(t4.first_name, ' ', t4.last_name) AS 'Creator Name',
             t4.onid AS 'Creator ONID',
-            t2.id AS 'Event ID'
+            t2.hash AS 'Event Key'
         FROM 
             booking AS t0
         INNER JOIN timeslot AS t1 
@@ -43,8 +43,8 @@
     $statement -> execute();
 
     $result = $statement -> get_result();
-    $result_array = $result -> fetch_all(MYSQLI_ASSOC);
-    $result_keys = array_keys($result_array[0]);
+    $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+    $resultKeys = array_keys($resultArray[0]);
 
     $result -> free();
     $database -> close();
@@ -55,8 +55,8 @@
         'views/reservations.twig', 
         [
             'user_ONID' => $_SESSION['user'],
-            'table_headers' => $result_keys, 
-            'table_rows' => $result_array
+            'table_headers' => $resultKeys, 
+            'table_rows' => $resultArray
         ]
     ); 
 

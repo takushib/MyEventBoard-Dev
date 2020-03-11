@@ -7,7 +7,7 @@
     // get data for dashboard, including
     // user data, event data, time slot data
     
-    $user_ONID = $_POST['userONID'];
+    $userONID = $_POST['userONID'];
 
     $q = "
 
@@ -36,12 +36,12 @@
     ";
 
     $statement = $database->prepare($q);
-    $statement->bind_param("s", $user_ONID);
+    $statement->bind_param("s", $userONID);
     $statement->execute();
     
     $result = $statement->get_result();
-    $result_array = $result -> fetch_all(MYSQLI_ASSOC);
+    $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
 
-    echo json_encode($result_array);
+    echo json_encode($resultArray);
 
 ?>

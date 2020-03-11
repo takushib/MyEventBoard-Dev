@@ -14,27 +14,27 @@
 
     // get key for event from URL
 
-    $event_key = ($_GET["key"]);
+    $eventKey = ($_GET["key"]);
 
     // get event data from database
 
-    $query = 'SELECT name FROM event WHERE id = ?';
+    $query = 'SELECT name FROM event WHERE hash = ?';
 
     $statement = $database -> prepare($query);
-    $statement -> bind_param("i", $event_key);
+    $statement -> bind_param("s", $eventKey);
     $statement -> execute();
 
     $result = $statement -> get_result();
-    $result_row = $result -> fetch_assoc();
+    $resultRow = $result -> fetch_assoc();
 
     // if event data could not be found, show error page
 
-    if ($result_row == NULL) {
+    if ($resultRow == NULL) {
         echo $twig -> render('views/404.twig');
         exit;
     }
 
-    $event_name = $result_row['name'];
+    $eventName = $resultRow['name'];
 
     $result -> free();
 
@@ -43,7 +43,7 @@
     $query = "
 
         SELECT 
-            T.id, T.start_time, T.duration, 
+            T.hash, T.start_time, T.duration, 
             T.slot_capacity, T.spaces_available, T.is_full, 
             E.description, E.location, 
             IF(U.onid = ?, TRUE, FALSE)
@@ -55,17 +55,17 @@
         LEFT JOIN user U 
             ON B.fk_user_id = U.id
         WHERE 
-            T.fk_event_id = ?
+            E.hash = ?
 
     ";
 
     $statement = $database -> prepare($query);
-    $statement -> bind_param("si", $_SESSION['user'], $event_key);
+    $statement -> bind_param("ss", $_SESSION['user'], $eventKey);
     $statement -> execute();
 
     $result = $statement -> get_result();
-    $result_array = $result -> fetch_all(MYSQLI_ASSOC);
-    $result_keys = array_keys($result_array[0]);
+    $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+    $resultKeys = array_keys($resultArray[0]);
 
     $result -> free();
     $database -> close();
@@ -76,9 +76,9 @@
         'views/register.twig',
         [
             'user_ONID' => $_SESSION['user'],
-            'event_name' => $event_name,
-            'table_headers' => $result_keys,
-            'table_rows' => $result_array
+            'event_name' => $eventName,
+            'table_headers' => $resultKeys,
+            'table_rows' => $resultArray
         ]
     );
 
