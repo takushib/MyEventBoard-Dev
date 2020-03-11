@@ -1,0 +1,12 @@
+.eventNameOnViewer {
+	text-align: center;
+	padding: 10px;
+}
+
+#eventName {
+	font-weight: bold !important;
+}
+
+.goToEvent {
+	float: right !important;
+}
