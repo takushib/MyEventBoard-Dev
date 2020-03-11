@@ -36,7 +36,7 @@
 		$s_time = $_POST["start_time"];
 		$duration = $_POST["duration"];
 			
-		$queryUser = 'SELECT email, first_name FROM User WHERE id = ?';
+		$queryUser = 'SELECT email, first_name FROM user WHERE id = ?';
 		$statement2 = $database->prepare($queryUser);
 		$statement2->bind_param("i", $user_key);
 		$statement2->execute();
@@ -48,10 +48,10 @@
 		$queryLoc = "
 
 			SELECT E.location AS 'location' 
-			FROM Timeslot 
-			INNER JOIN Event E 
-				ON Timeslot.fk_event_id = E.id 
-			WHERE Timeslot.id = ?
+			FROM timeslot 
+			INNER JOIN event E 
+				ON timeslot.fk_event_id = E.id 
+			WHERE timeslot.id = ?
 			
 		";
 

@@ -23,15 +23,14 @@
     $query = "
     
         SELECT
-            Event.id AS 'Event ID',
-            Event.name AS 'Event Name',
-            Event.capacity AS 'Capacity',
-            Event.open_slots AS 'Available Slots'
+            event.id AS 'Event ID',
+            event.name AS 'Event Name',
+            event.capacity AS 'Capacity',
+            event.open_slots AS 'Available Slots'
         FROM 
-            Event, User
+            event, user
         WHERE
-            User.id = ? AND
-            Event.fk_event_creator = User.id
+            user.id = ? AND event.fk_event_creator = user.id
         
     ";
         

@@ -19,7 +19,7 @@
 
 		$statement = $database -> prepare("
 
-			INSERT INTO Event 
+			INSERT INTO event 
 				(name, description, fk_event_creator, location, capacity, open_slots) 
 			VALUES (?, ?, ?, ?, ?, ?)
 			
@@ -44,8 +44,8 @@
 
 		$statement = $database -> prepare("
 
-			INSERT INTO Timeslot 
-				(start_time, end_time, duration, slot_capacity, spaces_available, is_full, fk_event_id) 
+			INSERT INTO 
+				timeslot(start_time, end_time, duration, slot_capacity, spaces_available, is_full, fk_event_id) 
 			VALUES (?, ?, ?, ?, ?, ?, ?)
 
 		");

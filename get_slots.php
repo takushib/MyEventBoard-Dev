@@ -10,7 +10,7 @@
 	{
 		$event_id = $_POST("fk_event");
 
-		$statement = $database -> prepare("SELECT * FROM Timeslot WHERE fk_event_id=?");
+		$statement = $database -> prepare("SELECT * FROM timeslot WHERE fk_event_id = ?");
 		$statement -> bind_param("i", $event_id);
 		
 		if ($result = $database->query($statement)) {

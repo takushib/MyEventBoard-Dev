@@ -23,8 +23,8 @@
             t1.onid AS 'Creator ONID',
             t0.id AS 'Event ID'
         FROM 
-            Event AS t0
-        INNER JOIN User AS t1
+            event AS t0
+        INNER JOIN user AS t1
             ON t0.fk_event_creator = t1.id
 
     ";

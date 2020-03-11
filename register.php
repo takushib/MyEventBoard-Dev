@@ -18,7 +18,7 @@
 
     // get event data from database
 
-    $query = 'SELECT name FROM Event WHERE id = (?)';
+    $query = 'SELECT name FROM event WHERE id = ?';
 
     $statement = $database -> prepare($query);
     $statement -> bind_param("i", $event_key);
@@ -47,15 +47,15 @@
             T.slot_capacity, T.spaces_available, T.is_full, 
             E.description, E.location, 
             IF(U.onid = ?, TRUE, FALSE)
-        FROM Timeslot T
-        INNER JOIN Event E 
+        FROM timeslot T
+        INNER JOIN event E 
             ON T.fk_event_id = E.id
-        LEFT JOIN Bookings B
+        LEFT JOIN booking B
             ON T.id = B.fk_timeslot_id
-        LEFT JOIN User U 
+        LEFT JOIN user U 
             ON B.fk_user_id = U.id
         WHERE 
-            fk_event_id = ?
+            T.fk_event_id = ?
 
     ";
 
