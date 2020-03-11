@@ -2,13 +2,13 @@
 
     include 'php/database.php';
 
-    $slot_key = $_POST["eid"];
+    $eventKey = $_POST["key"];
 
-    $query = 'DELETE FROM event where id = ?';
+    $query = "DELETE FROM event WHERE hash = ?";
     $statement = $database -> prepare($query);
-    $statement -> bind_param("i", $slot_key);
+    $statement -> bind_param("s", $eventKey);
     
-    if(!$statement->execute()) {
+    if(!$statement -> execute()) {
       echo "ERROR: The event(s) could not be deleted.";
     }
     else {

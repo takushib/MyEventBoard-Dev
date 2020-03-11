@@ -23,7 +23,7 @@
     $query = "
     
         SELECT
-            event.id AS 'Event ID',
+            event.hash AS 'Event Key',
             event.name AS 'Event Name',
             event.capacity AS 'Capacity',
             event.open_slots AS 'Available Slots'
@@ -35,12 +35,12 @@
     ";
         
     $statement = $database -> prepare($query);
-    $statement -> bind_param('s', $userKey);
+    $statement -> bind_param('i', $userKey);
     $statement -> execute();
 
     $result = $statement -> get_result();
-    $result_array = $result -> fetch_all(MYSQLI_ASSOC);
-    $result_keys = array_keys($result_array[0]);
+    $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+    $resultKeys = array_keys($resultArray[0]);
 
     $result -> free();
     $database -> close();
@@ -51,8 +51,8 @@
         'views/events.twig', 
         [
             'user_ONID' => $_SESSION['user'],
-            'table_headers' => $result_keys, 
-            'table_rows' => $result_array
+            'table_headers' => $resultKeys, 
+            'table_rows' => $resultArray
         ]
     ); 
 

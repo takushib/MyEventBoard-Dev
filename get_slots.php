@@ -8,10 +8,19 @@
 
 	if (!empty($_POST))
 	{
-		$event_id = $_POST("fk_event");
+		$eventKey = $_POST("eventHash");
 
-		$statement = $database -> prepare("SELECT * FROM timeslot WHERE fk_event_id = ?");
-		$statement -> bind_param("i", $event_id);
+		$query = "
+
+			SELECT * FROM timeslot 
+			INNER JOIN event 
+				ON timeslot.fk_event_id = event.id 
+			WHERE event.hash = ?
+		
+		";
+
+		$statement = $database -> prepare($query);
+		$statement -> bind_param("s", $eventKey);
 		
 		if ($result = $database->query($statement)) {
 			$slot_array = [];
@@ -20,7 +29,7 @@
 				$slot_array[$i] = $result_object;
 				$i++;
 			}
-		  	echo ($event_id);
+		  	echo ($eventKey);
 		}
 	}
 
