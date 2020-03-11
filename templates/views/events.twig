@@ -28,6 +28,8 @@
 						<th scope="col">{{ table_header }}</th>
 						{% endfor %}
 
+						<th scope="col">Link To Event</th>
+						
 						<th scope="col"></th>
 
 						<th scope="col">
@@ -49,24 +51,30 @@
 
 						<td class="d-none" scope="col">{{ event_key }}</td>
 
-						<td scope="col">
+						<td>
 							<a class="text-info" href="./manage?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
 						</td>
-
+						
 						{% for column in table_row|slice(2) %}
+						
+						<td>{{ column }}</td>
 
-						<td scope="col">{{ column }}</td>
-
+						
 						{% endfor %}
 
-						<td scope="col">
+						<td class="linkToEvent">
+						</td>
+						
+						
+						
+						<td>
 							<button class="eventManageButton editEventButton">
 								<i class="fas fa-edit"></i>
 								<text> Edit</text>
 							</button>
 						</td>
 
-						<td scope="col">
+						<td>
 							<input class="massDeleteOn doNotDisplay" type="checkbox" unchecked>
 							<button class="eventManageButton deleteEvent">
 								<i class="fas fa-times"></i>
