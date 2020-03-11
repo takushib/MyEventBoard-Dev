@@ -1,19 +1,22 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} {% endblock %}
+{% block page_head %} 
+
+<link rel="stylesheet" href="css/manageStyle.css"> 
+
+{% endblock %}
 
 
 {% block page_content %}
 
 <div class="container objectSpace">
 
-	<div>
+	<div class="eventNameOnViewer">
 		<h2 class="d-inline" id="eventName">{{ event_name }}</h2>
-		<span class="mx-1"></span>
-		<a class="text-info" href="./register?key={{ event_key }}">
-			<i class="fas fa-external-link-alt"></i>
-		</a>
 	</div>
+
+		
+
 	
 	<div class="container entryField1">
 		
@@ -54,6 +57,17 @@
 
 		</div>
 
+	<div class="mx-1 goToEvent">
+	
+	<Button type="button" class="btn btn-dark visitEvent">
+		<a class="text-info" href="./register?key={{ event_key }}">
+			<i class="fas fa-external-link-alt"></i>
+		</a>
+	Go to Event
+	</Button>
+	</div>
+		
+		
 	</div>
 
 </div>
@@ -82,6 +96,10 @@
 
 <!-- UI specific javascripts -->
 <script type="text/javascript" src="view_js/ui.js"></script>
+
+<!-- JavaScript specific to this page -->
+<script type="text/javascript" src="view_js/manage.js"></script>
+
 
 <!-- JavaScript specific to this page -->
 <script>$(document).ready( function(){ formatTableDateTime(0); }); </script>
