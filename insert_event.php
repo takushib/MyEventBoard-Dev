@@ -19,15 +19,15 @@
 
 		$statement = $database -> prepare("
 
-			INSERT INTO event 
-				(name, description, fk_event_creator, location, capacity, open_slots) 
-			VALUES (?, ?, ?, ?, ?, ?)
+			INSERT INTO 
+				event(hash, name, description, fk_event_creator, location, capacity, open_slots) 
+			VALUES (?, ?, ?, ?, ?, ?, ?)
 			
 		");
 
 		$statement -> bind_param(
-			"ssisii", 
-			$eName, $eDescription, $eCreator, $eLocation, $eCapacity, $eOpenSlots
+			"sssisii", 
+			$eHash, $eName, $eDescription, $eCreator, $eLocation, $eCapacity, $eOpenSlots
 		);
 
 		$eName = $_POST['eventName'];
@@ -37,22 +37,25 @@
 		$eCapacity = $_POST['eventCap'];
 		$eOpenSlots = $eCapacity;
 
+		$bigString = $eName + $eDescription + $eCreator + $eLocation + time();
+		$eHash = password_hash($bigString, PASSWORD_BCRYPT);
+
 		$statement -> execute();
 
-		$newEventID = $database -> insert_id;
 
+		$newEventID = $database -> insert_id;
 
 		$statement = $database -> prepare("
 
 			INSERT INTO 
-				timeslot(start_time, end_time, duration, slot_capacity, spaces_available, is_full, fk_event_id) 
-			VALUES (?, ?, ?, ?, ?, ?, ?)
+				timeslot(hash, start_time, end_time, duration, slot_capacity, spaces_available, is_full, fk_event_id) 
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 
 		");
 
 		$statement -> bind_param(
-			"ssiiiii", 
-			$sStartDate, $sEndDate, $sDuration, $sCapacity, $sSpaces, $sFull, $sEventID
+			"sssiiiii", 
+			$sHash, $sStartDate, $sEndDate, $sDuration, $sCapacity, $sSpaces, $sFull, $sEventID
 		);
 		
 		foreach($slots as $item){
@@ -64,6 +67,9 @@
 			$sSpaces = $_POST['sCap'];
 			$sFull = 0;
 			$sEventID = $newEventID;
+
+			$bigString = $sStartDate + $sEndDate + $sEventID + time();
+			$sHash = password_hash($bigString, PASSWORD_BCRYPT);
 
 			$statement -> execute();
 

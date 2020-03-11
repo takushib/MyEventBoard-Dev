@@ -14,7 +14,7 @@
 
     // get key for event from URL
 
-    $event_key = ($_GET["key"]);
+    $eventKey = ($_GET["key"]);
 
     // get event name and match user ONID with event creator's ONID
     // if there are no results, show error page
@@ -25,23 +25,23 @@
         FROM event 
         INNER JOIN user 
             ON event.fk_event_creator = user.id 
-        WHERE event.id = ? AND user.onid = ?
+        WHERE event.hash = ? AND user.onid = ?
 
     ";
 
     $statement = $database -> prepare($query);
-    $statement -> bind_param("is", $event_key, $_SESSION['user']);
+    $statement -> bind_param("ss", $eventKey, $_SESSION['user']);
     $statement -> execute();
 
     $result = $statement -> get_result();
-    $result_row = $result -> fetch_assoc();
+    $resultRow = $result -> fetch_assoc();
 
-    if ($result_row == NULL) {
+    if ($resultRow == NULL) {
         echo $twig -> render('views/404.twig');
         exit;
     }
 
-    $event_name = $result_row['name'];
+    $eventName = $resultRow['name'];
 
     $result -> free();
 
@@ -63,19 +63,19 @@
         INNER JOIN event AS t3
             ON t1.fk_event_id = t3.id
         WHERE 
-            t3.id = ?
+            t3.hash = ?
         ORDER BY
             t1.start_time AND t2.first_name
     
     ";
 
     $statement = $database -> prepare($query);
-    $statement -> bind_param("i", $event_key);
+    $statement -> bind_param("s", $eventKey);
     $statement -> execute();
 
     $result = $statement -> get_result();
-    $result_array = $result -> fetch_all(MYSQLI_ASSOC);
-    $result_keys = array_keys($result_array[0]);
+    $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+    $resultKeys = array_keys($resultArray[0]);
 
     $result -> free();
     $database -> close();
@@ -86,10 +86,10 @@
         'views/manage.twig',
         [
             'user_ONID' => $_SESSION['user'],
-            'event_name' => $event_name,
-            'event_key' => $event_key,
-            'table_headers' => $result_keys,
-            'table_rows' => $result_array
+            'event_name' => $eventName,
+            'event_key' => $eventKey,
+            'table_headers' => $resultKeys,
+            'table_rows' => $resultArray
         ]
     );
 
