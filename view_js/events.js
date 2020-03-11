@@ -11,13 +11,9 @@ $(document).ready(function () {
 
 $( document ).ready(function() {
 	
-	//console.log($('.linkToEvent').parent().children().eq(eventNameIndex).children().attr('href'));
-	
-	var eventLinks = $('.linkToEvent').parent().children().eq(eventNameIndex).children().attr('href')
-	
 	$("#eventsTable tr td:nth-last-child( "+ eventLinkIndex +" )").each(function () {
-		var eventLink = $(this).parent().children().eq(eventNameIndex).children().attr('href').toString();
 
+		var eventLink = $(this).parent().children().eq(eventNameIndex).children().attr('href');
 		eventLink = eventLink.replace('manage', 'register');
 		pathArray = window.location.pathname.split('/');
 		
@@ -37,18 +33,19 @@ $('.copy').on('click', function () {
 	
 	var temp_text = $('<input></input>');
 	temp_text.attr("type", "text");
-	temp_text.addClass('doNotDisplay');
-	temp_text.val($(this).next().text());
+	temp_text.val($(this).next().text().toString());
+	
     temp_text.attr('id', "copyToClipBoard");
 	$(this).append(temp_text);
 	
 	var copyText = document.getElementById("copyToClipBoard");
 	
 	copyText.select();
+	copyText.setSelectionRange(0, 99999);
     document.execCommand('copy');
-	alert("Copied URL:\n" + copyText.value);
+	$('#copyToClipBoard').remove();
+	alert("Copied to Clipboard!");
 	
-	$('#copyToClipBoard').remove("copyToClipBoard");
 
 })
 
