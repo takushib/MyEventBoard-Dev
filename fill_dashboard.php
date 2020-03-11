@@ -22,15 +22,15 @@
             T.spaces_available as 'slots_remaining',
             U1.first_name as 'ec_first_name',
             U1.last_name as 'ec_last_name'
-        FROM Bookings
+        FROM booking
         INNER JOIN 
-            User U on Bookings.fk_user_id = U.id
+            user U on booking.fk_user_id = U.id
         INNER JOIN 
-            Timeslot T on Bookings.fk_timeslot_id = T.id
+            timeslot T on booking.fk_timeslot_id = T.id
         INNER JOIN 
-            Event E on T.fk_event_id = E.id
+            event E on T.fk_event_id = E.id
         INNER JOIN 
-            User U1 on E.fk_event_creator = U1.id
+            user U1 on E.fk_event_creator = U1.id
         WHERE U.onid = ? ORDER BY T.start_time
 
     ";

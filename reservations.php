@@ -23,14 +23,14 @@
             t4.onid AS 'Creator ONID',
             t2.id AS 'Event ID'
         FROM 
-            Bookings AS t0
-        INNER JOIN Timeslot AS t1 
+            booking AS t0
+        INNER JOIN timeslot AS t1 
             ON t0.fk_timeslot_id = t1.id 
-        INNER JOIN Event AS t2 
+        INNER JOIN event AS t2 
             ON t1.fk_event_id = t2.id
-        INNER JOIN User AS t3
+        INNER JOIN user AS t3
             ON t0.fk_user_id = t3.id
-        INNER JOIN User AS t4
+        INNER JOIN user AS t4
             ON t2.fk_event_creator = t4.id
         WHERE t3.onid = ?
         ORDER BY

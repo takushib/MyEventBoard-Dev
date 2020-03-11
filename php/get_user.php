@@ -2,7 +2,7 @@
 
     function getUserKeyFromDB($userONID, $database) {
 
-        $query = "SELECT id AS 'key' FROM User WHERE onid = ?";
+        $query = "SELECT id AS 'key' FROM user WHERE onid = ?";
 
         $statement = $database -> prepare($query);
 

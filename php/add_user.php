@@ -6,7 +6,7 @@
 
     // check if user is in database
 
-    $query = 'SELECT * FROM User WHERE onid = ?';
+    $query = 'SELECT * FROM user WHERE onid = ?';
 
     $statement = $database -> prepare($query);
     $statement -> bind_param('s', $_SESSION['user']);
@@ -21,7 +21,7 @@
         $query = '
             
             INSERT INTO 
-                User(onid, email, last_name, first_name) 
+                user(onid, email, last_name, first_name) 
             VALUES 
                 (?, ?, ?, ?)
         

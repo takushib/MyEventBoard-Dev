@@ -21,10 +21,11 @@
 
     $query = "
 
-        SELECT Event.name
-        FROM Event 
-        INNER JOIN User ON Event.fk_event_creator = User.id 
-        WHERE Event.id = ? AND User.onid = ?
+        SELECT event.name
+        FROM event 
+        INNER JOIN user 
+            ON event.fk_event_creator = user.id 
+        WHERE event.id = ? AND user.onid = ?
 
     ";
 
@@ -54,12 +55,12 @@
             t2.onid AS 'Attendee ONID',
             t3.name AS 'Event Name'
         FROM 
-            Bookings AS t0
-        INNER JOIN Timeslot AS t1
+            booking AS t0
+        INNER JOIN timeslot AS t1
             ON t0.fk_timeslot_id = t1.id
-        INNER JOIN User AS t2
+        INNER JOIN user AS t2
             ON t0.fk_user_id = t2.id
-        INNER JOIN Event AS t3
+        INNER JOIN event AS t3
             ON t1.fk_event_id = t3.id
         WHERE 
             t3.id = ?
