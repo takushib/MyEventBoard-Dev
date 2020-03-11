@@ -1,12 +1,56 @@
 const eventNameIndex = 1; // Index of event name on table. If table structure changes, this needs to be changed accordingly.
 const currPosition = 0;
+const eventLinkIndex = 3;
 
 $(document).ready(function () {
-	console.log("ready!");
 
 	displayNoEventsHeader();
 
 });
+
+
+$( document ).ready(function() {
+	
+	//console.log($('.linkToEvent').parent().children().eq(eventNameIndex).children().attr('href'));
+	
+	var eventLinks = $('.linkToEvent').parent().children().eq(eventNameIndex).children().attr('href')
+	
+	$("#eventsTable tr td:nth-last-child( "+ eventLinkIndex +" )").each(function () {
+		var eventLink = $(this).parent().children().eq(eventNameIndex).children().attr('href').toString();
+
+		eventLink = eventLink.replace('manage', 'register');
+		pathArray = window.location.pathname.split('/');
+		
+		var newLink = window.location.protocol + window.location.host + "/" + pathArray[1] + "/" + pathArray[2] + eventLink.slice(1,eventLink.length);
+		var hrefLink = "/" + pathArray[1] + "/" + pathArray[2] + eventLink.slice(1,eventLink.length);
+		
+		var newLinkItem = $('<a href='+hrefLink+'>'+newLink+'</a>');
+		newLinkItem.addClass('linkToEvent');
+		newLinkItem.attr('id', 'linkToEvent');
+		$(this).append(newLinkItem);
+	});
+	
+});
+
+
+$('.copy').on('click', function () {
+	
+	var temp_text = $('<input></input>');
+	temp_text.attr("type", "text");
+	temp_text.addClass('doNotDisplay');
+	temp_text.val($(this).next().text());
+    temp_text.attr('id', "copyToClipBoard");
+	$(this).append(temp_text);
+	
+	var copyText = document.getElementById("copyToClipBoard");
+	
+	copyText.select();
+    document.execCommand('copy');
+	alert("Copied URL:\n" + copyText.value);
+	
+	$('#copyToClipBoard').remove("copyToClipBoard");
+
+})
 
 function displayNoEventsHeader() {
 	if ($('.tableBody').children().length == 0) {

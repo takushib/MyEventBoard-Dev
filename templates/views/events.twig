@@ -17,17 +17,24 @@
 
 		<div class="yourEvents table-responsive">
 
-			<table class="table table-striped eventsTable" id="eventsTable">
+			<table class="table table-striped eventsTable text-center" id="eventsTable">
 
 				<thead>
 					<tr scope="row" class="eventHeader">
 
 						<th class="d-none" scope="col">{{ table_headers|first }}</th>
 
-						{% for table_header in table_headers|slice(1) %}
-						<th scope="col">{{ table_header }}</th>
-						{% endfor %}
+						<th class="eventNameColumn" scope="col">{{ table_headers|slice(1,1)|first }}</th>
+						
+				
+						<th class="capacityColumn" scope="col">{{ table_headers|slice(2,2)|first }}</th>
+				
+						
+						<th class="slotsColumn" scope="col">{{ table_headers|slice(3,3)|first }}</th>
+					
 
+						<th scope="col">Link To Event</th>
+						
 						<th scope="col"></th>
 
 						<th scope="col">
@@ -49,24 +56,31 @@
 
 						<td class="d-none" scope="col">{{ event_key }}</td>
 
-						<td scope="col">
-							<a class="text-info" href="./manage?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
+						<td>
+							<a class="linkToEvent" href="./manage?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
 						</td>
-
+						
 						{% for column in table_row|slice(2) %}
+						
+						<td>{{ column }}</td>
 
-						<td scope="col">{{ column }}</td>
-
+						
 						{% endfor %}
 
-						<td scope="col">
+						<td class="linkColumn">
+							<button class="copy btn btn-sm btn-dark"> Copy </button>
+						</td>
+						
+						
+						
+						<td>
 							<button class="eventManageButton editEventButton">
 								<i class="fas fa-edit"></i>
 								<text> Edit</text>
 							</button>
 						</td>
 
-						<td scope="col">
+						<td>
 							<input class="massDeleteOn doNotDisplay" type="checkbox" unchecked>
 							<button class="eventManageButton deleteEvent">
 								<i class="fas fa-times"></i>
@@ -107,9 +121,9 @@
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" id="deleteCancelButton"
+					<button type="button" class="btn btn-dark" id="deleteCancelButton"
 						data-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-default" id="deleteSubmitButton">Delete</button>
+					<button type="button" class="btn btn-dark" id="deleteSubmitButton">Delete</button>
 				</div>
 			</div>
 

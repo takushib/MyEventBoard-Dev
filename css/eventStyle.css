@@ -38,3 +38,33 @@
 .noEvents {
 	text-align: center;
 }
+
+.linkToEvent {
+	color: #18acc9 !important;
+}
+
+.copy {
+	padding: 2px !important;
+	font-size: 10px !important;
+}
+
+.linkColumn {
+	max-width: 150px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.capacityColumn {
+	max-width: 60px !important;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.slotsColumn {
+	max-width: 80px !important;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

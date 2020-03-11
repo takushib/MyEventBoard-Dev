@@ -77,7 +77,7 @@
 		  
 		$statement -> close();
 
-		echo "DEBUG: Data has been submitted!";
+		echo "Your event has been successfully created!";
 		exit;
 
     }
