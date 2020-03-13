@@ -162,6 +162,22 @@ $(function () {
 	
 	
 	var selectableDates = getSelectableDates();
+	var cur_date = new Date();
+	var past_event = true;
+	
+	for (let i = 0; i < selectableDates.length; i++) {
+		var try_date = new Date(selectableDates[i]);
+		
+		if (try_date > cur_date)
+			past_event = false;
+	}
+	
+	if (past_event == true) {
+		$('#datepicker2').remove();
+		$('.calendarField').append('<h2> This Event has Expired <i class="fa fa-frown-o" aria-hidden="true"></i></h2>');
+		return;
+		
+	}
 
 	$("#datepicker2").datepicker({
 		startDate: new Date(),
@@ -178,25 +194,29 @@ $(function () {
 		language: 'en'
 	});
 
+	
 	highlightCalendar();
 });
 
 // Source: https://jsfiddle.net/christianklemp_imt/b20paum2/
 $(document).ready(function () {
 
-	$('#datepicker2').datepicker().on('changeDate', function (e) {
+	if($('#datepicker2') != undefined || $('#datepicker2') != null)  {
+		
+		$('#datepicker2').datepicker().on('changeDate', function (e) {
+	
+			$('#myModal').modal('toggle');
+	
+			var dayOfWeek = getDayName($(this));
+			$('.modal-body #dayLabel').text(dayOfWeek);
+			$('.modal-body #dateLabel').text(e.format());
+			createFields();
 
-		$('#myModal').modal('toggle');
+		});
 
-		var dayOfWeek = getDayName($(this));
-		$('.modal-body #dayLabel').text(dayOfWeek);
-		$('.modal-body #dateLabel').text(e.format());
-		createFields();
-
-	});
-
-	document.getElementById('datepicker2').addEventListener('click', highlightCalendar);
-
+		if (document.getElementById('datepicker2') != null || document.getElementById('datepicker2') != undefined)
+			document.getElementById('datepicker2').addEventListener('click', highlightCalendar);
+	}
 });
 
 function twentyFourFormatToMinutes(hour, minute) {
@@ -436,7 +456,6 @@ function getSelectableDates() {
 			continue;
 		enableDays.push(tempDateHolder);
 	}
-	console.log(enableDays);
 	return enableDays;
 }
 
