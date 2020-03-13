@@ -19,8 +19,8 @@
         SELECT
             t2.name AS 'Event Name', 
             t1.start_time AS 'Start Time',
-            CONCAT(t4.first_name, ' ', t4.last_name) AS 'Creator Name',
-            t4.onid AS 'Creator ONID',
+            t2.location AS 'Location',
+			CONCAT(t4.first_name, ' ', t4.last_name) AS 'Creator Name',
             t2.hash AS 'Event Key'
         FROM 
             booking AS t0
