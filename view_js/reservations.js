@@ -1,5 +1,6 @@
 const eventDateIndex = 3;
 const dateStringLength = 11;
+const eventNameIndex = 0;
 
 function createPastEventsTable(dateRow, columnNames) {
 	
@@ -17,21 +18,7 @@ function createPastEventsTable(dateRow, columnNames) {
 	
 	var rowHeader = $('<tr></tr>');
 	rowHeader.attr("scope", "row");
-	
-	
-	/*
-	var eventName = $('<th>Event Name</th>');
-	eventName.attr("scope", "col");
-	rowItemCount--;
-	
-	var startTime = $('<th>Start Time</th>');
-	startTime.attr("scope", "col");
-	rowItemCount--;
-	
-	
-	rowHeader.append(eventName);
-	rowHeader.append(startTime);
-	*/
+
 	
 	var i = 0;
 	
@@ -77,23 +64,12 @@ $( document ).ready(function() {
 	
 	$("#invitesTable tr td:nth-last-child( "+ eventDateIndex +" )").each(function () {
 
-	//	console.log($(this).text());
-		//var date = $(this).text().slice(0,dateStringLength);
-		//var time = $(this).text().slice(dateStringLength, $(this).text().length);
-		
-		
-		
 		var newDate = $(this).text().replace(/-/g, "/");
 		
 		var dateStrs = newDate.split(" ");
-		
-	//	console.log(newDate);
+
 		
 		var dt=new Date(dateStrs[0]);
-		
-		//console.log(time);
-		//console.log(newDate);
-		
 		
 		
 		var timeStrs = dateStrs[1].split(":");
@@ -105,6 +81,9 @@ $( document ).ready(function() {
 		
 		
 		if (dt < curDate) {
+			var linkToPastEvent = $(this).parent().children().eq(eventNameIndex).children();
+			console.log(linkToPastEvent);
+			linkToPastEvent.removeAttr("href");
 			dateRow.push($(this).parent());	
 			$(this).parent().remove();
 		}
