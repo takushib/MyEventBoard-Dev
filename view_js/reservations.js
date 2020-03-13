@@ -4,6 +4,9 @@ const eventNameIndex = 0;
 
 function createPastEventsTable(dateRow, columnNames) {
 	
+	if (dateRow.length == 0)
+		return;
+	
 	var rowItemCount = columnNames.length;
 	
 	var container = $('.entryField1');
