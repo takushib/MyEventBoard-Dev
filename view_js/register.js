@@ -36,6 +36,7 @@ function getColumnSelect() {
 }
 
 
+
 // for time slot in modal, set its color to red and set space to 0
 // for time slot object, set space to 0 and set full to 1
 

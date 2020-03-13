@@ -19,7 +19,7 @@
 		
 		<div class="yourInvites table-responsive">
 		
-			<table class="table table-striped">
+			<table class="table table-striped" id="invitesTable">
 				<thead>
 				<tr scope="row">
 					{% for table_header in table_headers|slice(0, -1) %}
@@ -80,6 +80,9 @@
 
 <!-- UI specific javascripts -->
 <script type="text/javascript" src="view_js/ui.js"></script>
+
+<!-- UI specific javascripts -->
+<script type="text/javascript" src="view_js/reservations.js"></script>
 
 <!-- JavaScript specific to this page -->
 <script>$(document).ready( function(){ formatTableDateTime(1); }); </script>

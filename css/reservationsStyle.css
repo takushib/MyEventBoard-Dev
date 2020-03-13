@@ -1,3 +1,20 @@
 .yourInvites {
 	text-align: center;
 }
+
+.pastEventsTable {
+	text-align: center;
+}
+
+.pastEventsTable > thead > tr , .pastEventsTable > tbody > tr{
+	opacity: .65;
+	pointer-events: none;
+}
+
+.pastEventsTable > tbody > tr > td > a {
+	color: black !important;
+}
+
+.pastEventsContainer {
+	margin-top: 7%;
+}

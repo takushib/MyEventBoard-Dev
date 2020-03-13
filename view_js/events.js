@@ -9,6 +9,7 @@ $(document).ready(function () {
 });
 
 
+
 $( document ).ready(function() {
 	
 	$("#eventsTable tr td:nth-last-child( "+ eventLinkIndex +" )").each(function () {
