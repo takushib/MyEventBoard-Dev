@@ -1,5 +1,60 @@
 const daysOfWeek = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
+
+// Uses 12 hour format. AM and PM captialized.
+function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
+	
+	if (!((timeToBeChecked.includes("AM") || timeToBeChecked.includes("PM") || todayTimeStamp.includes("PM") || todayTimeStamp.includes("AM"))))
+	{	
+		alert("incorrect arguments");
+		return false;
+	}
+	
+	
+	var checkedArrayHour = timeToBeChecked.split(":");
+	var todayArrayHour = todaysTime.split(":");
+	
+	var checkedMinutesArray = checkedArrayHour[1].split(" ");
+	var todayMinutesArray = todayArrayHour[1].split(" ");
+	
+	if (checkedMinutesArray[0].charAt(0) == '0')
+		checkedMinutesArray[0] = checkedMinutesArray[0].replace('0','');
+	
+	if (todayMinutesArray[0].charAt(0) == '0')
+		todayMinutesArray[0] = todayMinutesArray[0].replace('0','');
+	
+	if (checkedMinutesArray[1] == 'PM')
+		checkedArrayHour = checkedArrayHour + 12;
+	
+	if (todayMinutesArray[1] == 'PM')
+		todayArrayHour = todayArrayHour + 12;
+	
+	
+	var checkTime = parseInt(checkedArrayHour[0]) * 60 + parseInt(checkedMinutesArray[0]);
+	var todayTime = parseInt(todayArrayHour[0]) * 60 + parseInt(todayMinutesArray[0])
+	
+
+	if (checkTime < todayTime)
+		return true;
+	else
+		return false;
+	
+	return;
+}
+
+
+function getCurrentTime() {
+   
+		var date = new Date();
+        var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+        var AM_PM = date.getHours() >= 12 ? "PM" : "AM";
+        hours = hours < 10 ? hours : hours;
+        var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    
+        time = hours + ":" + minutes + " " + AM_PM;
+        return time;
+    };
+
 function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eventTime, eventLocation)
 {
 	//console.log(eventDate);
@@ -62,12 +117,22 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 
 
 	newEvent.addClass("eventBlock");
+	
+	
+	var todayTimeStamp = getCurrentTime();
+	console.log(todayTimeStamp);
+	console.log(eventTime);
+	
+	if (checkTimeIfLessThanToday(eventTime, todayTimeStamp) == true) {
+		newEvent.addClass("finishedEvent");
+	}
+	
 	return newEvent;
 }
 
 function buildContainer(events, todaysDate)
 {
-	console.log(events);
+	//console.log(events);
 	var newEvent;
 	var weekEventsContainer = $('.weeksEvent');
 	
@@ -76,6 +141,9 @@ function buildContainer(events, todaysDate)
 	if (formatDate(events[0].start_time) == todaysDate)
 	{
 		eventContainer.addClass("todayContainerStyle");
+	}
+	else if (formatDate(events[0].start_time) < todaysDate) {
+		eventContainer.addClass("finishedEvent");
 	}
 
 	eventContainer.addClass("containerStyle");

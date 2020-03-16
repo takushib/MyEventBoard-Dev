@@ -165,10 +165,11 @@ $(function () {
 	var cur_date = new Date();
 	var past_event = true;
 	
+	
 	for (let i = 0; i < selectableDates.length; i++) {
 		var try_date = new Date(selectableDates[i]);
 		
-		if (try_date > cur_date)
+		if (try_date => cur_date)
 			past_event = false;
 	}
 	
@@ -229,7 +230,6 @@ function calcStartTime() {
 	var obj = timeSlotObjects;
 
 	var objLength = timeSlotObjects.length;
-	console.log(objLength);
 
 	var timeSlotKeys = Object.keys(timeSlotObjects)
 	var test = timeSlotObjects[timeSlotKeys[0]].start_time.hour;
