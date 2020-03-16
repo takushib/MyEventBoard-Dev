@@ -118,9 +118,10 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	newEvent.addClass("eventBlock");
 	
 	
+	var date = new Date();
 	var todayTimeStamp = getCurrentTime();
 	
-	if (checkTimeIfLessThanToday(eventTime, todayTimeStamp) == true) {
+	if (checkTimeIfLessThanToday(eventTime, todayTimeStamp) == true && getDate(date) === eventDate) {
 		newEvent.addClass("finishedEvent");
 	}
 	
