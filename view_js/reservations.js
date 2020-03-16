@@ -85,7 +85,6 @@ $( document ).ready(function() {
 		
 		if (dt < curDate) {
 			var linkToPastEvent = $(this).parent().children().eq(eventNameIndex).children();
-			console.log(linkToPastEvent);
 			linkToPastEvent.removeAttr("href");
 			dateRow.push($(this).parent());	
 			$(this).parent().remove();
