@@ -1,8 +1,9 @@
-const eventDateIndex = 3;
+
 const dateStringLength = 11;
 const eventNameIndex = 0;
 const eventTimeIndex = 1;
-
+const eventDateIndex = 4;
+const deleteIndex = 4;
 $(document).ready(function () {
 
 	displayNoEventsHeader();
@@ -14,20 +15,38 @@ function displayNoEventsHeader() {
 		$('#invitesTable').addClass('doNotDisplay');
 		var noEventsLabel = $('<h3> You are not Reserved for any Events <img src="./NoEventsImg.png" height="100" width="100"></h3>');
 		noEventsLabel.addClass('noEvents');
+
 		$('.yourInvites').append(noEventsLabel);
 
 		if ($('#deleteSelectedConfirmBox').hasClass('doNotDisplay') != true) {
 			$('#deleteSelectedConfirmBox').toggleClass('doNotDisplay');
 		};
 	}
+	
 }
 
 $('#deleteConfirm').on('hidden.bs.modal', function () {
 	$('.list-group-item').remove();
 });
 
+function checkHidePastEventsTable() {
+	
+	if($('.pastEventsTable tbody').children().length == 0) {
+		$('.pastEventsContainer').addClass('doNotDisplay');
+	}
+}
+
 function createPastEventsTable(dateRow, columnNames) {
 	
+//	console.log(dateRow[0].children().eq(deleteIndex));
+	
+	for (let i = 0; i < dateRow.length; i++) {
+		dateRow[i].children().eq(deleteIndex).children().on( "click", function() {
+			$(this).parent().parent().remove();
+			checkHidePastEventsTable();
+			
+		});
+	}
 	if (dateRow.length == 0)
 		return;
 	
@@ -77,6 +96,7 @@ function createPastEventsTable(dateRow, columnNames) {
 	container.append(pastEvents);
 }
 
+
 $( document ).ready(function() {
 
 	var columnNames = [];
@@ -95,16 +115,15 @@ $( document ).ready(function() {
 		
 		var dateStrs = newDate.split(" ");
 
-		
-		var dt=new Date(dateStrs[0]);
-		
-		
+	
+		var dt = new Date(dateStrs[0]);
+	
+
 		var timeStrs = dateStrs[1].split(":");
  
 		dt.setHours(timeStrs[0]);
 		dt.setMinutes(timeStrs[1]);
 		dt.setSeconds(timeStrs[2]);
-		
 		
 		
 		if (dt < curDate) {

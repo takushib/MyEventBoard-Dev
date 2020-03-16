@@ -136,8 +136,8 @@ $("#submitButton").click(function () {
 	var selectedDate = $('#dateLabel').text();
 	
 	var curDate = getTodayDate();
-	console.log(curDate);
-	console.log(selectedDate);
+	//console.log(curDate);
+	//console.log(selectedDate);
 	
 	if (selectedSlot === false)
 		alert("Please pick a slot.");
