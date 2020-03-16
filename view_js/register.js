@@ -63,12 +63,87 @@ function setMySlot(modalTimeSlot, timeSlotObject) {
 }
 
 
+
+function getCurrentTime() {
+   
+		var date = new Date();
+        var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+        var AM_PM = date.getHours() >= 12 ? "PM" : "AM";
+        hours = hours < 10 ? hours : hours;
+        var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    
+        time = hours + ":" + minutes + " " + AM_PM;
+        return time;
+};
+
+function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
+	
+	if (!((timeToBeChecked.includes("AM") || timeToBeChecked.includes("PM") || todayTimeStamp.includes("PM") || todayTimeStamp.includes("AM"))))
+	{	
+		alert("incorrect arguments");
+		return false;
+	}
+	
+	
+	var checkedArrayHour = timeToBeChecked.split(":");
+	var todayArrayHour = todaysTime.split(":");
+	
+	var checkedMinutesArray = checkedArrayHour[1].split(" ");
+	var todayMinutesArray = todayArrayHour[1].split(" ");
+	
+	if (checkedMinutesArray[0].charAt(0) == '0')
+		checkedMinutesArray[0] = checkedMinutesArray[0].replace('0','');
+	
+	if (todayMinutesArray[0].charAt(0) == '0')
+		todayMinutesArray[0] = todayMinutesArray[0].replace('0','');
+	
+	if (checkedMinutesArray[1] == 'PM' & checkedArrayHour[0] != "12")
+		checkedArrayHour[0] = checkedArrayHour[0] + 12;
+	
+	if (todayMinutesArray[1] == 'PM' & todayArrayHour[0] != "12")
+		todayArrayHour[0] = todayArrayHour[0] + 12;
+	
+	
+	var checkTime = parseInt(checkedArrayHour[0]) * 60 + parseInt(checkedMinutesArray[0]);
+	var todayTime = parseInt(todayArrayHour[0]) * 60 + parseInt(todayMinutesArray[0])
+
+	
+	
+	if (checkTime < todayTime)
+		return true;
+	else
+		return false;
+}
+
+function getTodayDate() {
+	
+	// Returns mm/dd/yyyy
+	
+	var today = new Date();
+	var dd = today.getDate();
+
+	var mm = today.getMonth()+1; 
+	var yyyy = today.getFullYear();
+
+	return mm+'/'+dd+'/'+yyyy;
+
+}
+
 $("#submitButton").click(function () {
 
 	var selectedSlot = getColumnSelect();
-
+	
+	var selectedDate = $('#dateLabel').text();
+	
+	var curDate = getTodayDate();
+	console.log(curDate);
+	console.log(selectedDate);
+	
 	if (selectedSlot === false)
 		alert("Please pick a slot.");
+	else if (checkTimeIfLessThanToday(selectedSlot.prev().children().text(), getCurrentTime()) == true && selectedDate === curDate) {
+		alert("This slot is past the current time. Please pick a different slot");
+	}
 	else {
 		var slotKey = selectedSlot.parent().attr('id');
 		$.ajax({

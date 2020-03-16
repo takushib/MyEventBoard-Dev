@@ -23,11 +23,11 @@ function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
 	if (todayMinutesArray[0].charAt(0) == '0')
 		todayMinutesArray[0] = todayMinutesArray[0].replace('0','');
 	
-	if (checkedMinutesArray[1] == 'PM')
-		checkedArrayHour = checkedArrayHour + 12;
+	if (checkedMinutesArray[1] == 'PM' & checkedArrayHour[0] != "12")
+		checkedArrayHour[0] = checkedArrayHour[0] + 12;
 	
-	if (todayMinutesArray[1] == 'PM')
-		todayArrayHour = todayArrayHour + 12;
+	if (todayMinutesArray[1] == 'PM' & todayArrayHour[0] != "12")
+		todayArrayHour[0] = todayArrayHour[0] + 12;
 	
 	
 	var checkTime = parseInt(checkedArrayHour[0]) * 60 + parseInt(checkedMinutesArray[0]);
@@ -39,7 +39,6 @@ function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
 	else
 		return false;
 	
-	return;
 }
 
 
@@ -53,7 +52,7 @@ function getCurrentTime() {
     
         time = hours + ":" + minutes + " " + AM_PM;
         return time;
-    };
+};
 
 function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eventTime, eventLocation)
 {
@@ -120,8 +119,6 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	
 	
 	var todayTimeStamp = getCurrentTime();
-	console.log(todayTimeStamp);
-	console.log(eventTime);
 	
 	if (checkTimeIfLessThanToday(eventTime, todayTimeStamp) == true) {
 		newEvent.addClass("finishedEvent");
