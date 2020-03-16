@@ -561,3 +561,5 @@ function highlightCalendar() {
 	}
 
 }
+
+

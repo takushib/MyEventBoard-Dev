@@ -1,6 +1,30 @@
 const eventDateIndex = 3;
 const dateStringLength = 11;
 const eventNameIndex = 0;
+const eventTimeIndex = 1;
+
+$(document).ready(function () {
+
+	displayNoEventsHeader();
+
+});
+
+function displayNoEventsHeader() {
+	if ($('.tableBody').children().length == 0) {
+		$('#invitesTable').addClass('doNotDisplay');
+		var noEventsLabel = $('<h3> You are not Reserved for any Events <img src="./NoEventsImg.png" height="100" width="100"></h3>');
+		noEventsLabel.addClass('noEvents');
+		$('.yourInvites').append(noEventsLabel);
+
+		if ($('#deleteSelectedConfirmBox').hasClass('doNotDisplay') != true) {
+			$('#deleteSelectedConfirmBox').toggleClass('doNotDisplay');
+		};
+	}
+}
+
+$('#deleteConfirm').on('hidden.bs.modal', function () {
+	$('.list-group-item').remove();
+});
 
 function createPastEventsTable(dateRow, columnNames) {
 	
@@ -93,3 +117,33 @@ $( document ).ready(function() {
 	
 	createPastEventsTable(dateRow, columnNames);
 });
+
+$('.deleteEvent').on('click', function () {
+
+	$('#deleteConfirm').modal('toggle');
+
+	var listItem = $('<li> ' + $(this).parent().parent().children().eq(eventNameIndex).text() + "at " + $(this).parent().parent().children().eq(eventTimeIndex).text() + ' </li>');
+	listItem.addClass('list-group-item');
+	$('.containerForEventsToDelete ul').append(listItem);
+
+	var currentEvent = $(this);
+
+	$('.containerForEventsToDelete ul').append(listItem);
+
+	
+	$('#deleteSubmitButton').on('click', function () {
+		$('#deleteConfirm').modal('toggle');
+	/*	$.ajax({
+			url: "delete_event.php",
+			type: "POST",
+			data: { key: currentEvent.parent().parent().children().eq(currPosition).text() },
+		}).done(function (response) {
+			console.log(response);
+		});
+*/
+		$('#feedBackModalDelete').modal('toggle');
+		currentEvent.parent().parent().remove();
+		displayNoEventsHeader();
+	})
+	
+})
