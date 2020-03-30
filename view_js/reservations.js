@@ -38,15 +38,12 @@ function checkHidePastEventsTable() {
 
 function createPastEventsTable(dateRow, columnNames) {
 	
-//	console.log(dateRow[0].children().eq(deleteIndex));
-	
 	for (let i = 0; i < dateRow.length; i++) {
 		dateRow[i].children().eq(deleteIndex).children().on( "click", function() {
-			$(this).parent().parent().remove();
-			checkHidePastEventsTable();
-			
+			deletePastEvent($(this));
 		});
 	}
+	
 	if (dateRow.length == 0)
 		return;
 	
@@ -94,6 +91,7 @@ function createPastEventsTable(dateRow, columnNames) {
 	
 	pastEvents.append(table);
 	container.append(pastEvents);
+	displayNoEventsHeader();
 }
 
 
@@ -136,6 +134,36 @@ $( document ).ready(function() {
 	
 	createPastEventsTable(dateRow, columnNames);
 });
+
+
+function deletePastEvent(pastEvent) {
+	$('#deleteConfirm').modal('toggle');
+
+	
+	var listItem = $('<li> ' + pastEvent.parent().parent().children().eq(eventNameIndex).text() + "at " + pastEvent.parent().parent().children().eq(eventTimeIndex).text() + ' </li>');
+	listItem.addClass('list-group-item');
+	$('.containerForEventsToDelete ul').append(listItem);
+
+
+	$('.containerForEventsToDelete ul').append(listItem);
+
+	
+	$('#deleteSubmitButton').on('click', function () {
+		$('#deleteConfirm').modal('toggle');
+	/*	$.ajax({
+			url: "delete_event.php",
+			type: "POST",
+			data: { key: currentEvent.parent().parent().children().eq(currPosition).text() },
+		}).done(function (response) {
+			console.log(response);
+		});
+*/
+		$('#feedBackModalDelete').modal('toggle');
+		pastEvent.parent().parent().remove();
+		checkHidePastEventsTable();   // hide past events table if no past events
+	})
+}
+
 
 $('.deleteEvent').on('click', function () {
 
