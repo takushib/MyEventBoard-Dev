@@ -4,6 +4,7 @@ const eventNameIndex = 0;
 const eventTimeIndex = 1;
 const eventDateIndex = 4;
 const deleteIndex = 4;
+const currPosition = 0;
 $(document).ready(function () {
 
 	displayNoEventsHeader();
@@ -180,6 +181,7 @@ $('.deleteEvent').on('click', function () {
 
 	$('#deleteSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
+		console.log(currentEvent.parent().parent().children().eq(currPosition).text());
 		$.ajax({
 			url: "delete_reservation.php",
 			type: "POST",
