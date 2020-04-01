@@ -8,7 +8,9 @@ weekday[4]="Thursday";
 weekday[5]="Friday";
 weekday[6]="Saturday";
 
+
 // Returns week day name of a date obj
+
 function getDayName(dateObj) {
 	var date = dateObj.datepicker('getDate');
 	var dayOfWeek = weekday[date.getUTCDay()];
@@ -34,7 +36,6 @@ function getColumnSelect() {
 	else
 		return false;
 }
-
 
 
 // for time slot in modal, set its color to red and set space to 0
@@ -63,17 +64,17 @@ function setMySlot(modalTimeSlot, timeSlotObject) {
 }
 
 
-
 function getCurrentTime() {
    
-		var date = new Date();
-        var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-        var AM_PM = date.getHours() >= 12 ? "PM" : "AM";
-        hours = hours < 10 ? hours : hours;
-        var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-    
-        time = hours + ":" + minutes + " " + AM_PM;
-        return time;
+	var date = new Date();
+	var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+	var AM_PM = date.getHours() >= 12 ? "PM" : "AM";
+	hours = hours < 10 ? hours : hours;
+	var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+
+	time = hours + ":" + minutes + " " + AM_PM;
+	return time;
+
 };
 
 function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
@@ -145,6 +146,7 @@ $("#submitButton").click(function () {
 		alert("This slot is past the current time. Please pick a different slot");
 	}
 	else {
+
 		var slotKey = selectedSlot.parent().attr('id');
 		$.ajax({
 			type: "POST",
@@ -177,12 +179,15 @@ $("#submitButton").click(function () {
 				$('#feedBackModal').modal('toggle');
 				timeSlotObjects[slotKey].space = response;
 			}
-			
+
+			monthDayAvailableSpace = getMonthDayAvailableSpace();
+
 			selectedSlot[0].classList.remove('slotSelected');
 
 		});
 
 	}
+
 });
 
 
@@ -203,6 +208,7 @@ const monthEnum = {
 
 $(document).ready(function () {
 	timeSlotObjects = createTimeSlotObjects();
+	monthDayAvailableSpace = getMonthDayAvailableSpace();
 	document.getElementById('timeSlots').remove();
 
 });
@@ -273,8 +279,8 @@ $(function () {
 		language: 'en'
 	});
 
-	
 	highlightCalendar();
+
 });
 
 // Source: https://jsfiddle.net/christianklemp_imt/b20paum2/
@@ -520,21 +526,38 @@ function createTimeSlotObjects() {
 
 }
 
-function getSelectableDates() {
-	var enableDays = [];
-	var tempDateHolder;   // checks for the selected Date
+function getMonthDayAvailableSpace() {
 
-	for (var timeSlotKey of Object.keys(timeSlotObjects)) // store current day times into an array to loop through
-	{
-		var timeSlot = timeSlotObjects[timeSlotKey];
+	var monthDayAvailableSpace = {};
+	var objectKeys = Object.keys(timeSlotObjects);
 
-		tempDateHolder = timeSlot.start_time.month + "/" + timeSlot.start_time.day + "/" + timeSlot.start_time.year;
+	// for each time slot object, do the following
 
-		if (enableDays.includes(tempDateHolder) === true)
-			continue;
-		enableDays.push(tempDateHolder);
+	for (var key of objectKeys) {
+
+		var month = timeSlotObjects[key].start_time.month;
+		var day = timeSlotObjects[key].start_time.day;
+		var space = timeSlotObjects[key].space
+
+		// if data object does not have month key
+		// add key and assign empty object as initial value
+
+		if (!monthDayAvailableSpace[month]) monthDayAvailableSpace[month]= {};
+
+		// if object for month key does not have day key
+		// add key and assign 0 as initial value
+
+		if (!monthDayAvailableSpace[month][day]) monthDayAvailableSpace[month][day] = 0;
+
+		// add available space for time slot to total 
+		// for month and day in data object
+
+		monthDayAvailableSpace[month][day] += Number(space);
+
 	}
-	return enableDays;
+
+	return monthDayAvailableSpace;
+
 }
 
 function highlightCalendar() {
@@ -555,15 +578,44 @@ function highlightCalendar() {
 		var calendarDays = $('td[class="day"]');
 
 		for (day of calendarDays) {
-
+			
 			var sameDay = day.textContent == timeSlot.start_time.day;
 
-			if (sameDay) day.classList.add('bg-info');
+			var space = monthDayAvailableSpace[monthEnum[calendarMonth]][day.textContent];
+
+			if (sameDay && space > 0) day.classList.add('bg-info');
+
+			if (space <= 0) {
+				day.classList.add('bg-danger');
+				day.classList.add('disabled');
+				day.style.color = 'black';
+			}
+ 
 		}
 
 	}
 
 }
+
+
+function getSelectableDates() {
+	var enableDays = [];
+	var tempDateHolder;   // checks for the selected Date
+
+	for (var timeSlotKey of Object.keys(timeSlotObjects)) // store current day times into an array to loop through
+	{
+		var timeSlot = timeSlotObjects[timeSlotKey];
+
+		tempDateHolder = timeSlot.start_time.month + "/" + timeSlot.start_time.day + "/" + timeSlot.start_time.year;
+
+		if (enableDays.includes(tempDateHolder) === true)
+			continue;
+		enableDays.push(tempDateHolder);
+	}
+	return enableDays;
+}
+
+
 
 $('#submitFile').on('click', function () {
 	
