@@ -4,15 +4,15 @@
 
     $eventKey = $_POST["key"];
 
-    $query = "DELETE FROM event WHERE hash = ?";
+    $query = "DELETE FROM booking WHERE hash = ?";
     $statement = $database -> prepare($query);
     $statement -> bind_param("s", $eventKey);
 
     if(!$statement -> execute()) {
-      echo "ERROR: The event(s) could not be deleted.";
+      echo "ERROR: The reservation(s) could not be deleted!";
     }
     else {
-      echo "Event(s) deleted successfully!";
+      echo "Reservation(s) deleted successfully!";
     }
 
     $statement->close();
