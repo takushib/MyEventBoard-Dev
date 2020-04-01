@@ -18,7 +18,7 @@ $( document ).ready(function() {
 		eventLink = eventLink.replace('manage', 'register');
 		pathArray = window.location.pathname.split('/');
 		
-		var newLink = window.location.protocol + window.location.host + "/" + pathArray[1] + "/" + pathArray[2] + eventLink.slice(1,eventLink.length);
+		var newLink = window.location.protocol + "//" + window.location.host + "/" + pathArray[1] + "/" + pathArray[2] + eventLink.slice(1,eventLink.length);
 		var hrefLink = "/" + pathArray[1] + "/" + pathArray[2] + eventLink.slice(1,eventLink.length);
 		
 		var newLinkItem = $('<a href='+hrefLink+'>'+newLink+'</a>');

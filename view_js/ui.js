@@ -91,4 +91,16 @@ function formatTableDateTime(columnIndex) {
         row.children[columnIndex].innerText = formattedTime + ' on ' +  formattedDate;
 	}
 	
+	
+	var tableBody = document.getElementsByTagName('tbody')[1];
+
+	if (tableBody != undefined) {
+		for (row of tableBody.children) {
+			var timeSlotString = row.children[columnIndex].innerText;
+			var formattedDate = formatDate(timeSlotString); 
+			var formattedTime = formatTime(timeSlotString); 
+			row.children[columnIndex].innerText = formattedTime + ' on ' +  formattedDate;
+		}
+	}	
+	
 }

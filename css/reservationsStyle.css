@@ -8,7 +8,6 @@
 
 .pastEventsTable > thead > tr , .pastEventsTable > tbody > tr{
 	opacity: .65;
-	pointer-events: none;
 }
 
 .pastEventsTable > tbody > tr > td > a {
@@ -17,4 +16,34 @@
 
 .pastEventsContainer {
 	margin-top: 7%;
+}
+
+.containerForEventsToDelete > ul > li {
+	background-color: orange;
+	font-weight: bold;
+	border: 1px solid black;
+	margin-top: 3px;
+}
+
+.containerForEventsToDelete > ul {
+	background-color: white;
+	padding: 10px;
+	margin: 10px;
+}
+
+.containerForEventsToDelete {
+	padding: 10px;
+	border: none !important;
+	background: white !important;
+}
+
+#deleteSelectedConfirmBox {
+	float: none !important;
+	text-align: right !important;
+}
+
+.eventManageButton {
+	border: none;
+	background: none;
+	color: #0000EE ;
 }

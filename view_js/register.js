@@ -136,8 +136,8 @@ $("#submitButton").click(function () {
 	var selectedDate = $('#dateLabel').text();
 	
 	var curDate = getTodayDate();
-	console.log(curDate);
-	console.log(selectedDate);
+	//console.log(curDate);
+	//console.log(selectedDate);
 	
 	if (selectedSlot === false)
 		alert("Please pick a slot.");
@@ -243,10 +243,13 @@ $(function () {
 	
 	for (let i = 0; i < selectableDates.length; i++) {
 		var try_date = new Date(selectableDates[i]);
-		
-		if (try_date => cur_date)
+
+		if (Date.parse(try_date) >= Date.parse(cur_date))
+		{
 			past_event = false;
+		}
 	}
+	
 	
 	if (past_event == true) {
 		$('#datepicker2').remove();
@@ -561,3 +564,20 @@ function highlightCalendar() {
 	}
 
 }
+
+$('#submitFile').on('click', function () {
+	
+	var inputFile = $('#inputFile');
+	
+	if (!$('#inputFile').val()) {
+		alert('Please Upload File');
+	}
+	else
+	{
+		alert('File Submitted');
+	}
+	
+	
+})
+
+
