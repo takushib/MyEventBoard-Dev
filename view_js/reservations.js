@@ -26,6 +26,7 @@ function displayNoEventsHeader() {
 
 }
 
+
 $('#deleteConfirm').on('hidden.bs.modal', function () {
 	$('.list-group-item').remove();
 });
@@ -127,7 +128,7 @@ $( document ).ready(function() {
 
 		if (dt < curDate) {
 			var linkToPastEvent = $(this).parent().children().eq(eventNameIndex).children();
-			linkToPastEvent.removeAttr("href");
+		//	linkToPastEvent.removeAttr("href");
 			dateRow.push($(this).parent());
 			$(this).parent().remove();
 		}
@@ -136,6 +137,14 @@ $( document ).ready(function() {
 	createPastEventsTable(dateRow, columnNames);
 });
 
+function getHash(eventItem){
+
+	var linkToEvent = eventItem.parent().parent().children().eq(eventNameIndex).children();
+
+	var hash = linkToEvent.attr('href').split('key=$');
+
+	return hash[1];
+}
 
 function deletePastEvent(pastEvent) {
 	$('#deleteConfirm').modal('toggle');
@@ -148,6 +157,9 @@ function deletePastEvent(pastEvent) {
 
 	$('.containerForEventsToDelete ul').append(listItem);
 
+	var hashKey = getHash(pastEvent);
+
+	console.log(hashKey);
 
 	$('#deleteSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
@@ -178,6 +190,9 @@ $('.deleteEvent').on('click', function () {
 
 	$('.containerForEventsToDelete ul').append(listItem);
 
+	var hashKey = getHash(currentEvent);
+
+	console.log(hashKey);
 
 	$('#deleteSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
@@ -185,7 +200,7 @@ $('.deleteEvent').on('click', function () {
 		$.ajax({
 			url: "delete_reservation.php",
 			type: "POST",
-			data: { key: currentEvent.parent().parent().children().eq(currPosition).text() },
+			data: { key: hashKey },
 		}).done(function (response) {
 			console.log(response);
 		});
