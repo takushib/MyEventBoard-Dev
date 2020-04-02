@@ -66,7 +66,7 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	var eventNameText = eventName;
 
 	//var newEventIcon = $('<div><img src="./icon.png"></img></div>');
-	var newEventIcon = $('<img src="./icon.png"></img>');
+	var newEventIcon = $('<img src="MyEventBoardLogos/MEB_logo-04.png"></img>');
 
 	var newEventCreator = $('<div><text></text></div>');
 	var creatorText = creatorName;

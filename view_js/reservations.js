@@ -46,7 +46,7 @@ function createPastEventsTable(dateRow, columnNames) {
 
 	for (let i = 0; i < dateRow.length; i++) {
 		dateRow[i].children().eq(deleteIndex).children().on( "click", function() {
-			deletePastEvent($(this));
+			deleteEvent($(this));
 		});
 	}
 
@@ -154,53 +154,19 @@ function getHash(eventItem){
 	return hash[1];
 }
 
-function deletePastEvent(pastEvent) {
+function deleteEvent(eventDeleteObj) {
 	$('#deleteConfirm').modal('toggle');
 
-
-	var listItem = $('<li> ' + pastEvent.parent().parent().children().eq(eventNameIndex).text() + "at " + pastEvent.parent().parent().children().eq(eventTimeIndex).text() + ' </li>');
+	var listItem = $('<li> ' + eventDeleteObj.parent().parent().children().eq(eventNameIndex).text() + "at " + eventDeleteObj.parent().parent().children().eq(eventTimeIndex).text() + ' </li>');
 	listItem.addClass('list-group-item');
 	$('.containerForEventsToDelete ul').append(listItem);
 
 
 	$('.containerForEventsToDelete ul').append(listItem);
 
-	var hashKey = getHash(pastEvent);
+	var hashKey = getHash(eventDeleteObj);
 
-	console.log(hashKey);
-
-	$('#deleteSubmitButton').on('click', function () {
-		$('#deleteConfirm').modal('toggle');
-	/*	$.ajax({
-			url: "delete_event.php",
-			type: "POST",
-			data: { key: currentEvent.parent().parent().children().eq(currPosition).text() },
-		}).done(function (response) {
-			console.log(response);
-		});
-*/
-		$('#feedBackModalDelete').modal('toggle');
-		pastEvent.parent().parent().remove();
-		checkHidePastEventsTable();   // hide past events table if no past events
-	})
-}
-
-
-$('.deleteEvent').on('click', function () {
-
-	$('#deleteConfirm').modal('toggle');
-
-	var listItem = $('<li> ' + $(this).parent().parent().children().eq(eventNameIndex).text() + "at " + $(this).parent().parent().children().eq(eventTimeIndex).text() + ' </li>');
-	listItem.addClass('list-group-item');
-	$('.containerForEventsToDelete ul').append(listItem);
-
-	var currentEvent = $(this);
-
-	$('.containerForEventsToDelete ul').append(listItem);
-
-	var hashKey = getHash(currentEvent);
-
-	console.log(hashKey);
+	// console.log(hashKey);
 
 	$('#deleteSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
@@ -212,9 +178,16 @@ $('.deleteEvent').on('click', function () {
 			console.log(response);
 		});
 
-		$('#feedBackModalDelete').modal('toggle');
-		currentEvent.parent().parent().remove();
-		displayNoEventsHeader();
-	})
 
+		$('#feedBackModalDelete').modal('toggle');
+		eventDeleteObj.parent().parent().remove();
+		
+		displayNoEventsHeader(); // Check if need to show header for no Events
+		checkHidePastEventsTable();   // hide past events table if no past events
+	})
+}
+
+
+$('.deleteEvent').on('click', function () {
+	deleteEvent($(this));
 })

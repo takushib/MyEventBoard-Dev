@@ -246,13 +246,14 @@ $(function () {
 	
 	var selectableDates = getSelectableDates();
 	var cur_date = new Date();
-	var past_event = true;
+	cur_date.setHours(0,0,0,0);
 	
+	var past_event = true;
 	
 	for (let i = 0; i < selectableDates.length; i++) {
 		var try_date = new Date(selectableDates[i]);
 
-		if (Date.parse(try_date) >= Date.parse(cur_date))
+		if (try_date >= cur_date)
 		{
 			past_event = false;
 		}
