@@ -4,6 +4,12 @@
   background-color: orange;
   padding: 20px 10px;
   width: 100%;
+  font-size: 32pt;
+}
+
+#headerLogo {
+  height: 2em;
+  cursor: pointer;
 }
 
 .navbar {
@@ -37,11 +43,6 @@
   }
   .header-right {
     float: none;
-  }
-  
-  #headerLogo {
-	width: 300px;
-	height: 100px;
   }
 }
 
