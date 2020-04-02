@@ -66,7 +66,7 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	var eventNameText = eventName;
 
 	//var newEventIcon = $('<div><img src="./icon.png"></img></div>');
-	var newEventIcon = $('<div><img src="MyEventBoardLogos/MEB_logo-04.png"></img></div>');
+	var newEventIcon = $('<img src="MyEventBoardLogos/MEB_logo-04.png"></img>');
 
 	var newEventCreator = $('<div><text></text></div>');
 	var creatorText = creatorName;
@@ -83,6 +83,7 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	newEventName.addClass("Container");
 
 	newEventIcon.addClass("eventIcon");
+
 
 	newEventCreator.text(creatorText);
 	newEventCreator.addClass("eventBlockCreator");

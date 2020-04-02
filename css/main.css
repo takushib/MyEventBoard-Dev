@@ -86,13 +86,14 @@
 	height: 55%;
 	border-radius: 0 0 10px 10px;
 	border: 1px grey solid;
-	margin: 0 auto;
 }
 
 .eventIcon > img {
 	display: block;
 	width: 100%;
-	margin-top: 5%;
+	height: 100%;
+	margin-left: auto;
+	margin-right: auto;
 	border-radius: 0 0 10px 10px;
 }
 
