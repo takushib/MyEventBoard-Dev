@@ -83,8 +83,9 @@
 .eventIcon {
 	width: 95%;
 	min-width: 95%;
-	height: 65%;
+	height: 55%;
 	border-radius: 0 0 10px 10px;
+	border: 1px grey solid;
 }
 
 .eventIcon > img {
@@ -172,29 +173,23 @@
 	}
 	
 	.eventBlockName {
-		font-size: 23px;
+		font-size: 16px;
 		border-radius: 10px 10px 0px 0px;
 		height: 100%;
 		max-height: none;
 	}
 
 	.eventBlockCreator {
-		font-size: 20px;
+		font-size: 13px;
 	}
 
 
 	.infoHolder {
-		font-size: 25px;
+		font-size: 13px;
 		padding-top: 10%;
 	}
 	
 	.eventIcon {
 		display: none;
-	}
-
-	.eventIcon > img {
-		width: 100%;
-		height: 100%;
-		border-radius: 10px;
 	}
 }
