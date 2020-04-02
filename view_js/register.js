@@ -162,12 +162,14 @@ $("#submitButton").click(function () {
 				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
 				document.getElementById('feedbackMessage').textContent =
 					"The time slot was full! Please select another one!";
+				$('.fileUpload').addClass('doNotDisplay');
 				$('#feedBackModal').modal('toggle');
 			}
 			else if (response == 0) {
 				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				document.getElementById('feedbackMessage').textContent = "You have been registered!";
+				$('.fileUpload').removeClass('doNotDisplay');
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
 			}

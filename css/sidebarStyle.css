@@ -55,17 +55,20 @@ li a {
 @media (max-width: 768px) {
 /* Source: https://bootstrapious.com/p/bootstrap-sidebar */
 
+	.mobile {
+		float: none;
+	}
 	
+	.desktop {
+		float: none;
+	}
+
 	#dismiss {
 		display: block;
 	}
 	
 	.navbar {
-		display: block;;
-	}
-
-	.desktop {
-		display: none;
+		display: block;
 	}
 
 	.side-bar
