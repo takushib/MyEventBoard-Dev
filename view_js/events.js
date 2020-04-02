@@ -11,42 +11,42 @@ $(document).ready(function () {
 
 
 $( document ).ready(function() {
-	
+
 	$("#eventsTable tr td:nth-last-child( "+ eventLinkIndex +" )").each(function () {
 
 		var eventLink = $(this).parent().children().eq(eventNameIndex).children().attr('href');
 		eventLink = eventLink.replace('manage', 'register');
 		pathArray = window.location.pathname.split('/');
-		
+
 		var newLink = window.location.protocol + "//" + window.location.host + "/" + pathArray[1] + "/" + pathArray[2] + eventLink.slice(1,eventLink.length);
 		var hrefLink = "/" + pathArray[1] + "/" + pathArray[2] + eventLink.slice(1,eventLink.length);
-		
+
 		var newLinkItem = $('<a href='+hrefLink+'>'+newLink+'</a>');
 		newLinkItem.addClass('linkToEvent');
 		newLinkItem.attr('id', 'linkToEvent');
 		$(this).append(newLinkItem);
 	});
-	
+
 });
 
 
 $('.copy').on('click', function () {
-	
+
 	var temp_text = $('<input></input>');
 	temp_text.attr("type", "text");
 	temp_text.val($(this).next().text().toString());
-	
+
     temp_text.attr('id', "copyToClipBoard");
 	$(this).append(temp_text);
-	
+
 	var copyText = document.getElementById("copyToClipBoard");
-	
+
 	copyText.select();
 	copyText.setSelectionRange(0, 99999);
     document.execCommand('copy');
 	$('#copyToClipBoard').remove();
 	alert("Copied to Clipboard!");
-	
+
 
 })
 
@@ -77,6 +77,7 @@ $('.deleteEvent').on('click', function () {
 
 	$('#deleteSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
+		console.log(currentEvent.parent().parent().children().eq(currPosition).text());
 		$.ajax({
 			url: "delete_event.php",
 			type: "POST",
@@ -117,7 +118,7 @@ function massDelete(arrayWithReadyToDeleteEvents) {
 		});
 		$('#feedBackModalDelete').modal('toggle');
 	})
-	
+
 }
 
 
