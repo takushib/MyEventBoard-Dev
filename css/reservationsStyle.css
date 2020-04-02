@@ -14,8 +14,10 @@
 	color: black !important;
 }
 
-.pastEventsContainer {
-	margin-top: 7%;
+.pastEventsField {
+	
+	margin-top: 15%;
+	
 }
 
 .containerForEventsToDelete > ul > li {
