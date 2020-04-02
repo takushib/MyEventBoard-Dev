@@ -141,7 +141,7 @@ function getHash(eventItem){
 
 	var linkToEvent = eventItem.parent().parent().children().eq(eventNameIndex).children();
 
-	var hash = linkToEvent.attr('href').split('key=$');
+	var hash = linkToEvent.attr('href').split('key=');
 
 	return hash[1];
 }
@@ -196,11 +196,10 @@ $('.deleteEvent').on('click', function () {
 
 	$('#deleteSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
-		console.log(currentEvent.parent().parent().children().eq(currPosition).text());
 		$.ajax({
 			url: "delete_reservation.php",
 			type: "POST",
-			data: { key: hashKey },
+			data: { key: hashKey}
 		}).done(function (response) {
 			console.log(response);
 		});
