@@ -24,9 +24,134 @@ function checkInput(obj) {
 	}
 }
 
-window.onload = function () {
+$(document).ready(function(){
+
+	var locationsDropDown;
+	
+	$.getJSON('OSU_locations.json',function(data){
+		$.each(data, function(i, locations) {
+			
+			locations.name = locations.name.replace("'", "&#39");
+	
+			locationsDropDown += "<option value='"
+			+locations.name+
+			"'>"+locations.name+"</option>"
+			});
+		$('#locationInput').append(locationsDropDown);
+	});
+					
+});
+
+function checkIfRequiredElementsAreIncorrect() {
+	var eventNameObj = $('#eventNameInput');
+	var eventLocationObj = $('#locationInput');
+	var eventSlotsObj = $('#timeslotCapInput');
+	
+	var durations = ["1 Hour", "15 Minutes", "30 Minutes"];
+	
+	var eventDuration = $('#durationSelector');
+	
+	if (eventNameObj.val() === "")
+		return false;
+	if (eventLocationObj.val() === "")
+		return false;
+	
+	var checkIfCorrectInteger = eventSlotsObj.val();
+	
+	if (checkIfCorrectInteger !== "" && (isNaN(checkIfCorrectInteger) === true || checkIfCorrectInteger < 1)) //isNaN returns true if not an integer
+		return false;
+	
+
+	if (!(durations.includes(eventDuration.val())))
+		return false;
+	
+	return true;
+		
+}
+
+function checkIfElementsHaveBeenMaliciouslyChanged() {
+		var eventNameObj = $('#eventNameInput');
+		var eventLocationObj = $('#locationInput');
+		var eventDescriptObj = $('#eventDescriptTextArea');
+		var eventSlotsObj = $('#timeslotCapInput');
+		
+		var eventDuration = $('#durationSelector');
+		var eventDates = $('#Dates');
+		var timeSelect = $('#timeSelector');
+		
+		if (!(eventNameObj.is('input')))
+			return false;
+
+		if (!(eventLocationObj.is('select')))
+			return false;
+		
+		if (!(eventDescriptObj.is('textarea')))
+			return false;
+
+		if (!(eventSlotsObj.is('input')))
+			return false;
+		
+		
+		if (!(eventDuration.is('select')))
+			return false;
+		
+		if (!((eventDates.is('[readonly]')) && eventDates.is('input')))
+			return false;
+		
+		if (!(timeSelect.is('table')))
+			return false;
+		
+		return true;
+}
+
+function checkIfElementsHaveBeenMaliciouslyRemoved() {
+	var eventNameObj = document.getElementById("eventNameInput");
+	var eventLocationObj = document.getElementById("locationInput");
+	var eventSlotsObj = document.getElementById('timeslotCapInput');
+	var eventDescriptTextArea = document.getElementById('eventDescriptTextArea');
+	
+	var eventDatesObj = document.getElementById('Dates');
+	var eventDurationObj = document.getElementById('durationSelector');
+	var timeSelectObj = document.getElementById('timeSelector');
+	
+	if (typeof eventNameObj == undefined || eventNameObj == null)
+		return false;
+
+	if (typeof eventLocationObj == undefined || eventLocationObj == null)
+		return false;
+	
+	if (typeof eventSlotsObj == undefined || eventSlotsObj == null)
+		return false;
+	
+	if (typeof eventDescriptTextArea == undefined || eventDescriptTextArea == null)
+		return false;
+	
+
+
+	if (typeof eventsDateObj == undefined || eventDatesObj == null)
+		return false;
+	
+	if (typeof eventsDurationObj == undefined || eventDurationObj == null)
+		return false;
+
+	if (typeof timeSelectObj == undefined || timeSelectObj == null)
+		return false;
+	
+	return true;
+}
+
+				
+$(document).ready(function () {
 
 	document.getElementById("field1to2").addEventListener("click", function () {
+		
+		if (checkIfElementsHaveBeenMaliciouslyRemoved() == false || checkIfElementsHaveBeenMaliciouslyChanged() == false)
+		{
+			window.location = "./400";
+			return;
+		}
+		
+		
 		var eventNameObj = $('#eventNameInput');
 		var eventLocationObj = $('#locationInput');
 		var eventNameCheck = checkInput(eventNameObj);
@@ -47,6 +172,17 @@ window.onload = function () {
 	})
 
 	document.getElementById("field2toSubmit").addEventListener("click", function () {
+		
+		if (checkIfElementsHaveBeenMaliciouslyRemoved() == false || checkIfElementsHaveBeenMaliciouslyChanged() == false || checkIfRequiredElementsAreIncorrect() == false)
+		{
+		//	console.log(checkIfElementsHaveBeenMaliciouslyRemoved());
+		//	console.log(checkIfElementsHaveBeenMaliciouslyChanged());
+		//	console.log(checkIfRequiredElementsAreIncorrect());
+			window.location = "./400";
+			return;
+		}
+		
+		
 		var slots = submitEvent();
 		var eventDateInputObj = $('#Dates');
 
@@ -91,7 +227,7 @@ window.onload = function () {
 		$('.entryField1').removeClass('collapse');
 	})
 
-}
+});
 
 $('#durationSelector').on('change', function () {
 
@@ -351,8 +487,8 @@ function submitEvent() {
 						startDate: date + " " + formatTime(currTime),
 						endDate: date + " " + formatEndTime(currTime)
 					};
-					console.log(slot.startDate);
-					console.log(slot.endDate);
+				//	console.log(slot.startDate);
+				//	console.log(slot.endDate);
 					slotArray.push(slot);
 					hasSelected = true;
 				}

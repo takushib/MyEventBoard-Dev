@@ -8,16 +8,20 @@ const currPosition = 0;
 $(document).ready(function () {
 
 	displayNoEventsHeader();
-
+	$('#reserveNav').addClass('activeNavItem');
 });
+
+
 
 function displayNoEventsHeader() {
 	if ($('.tableBody').children().length == 0) {
-		$('#invitesTable').addClass('doNotDisplay');
 		var noEventsLabel = $('<h3> You are not Reserved for any Events <img src="./NoEventsImg.png" height="100" width="100"></h3>');
 		noEventsLabel.addClass('noEvents');
 
-		$('.yourInvites').append(noEventsLabel);
+		if (!$('#invitesTable').hasClass('doNotDisplay')) {
+			$('#invitesTable').addClass('doNotDisplay');
+			$('.yourInvites').append(noEventsLabel);
+		}
 
 		if ($('#deleteSelectedConfirmBox').hasClass('doNotDisplay') != true) {
 			$('#deleteSelectedConfirmBox').toggleClass('doNotDisplay');
@@ -34,7 +38,7 @@ $('#deleteConfirm').on('hidden.bs.modal', function () {
 function checkHidePastEventsTable() {
 
 	if($('.pastEventsTable tbody').children().length == 0) {
-		$('.pastEventsContainer').addClass('doNotDisplay');
+		$('.pastEventsField').addClass('doNotDisplay');
 	}
 }
 
@@ -54,10 +58,14 @@ function createPastEventsTable(dateRow, columnNames) {
 	var container = $('.entryField1');
 
 	var pastEvents = $('<div></div>');
-	pastEvents.addClass('pastEventsContainer');
-	pastEvents.append('<h2> Past Events </h2>');
 
-
+	var pastEventsField = $('<div></div>');
+	
+	pastEventsField.addClass('pastEventsField');
+	pastEvents.addClass('pastEventsContainer table-responsive');
+	pastEventsField.append('<h2> Past Events </h2>');
+	pastEventsField.append(pastEvents);
+	
 	var table = $('<Table></Table>');
 	table.addClass('table pastEventsTable table-striped');
 
@@ -92,7 +100,7 @@ function createPastEventsTable(dateRow, columnNames) {
 	table.append(tbody);
 
 	pastEvents.append(table);
-	container.append(pastEvents);
+	container.append(pastEventsField);
 	displayNoEventsHeader();
 }
 

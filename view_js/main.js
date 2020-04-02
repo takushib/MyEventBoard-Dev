@@ -281,6 +281,9 @@ $(document).ready(function () {
 })
 
 $(document).ready(function () {
+	
+	$('#homeNav').addClass('activeNavItem');
+	
 	$('.eventBlock').click(function () {
 		console.log("Redirect to respective Event Page Here");
 	});
