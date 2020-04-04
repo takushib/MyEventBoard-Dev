@@ -153,10 +153,6 @@ $('.deleteSelectButtonConfirm').on('click', function () {
 
 });
 
-$('.editEventButton').on('click', function () {
-
-	console.log("edit");
-});
 
 $(document).ready(function () {
 	$('#manageNav').addClass('activeNavItem');
