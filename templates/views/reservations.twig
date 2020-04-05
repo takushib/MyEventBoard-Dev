@@ -20,9 +20,10 @@
 		<div class="yourInvites table-responsive">
 		
 			<table class="table table-striped" id="invitesTable">
+
 				<thead>
 				<tr scope="row">
-					{% for table_header in table_headers|slice(0, -1) %}
+					{% for table_header in table_headers|slice(0, -2) %}
 					<th scope="col">{{ table_header }}</th>
 					{% endfor %}
 					<th scope="col">
@@ -30,18 +31,19 @@
 					</th>
 				</tr>
 				</thead>
+
 				<tbody class="tableBody">
 				{% for table_row in table_rows %}
 
-				<tr scope="row">
+				<tr id="{{ table_row|last }}"scope="row">
 
-					{% set event_key = table_row|last %}
+					{% set event_key = table_row|slice(-2, -1)|first %}
 
 					<td>
 						<a class="text-info" href="./register?key={{ event_key }}">{{ table_row|first }}</a>
 					</td>
 
-					{% for column in table_row|slice(1, -1) %}
+					{% for column in table_row|slice(1, -2) %}
 
 					<td>{{ column }}</td>
 
@@ -58,6 +60,7 @@
 				
 				{% endfor %}
 				</tbody>
+
 			</table>
 
 		</div>
