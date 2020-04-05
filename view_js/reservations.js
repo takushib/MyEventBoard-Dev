@@ -1,20 +1,20 @@
-
 const dateStringLength = 11;
 const eventNameIndex = 0;
 const eventTimeIndex = 1;
 const eventDateIndex = 4;
 const deleteIndex = 4;
 const currPosition = 0;
-$(document).ready(function () {
 
+$(document).ready(function () {
 	displayNoEventsHeader();
 	$('#reserveNav').addClass('activeNavItem');
 });
 
 
-
 function displayNoEventsHeader() {
+
 	if ($('.tableBody').children().length == 0) {
+
 		var noEventsLabel = $('<h3> You are not Reserved for any Events <img src="./NoEventsImg.png" height="100" width="100"></h3>');
 		noEventsLabel.addClass('noEvents');
 
@@ -26,6 +26,7 @@ function displayNoEventsHeader() {
 		if ($('#deleteSelectedConfirmBox').hasClass('doNotDisplay') != true) {
 			$('#deleteSelectedConfirmBox').toggleClass('doNotDisplay');
 		};
+
 	}
 
 }
@@ -36,7 +37,6 @@ $('#deleteConfirm').on('hidden.bs.modal', function () {
 });
 
 function checkHidePastEventsTable() {
-
 	if($('.pastEventsTable tbody').children().length == 0) {
 		$('.pastEventsField').addClass('doNotDisplay');
 	}
@@ -50,8 +50,7 @@ function createPastEventsTable(dateRow, columnNames) {
 		});
 	}
 
-	if (dateRow.length == 0)
-		return;
+	if (dateRow.length == 0) return;
 
 	var rowItemCount = columnNames.length;
 
@@ -83,11 +82,8 @@ function createPastEventsTable(dateRow, columnNames) {
 	}
 
 
-
-
 	var thead = $('<Thead></Thead>');
 	thead.append(rowHeader);
-
 
 
 	var tbody = $('<Tbody></Tbody>');
@@ -102,6 +98,7 @@ function createPastEventsTable(dateRow, columnNames) {
 	pastEvents.append(table);
 	container.append(pastEventsField);
 	displayNoEventsHeader();
+
 }
 
 
@@ -140,40 +137,38 @@ $( document ).ready(function() {
 			dateRow.push($(this).parent());
 			$(this).parent().remove();
 		}
+		
 	});
 
 	createPastEventsTable(dateRow, columnNames);
+
 });
 
+
 function getHash(eventItem){
-
-	var linkToEvent = eventItem.parent().parent().children().eq(eventNameIndex).children();
-
-	var hash = linkToEvent.attr('href').split('key=');
-
-	return hash[1];
+	return eventItem.parent().parent().attr('id');
 }
 
+
 function deleteEvent(eventDeleteObj) {
+
 	$('#deleteConfirm').modal('toggle');
 
 	var listItem = $('<li> ' + eventDeleteObj.parent().parent().children().eq(eventNameIndex).text() + "at " + eventDeleteObj.parent().parent().children().eq(eventTimeIndex).text() + ' </li>');
 	listItem.addClass('list-group-item');
 	$('.containerForEventsToDelete ul').append(listItem);
 
-
-	$('.containerForEventsToDelete ul').append(listItem);
-
 	var hashKey = getHash(eventDeleteObj);
-
 	// console.log(hashKey);
 
 	$('#deleteSubmitButton').on('click', function () {
+
 		$('#deleteConfirm').modal('toggle');
+
 		$.ajax({
 			url: "delete_reservation.php",
 			type: "POST",
-			data: { key: hashKey}
+			data: { key: hashKey }
 		}).done(function (response) {
 			console.log(response);
 		});
@@ -182,9 +177,11 @@ function deleteEvent(eventDeleteObj) {
 		$('#feedBackModalDelete').modal('toggle');
 		eventDeleteObj.parent().parent().remove();
 		
-		displayNoEventsHeader(); // Check if need to show header for no Events
-		checkHidePastEventsTable();   // hide past events table if no past events
+		displayNoEventsHeader(); // check if need to show header for no Events
+		checkHidePastEventsTable(); // hide past events table if no past events
+
 	})
+
 }
 
 
