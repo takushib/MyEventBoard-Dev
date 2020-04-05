@@ -127,6 +127,10 @@ $('#deleteConfirm').on('hidden.bs.modal', function () {
 });
 
 $('.deleteSelectButton').on('click', function () {
+	$('.massDeleteOn').each(function() {
+		$($(this)).prop('checked', false);
+	});
+	
 	$('.deleteSelectButton').toggleClass('toggled');
 	$('.massDeleteOn').toggleClass('doNotDisplay');
 	$('.deleteEvent').toggleClass('doNotDisplay');

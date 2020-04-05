@@ -4,6 +4,11 @@
 	color: #0000EE ;
 }
 
+.eventManageButton > a{
+	color: #0000EE !important;
+}
+
+
 .toggled {
 	background: #d3d3d3;
 	border: 1px solid grey;
