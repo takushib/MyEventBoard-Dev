@@ -64,7 +64,9 @@ function displayNoEventsHeader() {
 }
 
 $('.deleteEvent').on('click', function () {
-
+	$('#deleteMassSubmitButton').off();
+	$('#deleteMassSubmitButton').attr('id', "deleteSubmitButton");
+	$('#deleteSubmitButton').off();
 	$('#deleteConfirm').modal('toggle');
 
 	var listItem = $('<li> ' + $(this).parent().parent().children().eq(eventNameIndex).text() + ' </li>');
@@ -95,6 +97,9 @@ $('.deleteEvent').on('click', function () {
 
 function massDelete(arrayWithReadyToDeleteEvents) {
 
+	$('#deleteSubmitButton').off();
+	$('#deleteSubmitButton').attr('id', "deleteMassSubmitButton");
+	$('#deleteMassSubmitButton').off();
 	$('#deleteConfirm').modal('toggle');
 
 	arrayWithReadyToDeleteEvents.forEach(number => {
@@ -103,7 +108,7 @@ function massDelete(arrayWithReadyToDeleteEvents) {
 		$('.containerForEventsToDelete ul').append(listItem);
 	});
 
-	$('#deleteSubmitButton').on('click', function () {
+	$('#deleteMassSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
 		arrayWithReadyToDeleteEvents.forEach(number => {
 			$.ajax({
