@@ -127,3 +127,9 @@ label
 #deleteEventsHeader {
 	padding: 10px;
 }
+
+.fullSlot
+{
+	cursor: not-allowed !important;
+	background-color: #ffb6c1 !important;
+}

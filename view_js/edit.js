@@ -182,8 +182,6 @@ function addNewCol(e) {
 	newDateHeader.text(e.format());
 	newDateHeader.addClass("removeOnClear");
 
-
-	console.log(newDateHeader.text());
 	
 	$("#timeSelector tr:first").append(newDateHeader);
 
@@ -197,9 +195,18 @@ function addNewCol(e) {
 	newDateColumn.addClass("removeOnClear");
 	$("#timeSelector tr").not(':first').not(':last').append(newDateColumn);
 	
-	($("#timeSelector tr").not(':first').not(':last')).each() {
-		console.log($(this));
-	}
+	$("#timeSelector tr").not(':first').not(':last').each(function() {
+		
+		var time = formatTime($(this).children().find('div').text());
+		var date = formatDate(newDateHeader.text());
+		var startValCheckForDupe = [{
+										startDate: (date + " " + time), 
+										endDate: null}
+								   ];
+	
+		if (arraysNoDuplicate(stateOfEvent.slots, startValCheckForDupe) == false)
+			$(this).children().last().addClass("fullSlot");
+	});
 
 }
 
@@ -700,8 +707,7 @@ function arraysNoDuplicate(superset, subset) {
 
     if (!Array.isArray(superset) || ! Array.isArray(subset))
       return false;
-
-  
+	
 	let set1 =  superset.map((value)=>{
 		return value.startDate;
 	});
