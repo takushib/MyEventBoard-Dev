@@ -49,7 +49,7 @@
 				<input type="number" min="1" oninput="validity.valid||(value='');" class="form-control mb-4" id="timeslotCapInput" placeholder="Enter a capacity (default: 1)">
 			</div>
 
-			<!--
+			<!--  This is the input text where you can insert a file with a list of ONIDs to send emails to. Not implemented for now.
 			<div class="form-group text-nowrap">
 				<label for="dumpFileInput">User Notification Dump File</label>
 				<span style="padding-left:10px" class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Required Format: Email List in Text File. Sends a notification of Event to all listed Oregon State University Emails"></span>
@@ -57,16 +57,25 @@
 			</div>
 			-->
 			
-			<!-- Default unchecked -->
-			<!--
+			<!-- Anonymous Event Default unchecked -->
 			<div class="form-group text-nowrap">
 				<div class="custom-control custom-checkbox">
-				<input type="checkbox" class="custom-control-input" id="defaultUnchecked">
-				<label class="custom-control-label" for="defaultUnchecked">Enable User File Upload</label>
+				<input type="checkbox" checked="true" class="custom-control-input" id="anonymousCheck">
+				<label class="custom-control-label" for="anonymousCheck">Anonymous Event</label>
+				<span style="padding-left:10px" class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows users to be seen on registered slots if checked"></span>
+				</div>
+			</div>
+			
+			
+			<!-- File Upload Default unchecked -->
+			<div class="form-group text-nowrap">
+				<div class="custom-control custom-checkbox">
+				<input type="checkbox" class="custom-control-input" id="fileUpload">
+				<label class="custom-control-label" for="fileUpload">Enable User File Upload</label>
 				<span style="padding-left:10px" class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Allows users to upload a PDF when registering for this event"></span>
 				</div>
 			</div>
-			-->
+
 			
 			<div class="nextBackField">
 				<button type="button" class="btn btn-dark nextBackField" id="field1to2">Next</button>
