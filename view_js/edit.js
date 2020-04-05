@@ -6,10 +6,20 @@ const EVENT_DESCRIPT_LIST_LABEL = "EVENT_DESCRIPTION";
 const confirmationTypeList = [fileUploadType, anonymousCheckType, capacityType, durationType];
 const eventDeleteIndex = 1;
 
-var previousCapValue = $('#timeslotCapInput').val();
-var previousDuration = $('#durationSelector option:selected');
+const stateOfEvent = {
+						name: "",
+						eventDate: "",
+						capacity: "",
+						duration: "", 
+						fileOption: false,
+						anonymousOption: true,
+						slots: []
+					 };
 
-var weekday = new Array(7);
+stateOfEvent.capacity = $('#timeslotCapInput').val();
+stateOfEvent.duration = $('#durationSelector option:selected');
+
+const weekday = new Array(7);
 
 weekday[0]="Sunday";
 weekday[1]="Monday";
@@ -29,6 +39,12 @@ function getDayName(dateObj) {
 $(function () {
 	$('[data-toggle="tooltip"]').tooltip()
 })
+
+
+$(function initState() {
+	
+	// Initialize the state here (stateOfEvent variable)
+});
 
 $(document).ready(function(){
 	
@@ -165,6 +181,10 @@ function addNewCol(e) {
 	var newDateHeader = $('<th></th>');
 	newDateHeader.text(e.format());
 	newDateHeader.addClass("removeOnClear");
+
+
+	console.log(newDateHeader.text());
+	
 	$("#timeSelector tr:first").append(newDateHeader);
 
 	var newDateColumn = $('<td></td>');
@@ -176,6 +196,10 @@ function addNewCol(e) {
 	newDateColumn.append(timeDialogue);
 	newDateColumn.addClass("removeOnClear");
 	$("#timeSelector tr").not(':first').not(':last').append(newDateColumn);
+	
+	($("#timeSelector tr").not(':first').not(':last')).each() {
+		console.log($(this));
+	}
 
 }
 
@@ -243,17 +267,37 @@ $('.deleteEvent').on('click', function () {
 	deleteSelectedEvent($(this));
 })
 
+function updateStateFromDelete(startDateValToBeRemoved) {
+
+		console.log(startDateValToBeRemoved);
+		for(let i=0; i < stateOfEvent.slots.length; i++)
+		{
+			if(stateOfEvent.slots[i].startDate == startDateValToBeRemoved)
+			{	
+				stateOfEvent.slots.splice(i, 1);
+			}	
+		}
+	
+}
+
 function deleteSelectedEvent(selectedEvent) {
+	$('#deleteMassSubmitButton').off();
+	$('#deleteMassSubmitButton').attr('id', "deleteSubmitButton");
+	$('#deleteSubmitButton').off();
 	$('#deleteConfirm').modal('toggle');
 
-	var listItem = $('<li> ' + getEventInFormatFromTableCells(selectedEvent.parent().parent()) + ' </li>');
+	var deleteObjInfo = getEventInFormatFromTableCells(selectedEvent.parent().parent());
+	var listItem = $('<li> ' + deleteObjInfo.displayValue + ' </li>');
 	listItem.addClass('list-group-item');
 	$('.containerForEventsToDelete ul').append(listItem);
 		
 	$('#deleteSubmitButton').on('click', function () {
 		selectedEvent.parent().parent().remove();
+
+		updateStateFromDelete(deleteObjInfo.deleteValue);
 		$('#deleteConfirm').modal('toggle');
 		$('#feedBackModalDelete').modal('toggle');
+		//console.log(stateOfEvent.slots);
 	})
 }
 
@@ -264,23 +308,42 @@ function getEventInFormatFromTableCells(tableRow) {
 		formattedEventString.push($(this).text());
 	});
 	
-	return formattedEventString[0] + ", " + formattedEventString[1] + ", " + formattedEventString[2] + " - " + formattedEventString[3];
+	
+	var yyyy_mm_dd_format = formatDate(formattedEventString[0]); 
+	
+	var formatStringObj = {
+						displayValue: formattedEventString[0] + ", " + formattedEventString[1] + ", " + formattedEventString[2] + " - " + formattedEventString[3],
+						deleteValue: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2])
+					   }
+	return formatStringObj;
 }
 
-function massDelete(arrayWithReadyToDeleteEvents) {
-
+function massDelete(arrayWithReadyToDeleteEventRows) {
+	$('#deleteSubmitButton').off();
+	$('#deleteSubmitButton').attr('id', "deleteMassSubmitButton");
+	$('#deleteMassSubmitButton').off();
 	$('#deleteConfirm').modal('toggle');
 
+	var arrayOfEventSlotsToDelete = [];
 	
-	arrayWithReadyToDeleteEvents.forEach(number => {
-		var listItem = $('<li> ' + getEventInFormatFromTableCells(number) + ' </li>');
+	arrayWithReadyToDeleteEventRows.forEach(number => {
+		var deleteObjInfo = getEventInFormatFromTableCells(number);
+		arrayOfEventSlotsToDelete.push(deleteObjInfo.deleteValue);
+		var listItem = $('<li> ' + deleteObjInfo.displayValue + ' </li>');
 		listItem.addClass('list-group-item');
 		$('.containerForEventsToDelete ul').append(listItem);
 	});
 	
-	$('#deleteSubmitButton').on('click', function () {
+	$('#deleteMassSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
-	/*	arrayWithReadyToDeleteEvents.forEach(number => {
+	
+		//console.log(arrayOfEventSlotsToDelete);
+		for (let i = 0; i < arrayOfEventSlotsToDelete.length; i++)
+		{
+			updateStateFromDelete(arrayOfEventSlotsToDelete[i]);
+			arrayWithReadyToDeleteEventRows[i].remove();
+		}
+		/*	arrayWithReadyToDeleteEvents.forEach(number => {
 			$.ajax({
 				url: "delete_event.php",
 				type: "POST",
@@ -291,6 +354,8 @@ function massDelete(arrayWithReadyToDeleteEvents) {
 			number.parent().remove();
 			
 		}); */
+		//arrayOfEventSlotsToDelete = [];
+		//console.log(stateOfEvent.slots);
  		$('#feedBackModalDelete').modal('toggle');
 	})
 
@@ -344,11 +409,11 @@ function resetCanceledInput() {
 	
 	var findSelectedDuration = $('#durationSelector').find(":selected");
 	
-	if (previousDuration.val() != findSelectedDuration.val())
-		$('#durationSelector').find('option[value="'+ previousDuration.val() +'"]').prop('selected', 'selected');
+	if (stateOfEvent.duration.val() != findSelectedDuration.val())
+		$('#durationSelector').find('option[value="'+ stateOfEvent.duration.val() +'"]').prop('selected', 'selected');
 
-	if (previousCapValue != $('#timeslotCapInput').val())
-		$('#timeslotCapInput').val(previousCapValue);
+	if (stateOfEvent.capacity != $('#timeslotCapInput').val())
+		$('#timeslotCapInput').val(stateOfEvent.capacity);
 }
 
 function clearModal() {
@@ -416,7 +481,7 @@ function callCheckConfirmation(confirmationType) {
 				
 				$('#generalAcceptButton').on('click', function() {
 					$('#generalConfirm').modal('toggle');
-					previousCapValue = $('#timeslotCapInput').val();
+					stateOfEvent.capacity = $('#timeslotCapInput').val();
 				});
 
 				break;
@@ -430,8 +495,9 @@ function callCheckConfirmation(confirmationType) {
 				$('#generalAcceptButton').on('click', function() {
 					changedDuration();
 					$('#existingEventsTable tbody').empty();
+					stateOfEvent.slots = [];
 					$('#generalConfirm').modal('toggle');
-					previousDuration = $("#durationSelector option:selected");
+					stateOfEvent.duration = $("#durationSelector option:selected");
 				});
 
 				break;
@@ -629,15 +695,50 @@ $('#addEventModal').on('hidden.bs.modal', function () {
 	$('.removeOnClear').remove(); //Clear all cells
 });
 
+//source: https://truetocode.com/check-for-duplicates-in-array-of-javascript-objects/
+function arraysNoDuplicate(superset, subset) {
+
+    if (!Array.isArray(superset) || ! Array.isArray(subset))
+      return false;
+
+  
+	let set1 =  superset.map((value)=>{
+		return value.startDate;
+	});
+	
+	let set2 = subset.map((value)=>{
+		return value.startDate;
+	});
+	
+	let createSet  = new Set(set1.concat(set2));  // Creating a set will remove all duplicate start Dates
+	
+	let unionSet = set1.concat(set2);
+
+	if (createSet.size < unionSet.length)  // Duplicate detected a removed. Therefore there are duplicates
+		return false;
+	else
+		return true;
+
+}
+
 $('#addEventsButton').on('click', function() {
 	var addEventsCheck = addEventSlots();
 	
-	if (addEventsCheck === false || $('#Dates').val() == "")
+	if (addEventsCheck === false || $('#Dates').val() == "")  //addEventsCheck is false when incorrect information is passed. Otherwise it is the slots from adding.
 		alert("Must have an inputted date before adding!");
 	else
 	{
-		addToExistingEvent(addEventsCheck);
-		$('#addEventModal').modal('toggle');
+		if (arraysNoDuplicate(stateOfEvent.slots, addEventsCheck) === true)
+		{
+			for (let i = 0; i < addEventsCheck.length; i++)
+				stateOfEvent.slots.push(addEventsCheck[i]);
+			
+			addToExistingEvent(addEventsCheck);
+			$('#addEventModal').modal('toggle');
+		
+		}
+		else
+			alert("Duplication event slot detected");
 	}
 });
 
@@ -665,9 +766,14 @@ function appendToExistingEventTable(date, nameOfDay, startTime, endTime) {
 	var massDeleteOption = $('<input></input>');
 	massDeleteOption.attr("type", "checkbox");
 	massDeleteOption.attr("unchecked");
-	massDeleteOption.addClass("massDeleteOn doNotDisplay");
+	
+	if (!($('.deleteSelectButton').hasClass('toggled')))
+		massDeleteOption.addClass("doNotDisplay");
+	massDeleteOption.addClass("massDeleteOn");
 	
 	var deleteButton = $('<button></button>');
+	if (($('.deleteSelectButton').hasClass('toggled')))
+		deleteButton.addClass("doNotDisplay");
 	deleteButton.addClass("eventManageButton deleteEvent");
 	
 	var deleteIcon = $('<i></i>');
@@ -700,30 +806,32 @@ function addToExistingEvent(newSlots) {
 	
 	console.log(newSlots);
 	for (let i = 0; i < newSlots.length; i++) {
-		var timeInfo = newSlots[i].startDate.split(', ');
-		var endTimeInfo = newSlots[i].endDate.split(', ');
+		var timeInfo = newSlots[i].startDate.split(' ');
+		var endTimeInfo = newSlots[i].endDate.split(' ');
 		
 		var dateValue = timeInfo[0];
 		var timeValue = timeInfo[1];
 		
 		var datePieces = dateValue.split("-");
 		
-		datePieces[2] = datePieces[2] * 1; //Remove leading 0's by casting to integer
-		datePieces[1] = datePieces[1]*1-1; //date object month is off by 1;
+		datePieces[2] = datePieces[2]; //Remove leading 0's by casting to integer
+		var month = datePieces[1]; // save month to get correct month and day
+		datePieces[1] = datePieces[1] - 1; //day name for object month is off by 1;
 		
 		var dateObj = new Date(datePieces[0], datePieces[1], datePieces[2]);
 		var nameOfDay = getDayName(dateObj);
 		
+		
 		// Values passed in format: mm/dd/yyyy, nameOfDay (e.g. Tuesday), start time (hh:mm AM/PM) - endTime (hh:mm AM/PM)
-		appendToExistingEventTable(datePieces[1] + "/" + datePieces[2] + "/" + datePieces[0], nameOfDay, convertMilitaryTimeToAMPM(timeValue), convertMilitaryTimeToAMPM(endTimeInfo[1]));
+		appendToExistingEventTable(month + "/" + datePieces[2] + "/" + datePieces[0], nameOfDay, convertMilitaryTimeToAMPM(timeValue), convertMilitaryTimeToAMPM(endTimeInfo[1]));
 	}
 	
 }
 
 //Military Time to 12 Hour AM/PM
-function convertMilitaryTimeToAMPM(hoursInMilitaryFormat) {
+function convertMilitaryTimeToAMPM(timeInMilitaryFormat) {
    
-    var timeVal = hoursInMilitaryFormat.split(":");
+    var timeVal = timeInMilitaryFormat.split(":");
 	
 	var hours = parseInt(timeVal[0],10) > 12 ? parseInt(timeVal[0],10) - 12 : parseInt(timeVal[0],10);
 	var AM_PM = parseInt(timeVal[0],10) >= 12 ? "PM" : "AM";
@@ -735,6 +843,20 @@ function convertMilitaryTimeToAMPM(hoursInMilitaryFormat) {
 
 };
 
+// source: https://stackoverflow.com/questions/15083548/convert-12-hour-hhmm-am-pm-to-24-hour-hhmm
+function convertAMPMToMilitary(timeInAMPM) {
+	var time = timeInAMPM;
+	var hours = Number(time.match(/^(\d+)/)[1]);
+	var minutes = Number(time.match(/:(\d+)/)[1]);
+	var AMPM = time.match(/\s(.*)$/)[1];
+	if(AMPM == "PM" && hours<12) hours = hours+12;
+	if(AMPM == "AM" && hours==12) hours = hours-12;
+	var sHours = hours.toString();
+	var sMinutes = minutes.toString();
+	if(hours<10) sHours = sHours;
+	if(minutes<10) sMinutes = "0" + sMinutes;
+	return sHours + ":" + sMinutes;
+}
 
 function addEventSlots() {
 
@@ -758,8 +880,8 @@ function addEventSlots() {
 					var date = formatDate(currDate);
 					var currTime = $(this).closest('tr').find('th').children().text();
 					var slot = {
-						startDate: date + ", " + formatTime(currTime),
-						endDate: date + ", " + formatEndTime(currTime)
+						startDate: date + " " + formatTime(currTime),
+						endDate: date + " " + formatEndTime(currTime)
 					};
 					slotArray.push(slot);
 					hasSelected = true;
