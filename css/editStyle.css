@@ -65,7 +65,7 @@ label
 	overflow-y: auto;
 }
 
-.existingEvents {
+.addedEventsContainer {
 	display:inline-block;
 	min-width: 100% !important;
 	overflow-x: auto;
@@ -107,11 +107,10 @@ label
 }
 
 .openAddEvents:hover {
-	color: blue;
 	cursor: pointer;
 }
 
-#labelForExistingDates {
+#labelForAddedDates, #labelForExistingDates {
 	font-size: 20px ;
 }
 
@@ -121,15 +120,38 @@ label
 }
 
 .deleteSelectButtonConfirm {
-	float:right;
+	background: black;
+	color: white;
+	border: none;
 }
 
 #deleteEventsHeader {
 	padding: 10px;
 }
 
+.disabled{
+
+}
+
 .fullSlot
 {
 	cursor: not-allowed !important;
 	background-color: #ffb6c1 !important;
+}
+
+.buttonActive {
+    background-color: #add8e6!important;
+    box-shadow: 0 5px white;
+}
+
+.selectedRow {
+	background-color: blue!important;
+}
+
+.toBeAddedSlots {
+	color: blue;
+}
+
+.toBeDeletedSlots {
+	color: red;
 }

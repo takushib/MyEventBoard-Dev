@@ -6,6 +6,16 @@ const EVENT_DESCRIPT_LIST_LABEL = "EVENT_DESCRIPTION";
 const confirmationTypeList = [fileUploadType, anonymousCheckType, capacityType, durationType];
 const eventDeleteIndex = 1;
 
+const existingEventsArray = [	
+								{
+									startDate: "2020-04-14 17:00",
+									endDate: "2020-04-14 18:00"
+								}, 
+								{
+									startDate: "2020-05-14 17:00",
+									endDate: "2020-05-14 18:00"
+								}
+							]; // this will be changed to existing events from Database
 const stateOfEvent = {
 						name: "",
 						eventDate: "",
@@ -13,7 +23,7 @@ const stateOfEvent = {
 						duration: "", 
 						fileOption: false,
 						anonymousOption: true,
-						slots: []
+						addedSlots: []
 					 };
 
 stateOfEvent.capacity = $('#timeslotCapInput').val();
@@ -41,9 +51,195 @@ $(function () {
 })
 
 
-$(function initState() {
+
+$(document).ready(function(){
+	initState();
+});
+
+function initState() {
 	
-	// Initialize the state here (stateOfEvent variable)
+	for (let i = 0; i < existingEventsArray.length; i++)
+	{
+		var dbObjToReadable = databaseDateFormatToReadable(existingEventsArray[i]);
+		appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
+	}
+}
+
+function buildRadioInput(nameOfLabel, id, nameOfRadio, valueOfRadio) {
+
+	var container = $('<div></div>');
+	container.addClass("custom-control custom-radio");
+	
+	var radioInput = $('<input></input>');
+	radioInput.addClass("custom-control-input");
+	radioInput.addClass(nameOfRadio);
+	radioInput.attr("type", "radio");
+	radioInput.attr("id", id);
+	radioInput.attr("name", nameOfRadio);
+	radioInput.attr("value", valueOfRadio);
+	
+	var radioLabel = $('<label></label>');
+	radioLabel.append(nameOfLabel);
+	radioLabel.addClass('custom-control-label');
+	radioLabel.attr("for",id);
+	
+	container.append(radioInput);
+	container.append(radioLabel);
+	
+	return container;
+	
+}
+
+function buildModalForMoveSlots(modalHeaderName, moveRowArray) {
+	$('#generalHeaderLabel').text(modalHeaderName);
+	
+		var toBeMoved = $('<div></div>');
+		var toBeMovedLabel = $('<label> Slots to be MOVED: </label>');
+		var moveList = $('<ul></ul>');
+		moveList.addClass('list-group saveItemList');
+		toBeMoved.append(toBeMovedLabel);
+		
+		for (let i = 0; i < moveRowArray.length; i++) {
+			var listItemInfo = getEventInFormatFromTableCells(moveRowArray[i])
+			var listItem = $('<li>'+listItemInfo.displayValue+' </li>');
+			listItem.addClass('list-group-item toBeDeletedSlots');
+			moveList.append(listItem);
+		}
+		
+		toBeMoved.append(moveList);
+		$('.confirmationDescriptionContainer').append(toBeMoved);
+		$('.confirmationDescriptionContainer').append('<br><br>');
+		
+		$('.confirmationDescriptionContainer').append(buildRadioInput("1 Day", "radiOneDay", "moveDatesRadio", 1));
+		$('.confirmationDescriptionContainer').append(buildRadioInput("1 Week", "radioOneWeek", "moveDatesRadio", 7));
+		$('.confirmationDescriptionContainer').append(buildRadioInput("30 Days", "radioOneMonth", "moveDatesRadio", 30));
+		$('.confirmationDescriptionContainer').append('<br><br>');
+		
+		
+		
+		var datePickerForMove = $('<div></div>');
+		datePickerForMove.addClass('input-group date mb-3');
+		datePickerForMove.attr("id", "moveDatePicker");
+		
+		var moveDateInput = $('<input></input>');
+		moveDateInput.attr('readonly', true);
+		moveDateInput.attr("type", "text");
+		moveDateInput.attr("name", "moveDates");
+		moveDateInput.attr("id", "moveDateInput");
+		moveDateInput.attr("required", "");
+		moveDateInput.attr("placeholder", "Enter a Date to Move To");
+		moveDateInput.addClass("form-control");
+		datePickerForMove.append(moveDateInput);
+		
+		var calendarWidget = $('<span></span>');
+		calendarWidget.addClass("input-group-addon");
+		
+		var calendarImage = $('<i></i>');
+		calendarImage.addClass("glyphicon glyphicon-calendar");
+		
+		var spanCount = $('<span></span>');
+		spanCount.addClass('count');
+		
+		calendarWidget.append(calendarImage);
+		calendarWidget.append(spanCount);
+		
+		datePickerForMove.append(calendarWidget);
+		
+		$('.confirmationDescriptionContainer').append(datePickerForMove);
+		
+		$('#moveDatePicker').datepicker({
+			startDate: new Date(),
+			multidate: false,
+			format: "mm/dd/yyyy",
+			daysOfWeekHighlighted: "5,6",
+			language: 'en'
+		}).on('changeDate', function (e) {
+	
+			$(".moveDatesRadio").each(function() {
+				$(this).prop("checked", false);
+			});
+		
+		});
+		
+		$('.moveDatesRadio').on("click", function() {
+			$('#moveDatePicker').datepicker('update', '');
+		});
+	
+}
+
+$('#moveExistingDates').on('click', function() {
+	
+	var toBeMovedRowArray = [];
+	
+	$('#existingEventsTable tbody tr').each(function() {
+		
+		if ($(this).hasClass("selectedRow"))
+			toBeMovedRowArray.push($(this));
+	});
+	
+	if (toBeMovedRowArray.length < 1)
+		return;
+	
+	buildModalForMoveSlots("Move Slots", toBeMovedRowArray);
+	
+	$('#generalConfirm').modal('toggle');	
+	
+	
+	$('#generalAcceptButton').on('click', function() {
+		$('#generalConfirm').modal('toggle');
+	});
+				
+	$('#generalCancelButton').on('click', function() {
+		$('#generalConfirm').modal('toggle');
+	});
+	
+});
+	
+function appendToExistingEventTable(date, nameOfDay, startTime, endTime) {
+	var newRow = $('<tr></tr>');
+	newRow.addClass('editableField');
+	
+	newRow.on("click", function() {
+		$(this).toggleClass("selectedRow");
+	});
+	
+	newRow.on("click", 'td:last-child', function(e) {
+		e.stopPropagation();
+	});
+	
+	var eventDate = $('<td>'+date+'</td>');
+
+	var eventDayName = $('<td>'+nameOfDay+'</td>');
+	
+	var eventStartTime = $('<td>'+startTime+'</td>');
+	
+	var eventEndTime = $('<td>'+endTime+'</td>');
+	
+	var deleteOptionCell = $('<td></td>');
+	var checkedForDelete = $('<input></input>');
+	checkedForDelete.attr("type", "checkbox");
+	checkedForDelete.attr("unchecked");
+	checkedForDelete.addClass("checkedForDelete");
+	deleteOptionCell.append(checkedForDelete);
+	
+	newRow.append(eventDate);
+	newRow.append(eventDayName);
+	newRow.append(eventStartTime);
+	newRow.append(eventEndTime);
+	newRow.append(deleteOptionCell);
+	
+	$('#existingEventsTable tbody').append(newRow);
+	
+}
+
+$('#hideExistingDates').on("click", function() {
+	$(this).toggleClass('buttonActive');
+	$('#existingEventsTable').toggleClass("doNotDisplay");
+});
+
+$('#hideAddedDates').on("click", function() {
+	$(this).toggleClass('buttonActive');
+	$('#addEventsTable').toggleClass("doNotDisplay");
 });
 
 $(document).ready(function(){
@@ -203,8 +399,9 @@ function addNewCol(e) {
 										startDate: (date + " " + time), 
 										endDate: null}
 								   ];
-	
-		if (arraysNoDuplicate(stateOfEvent.slots, startValCheckForDupe) == false)
+		
+		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
+		if (arraysNoDuplicate(allSlotsTempArray, startValCheckForDupe) == false)
 			$(this).children().last().addClass("fullSlot");
 	});
 
@@ -277,11 +474,11 @@ $('.deleteEvent').on('click', function () {
 function updateStateFromDelete(startDateValToBeRemoved) {
 
 		console.log(startDateValToBeRemoved);
-		for(let i=0; i < stateOfEvent.slots.length; i++)
+		for(let i=0; i < stateOfEvent.addedSlots.length; i++)
 		{
-			if(stateOfEvent.slots[i].startDate == startDateValToBeRemoved)
+			if(stateOfEvent.addedSlots[i].startDate == startDateValToBeRemoved)
 			{	
-				stateOfEvent.slots.splice(i, 1);
+				stateOfEvent.addedSlots.splice(i, 1);
 			}	
 		}
 	
@@ -301,10 +498,10 @@ function deleteSelectedEvent(selectedEvent) {
 	$('#deleteSubmitButton').on('click', function () {
 		selectedEvent.parent().parent().remove();
 
-		updateStateFromDelete(deleteObjInfo.deleteValue);
+		updateStateFromDelete(deleteObjInfo.startTime);
 		$('#deleteConfirm').modal('toggle');
 		$('#feedBackModalDelete').modal('toggle');
-		//console.log(stateOfEvent.slots);
+		//console.log(stateOfEvent.addedSlots);
 	})
 }
 
@@ -315,13 +512,14 @@ function getEventInFormatFromTableCells(tableRow) {
 		formattedEventString.push($(this).text());
 	});
 	
-	
 	var yyyy_mm_dd_format = formatDate(formattedEventString[0]); 
 	
 	var formatStringObj = {
-						displayValue: formattedEventString[0] + ", " + formattedEventString[1] + ", " + formattedEventString[2] + " - " + formattedEventString[3],
-						deleteValue: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2])
-					   }
+						    displayValue: formattedEventString[0] + ", " + formattedEventString[1] + ", " + formattedEventString[2] + " - " + formattedEventString[3],
+						    startTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2]),
+						    endTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[3])
+					      }
+						  
 	return formatStringObj;
 }
 
@@ -335,7 +533,7 @@ function massDelete(arrayWithReadyToDeleteEventRows) {
 	
 	arrayWithReadyToDeleteEventRows.forEach(number => {
 		var deleteObjInfo = getEventInFormatFromTableCells(number);
-		arrayOfEventSlotsToDelete.push(deleteObjInfo.deleteValue);
+		arrayOfEventSlotsToDelete.push(deleteObjInfo.startTime);
 		var listItem = $('<li> ' + deleteObjInfo.displayValue + ' </li>');
 		listItem.addClass('list-group-item');
 		$('.containerForEventsToDelete ul').append(listItem);
@@ -344,25 +542,11 @@ function massDelete(arrayWithReadyToDeleteEventRows) {
 	$('#deleteMassSubmitButton').on('click', function () {
 		$('#deleteConfirm').modal('toggle');
 	
-		//console.log(arrayOfEventSlotsToDelete);
 		for (let i = 0; i < arrayOfEventSlotsToDelete.length; i++)
 		{
 			updateStateFromDelete(arrayOfEventSlotsToDelete[i]);
 			arrayWithReadyToDeleteEventRows[i].remove();
 		}
-		/*	arrayWithReadyToDeleteEvents.forEach(number => {
-			$.ajax({
-				url: "delete_event.php",
-				type: "POST",
-				data: { key: number.parent().children().eq(currPosition).text() },
-			}).done(function (response) {
-				console.log(response);
-			});
-			number.parent().remove();
-			
-		}); */
-		//arrayOfEventSlotsToDelete = [];
-		//console.log(stateOfEvent.slots);
  		$('#feedBackModalDelete').modal('toggle');
 	})
 
@@ -392,7 +576,7 @@ $('.deleteSelectButtonConfirm').on('click', function () {
 	var tempHolder = [];
 
 	
-	$("#existingEventsTable tr td:nth-last-child( " + eventDeleteIndex + " )").each(function () {
+	$("#addEventsTable tr td:nth-last-child( " + eventDeleteIndex + " )").each(function () {
 		if ($(this).children().prop("checked")) {
 			tempHolder.push($(this).parent());
 			atLeastOnSelected = true;
@@ -501,8 +685,9 @@ function callCheckConfirmation(confirmationType) {
 				
 				$('#generalAcceptButton').on('click', function() {
 					changedDuration();
-					$('#existingEventsTable tbody').empty();
-					stateOfEvent.slots = [];
+					$('#addEventsTable tbody').empty();
+					$('#existingEventsTable').addClass("disabled");
+					stateOfEvent.addedSlots = [];
 					$('#generalConfirm').modal('toggle');
 					stateOfEvent.duration = $("#durationSelector option:selected");
 				});
@@ -590,7 +775,7 @@ function changedDuration() {
 	}
 }
 
-function buildModalForSave(modalHeaderName) {
+function buildModalForFormSave(modalHeaderName) {
 	$('#generalHeaderLabel').text(modalHeaderName);
 	
 	var newEventName = $('#eventNameInput').val();
@@ -676,7 +861,7 @@ function saveFormChanges() {
 
 $('#saveForm').on('click', function() {
 	
-	buildModalForSave("Confirm Save");
+	buildModalForFormSave("Confirm Save");
 	$('#generalConfirm').modal('toggle');
 	
 	$('#generalAcceptButton').on('click', function() {
@@ -690,6 +875,90 @@ $('#saveForm').on('click', function() {
 	
 	
 });
+
+function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
+	$('#generalHeaderLabel').text(modalHeaderName);
+	
+	if (addArray.length > 0) 
+	{
+		var toBeAdded = $('<div></div>');
+		var toBeAddLabel = $('<label> Slots to be ADDED: </label>');
+		toBeAdded.append(toBeAddLabel);
+		
+		var addList =  $('<ul></ul>');
+		addList.addClass('list-group saveItemList');
+
+		for (let i = 0; i < addArray.length; i++)
+		{
+			var slotInfo = databaseDateFormatToReadable(addArray[i]);
+			var listItem = $('<li>'+slotInfo.date+' , '+slotInfo.dayName+'  , '+slotInfo.startTime+' - '+slotInfo.endTime+' </li>');
+			listItem.addClass('list-group-item toBeAddedSlots');
+			addList.append(listItem);
+		}
+		toBeAdded.append(addList);
+		$('.confirmationDescriptionContainer').append(toBeAdded);
+		$('.confirmationDescriptionContainer').append('<br><br>');
+	}
+	
+	if (deleteArray.length > 0) 
+	{
+		var toBeDeleted = $('<div></div>');
+		var toBeDeletedLabel = $('<label> Slots to be DELETED: </label>');
+		var deleteList = $('<ul></ul>');
+		deleteList.addClass('list-group saveItemList');
+		toBeDeleted.append(toBeDeletedLabel);
+		
+		var deleteObjInfoHolder = [];
+
+		for (let i = 0; i < deleteArray.length; i++) {
+			var listItem = $('<li>'+deleteArray[i].displayValue+' </li>');
+			listItem.addClass('list-group-item toBeDeletedSlots');
+			deleteList.append(listItem);
+		}
+		
+		toBeDeleted.append(deleteList);
+		$('.confirmationDescriptionContainer').append(toBeDeleted);
+		$('.confirmationDescriptionContainer').append('<br><br>');
+	}
+	
+}
+
+function saveTimeChanges(eventAddArray, eventDeleteArray) {
+	console.log("ADDED SLOTS:")
+	console.log(eventAddArray);
+	console.log("DELETED SLOTS:")
+	console.log(eventDeleteArray);
+}
+
+$('#saveSlots').on('click', function() {
+	
+	var deleteObjInfoHolder = [];
+
+	$("#existingEventsTable tr td:nth-last-child( " + eventDeleteIndex + " )").each(function () {
+		if ($(this).children().prop("checked")) {
+			var deleteObjInfo = getEventInFormatFromTableCells($(this).parent());
+			deleteObjInfoHolder.push(deleteObjInfo);
+		}
+	});
+	
+	if (deleteObjInfoHolder.length < 1 && stateOfEvent.addedSlots < 1)
+		return;
+	
+	buildModalForTimeSave("Confirm Save", stateOfEvent.addedSlots, deleteObjInfoHolder);
+	$('#generalConfirm').modal('toggle');	
+	
+	
+	$('#generalAcceptButton').on('click', function() {
+		saveTimeChanges(stateOfEvent.addedSlots, deleteObjInfoHolder);
+		$('#generalConfirm').modal('toggle');
+	});
+				
+	$('#generalCancelButton').on('click', function() {
+		$('#generalConfirm').modal('toggle');
+	});
+	
+});
+
 
 $('#openAddEvents').on('click', function() {
 	$('#addEventModal').modal('toggle');
@@ -734,10 +1003,11 @@ $('#addEventsButton').on('click', function() {
 		alert("Must have an inputted date before adding!");
 	else
 	{
-		if (arraysNoDuplicate(stateOfEvent.slots, addEventsCheck) === true)
+		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
+		if (arraysNoDuplicate(allSlotsTempArray, addEventsCheck) === true)
 		{
-			for (let i = 0; i < addEventsCheck.length; i++)
-				stateOfEvent.slots.push(addEventsCheck[i]);
+			//for (let i = 0; i < addEventsCheck.length; i++)
+			stateOfEvent.addedSlots = stateOfEvent.addedSlots.concat(addEventsCheck);
 			
 			addToExistingEvent(addEventsCheck);
 			$('#addEventModal').modal('toggle');
@@ -748,23 +1018,14 @@ $('#addEventsButton').on('click', function() {
 	}
 });
 
-
-function appendToExistingEventTable(date, nameOfDay, startTime, endTime) {
+function appendToAddedTable(date, nameOfDay, startTime, endTime) {
 	var newRow = $('<tr></tr>');
-	
+
 	var eventDate = $('<td>'+date+'</td>');
-	eventDate.addClass('editableField');
-	eventDate.on("click", function() {
-		console.log("Event Date Update");
-	});
-	
+
 	var eventDayName = $('<td>'+nameOfDay+'</td>');
 	
 	var eventStartTime = $('<td>'+startTime+'</td>');
-	eventStartTime.addClass('editableField');
-	eventStartTime.on("click", function() {
-		console.log("Event Start Time Update");
-	});
 	
 	var eventEndTime = $('<td>'+endTime+'</td>');
 	
@@ -785,7 +1046,7 @@ function appendToExistingEventTable(date, nameOfDay, startTime, endTime) {
 	var deleteIcon = $('<i></i>');
 	deleteIcon.addClass("fas fa-times");
 	
-	var deleteText = $('<text> Delete</text>');
+	var deleteText = $('<text> Remove</text>');
 	
 	deleteButton.append(deleteIcon);
 	deleteButton.append(deleteText);
@@ -803,33 +1064,44 @@ function appendToExistingEventTable(date, nameOfDay, startTime, endTime) {
 	newRow.append(eventEndTime);
 	newRow.append(deleteOptionCell);
 	
-	$('#existingEventsTable tbody').append(newRow);
+	$('#addEventsTable tbody').append(newRow);
 	
 }
 
+// Input takes a object with start date and end Date (Format: yyyy-mm-dd hh:mm)
+function databaseDateFormatToReadable(databaseDateObj) {
+	var timeInfo = databaseDateObj.startDate.split(' ');
+	var endTimeInfo = databaseDateObj.endDate.split(' ');
+		
+	var dateValue = timeInfo[0];
+	var timeValue = timeInfo[1];
+		
+	var datePieces = dateValue.split("-");
+		
+	datePieces[2] = datePieces[2]; //Remove leading 0's by casting to integer
+	var month = datePieces[1]; // save month to get correct month and day
+	datePieces[1] = datePieces[1] - 1; //day name for object month is off by 1;
+		
+	var dateObj = new Date(datePieces[0], datePieces[1], datePieces[2]);
+	var nameOfDay = getDayName(dateObj);
+	
+	return formatedDateObject = {
+									date: month + "/" + datePieces[2] + "/" + datePieces[0],
+									dayName: nameOfDay,
+									startTime: convertMilitaryTimeToAMPM(timeValue),
+									endTime: convertMilitaryTimeToAMPM(endTimeInfo[1])
+								}
+}
 
 function addToExistingEvent(newSlots) {
 	
 	console.log(newSlots);
+	
 	for (let i = 0; i < newSlots.length; i++) {
-		var timeInfo = newSlots[i].startDate.split(' ');
-		var endTimeInfo = newSlots[i].endDate.split(' ');
-		
-		var dateValue = timeInfo[0];
-		var timeValue = timeInfo[1];
-		
-		var datePieces = dateValue.split("-");
-		
-		datePieces[2] = datePieces[2]; //Remove leading 0's by casting to integer
-		var month = datePieces[1]; // save month to get correct month and day
-		datePieces[1] = datePieces[1] - 1; //day name for object month is off by 1;
-		
-		var dateObj = new Date(datePieces[0], datePieces[1], datePieces[2]);
-		var nameOfDay = getDayName(dateObj);
-		
-		
+		var formattedTime = databaseDateFormatToReadable(newSlots[i]);
+
 		// Values passed in format: mm/dd/yyyy, nameOfDay (e.g. Tuesday), start time (hh:mm AM/PM) - endTime (hh:mm AM/PM)
-		appendToExistingEventTable(month + "/" + datePieces[2] + "/" + datePieces[0], nameOfDay, convertMilitaryTimeToAMPM(timeValue), convertMilitaryTimeToAMPM(endTimeInfo[1]));
+		appendToAddedTable(formattedTime.date, formattedTime.dayName, formattedTime.startTime, formattedTime.endTime);
 	}
 	
 }
