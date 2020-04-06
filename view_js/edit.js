@@ -110,12 +110,9 @@ function buildModalForMoveSlots(modalHeaderName, moveRowArray) {
 		$('.confirmationDescriptionContainer').append(toBeMoved);
 		$('.confirmationDescriptionContainer').append('<br><br>');
 		
-		$('.confirmationDescriptionContainer').append(buildRadioInput("1 Day", "radiOneDay", "moveDatesRadio", 1));
-		$('.confirmationDescriptionContainer').append(buildRadioInput("1 Week", "radioOneWeek", "moveDatesRadio", 7));
-		$('.confirmationDescriptionContainer').append(buildRadioInput("30 Days", "radioOneMonth", "moveDatesRadio", 30));
-		$('.confirmationDescriptionContainer').append('<br><br>');
-		
-		
+		$('.confirmationDescriptionContainer').append(buildRadioInput("Tomorrow", "radiOneDay", "moveDatesRadio", 1));
+		$('.confirmationDescriptionContainer').append(buildRadioInput("Next Week", "radioOneWeek", "moveDatesRadio", 7));
+		$('.confirmationDescriptionContainer').append(buildRadioInput("Next Two Weeks", "radioTwoWeeks", "moveDatesRadio", 14));
 		
 		var datePickerForMove = $('<div></div>');
 		datePickerForMove.addClass('input-group date mb-3');
@@ -167,6 +164,70 @@ function buildModalForMoveSlots(modalHeaderName, moveRowArray) {
 	
 }
 
+function modSlotsByChangeVal(slotsToMod, modValue) {
+	
+	console.log(slotsToMod);
+	var moddedSlots = [];
+	
+	if (modValue === -1 && $('#moveDateInput').val() !== "") {
+		modValue = $('#moveDateInput').val();
+		console.log(modValue);
+		
+		for (let i = 0; i < slotsToMod.length; i++)
+		{
+			var startInfo = slotsToMod[i].startTime.split(" ");
+			var endInfo = slotsToMod[i].endTime.split(" ");
+			
+			var datePieces = modValue.split("/");
+			
+			var moddedSlot = {
+								startDate: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + startInfo[1],
+								endDate: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + endInfo[1]
+							 };
+			moddedSlots.push(moddedSlot);
+		}
+		return moddedSlots;
+		
+	}
+	else if (modValue !== -1) {
+		
+		for (let i = 0; i < slotsToMod.length; i++)
+		{
+			var startInfo = slotsToMod[i].startTime.split(" ");
+			var endInfo = slotsToMod[i].endTime.split(" ");
+			
+			
+			var datePieces = startInfo[0].split("-");
+			
+			var tempDate = new Date(datePieces[0] * 1, datePieces[1] * 1 - 1, datePieces[2] * 1);
+			tempDate.setDate(tempDate.getDate() + parseInt(modValue, 10));
+			
+			var yearPiece = tempDate.getFullYear();
+			
+			var monthPiece = tempDate.getMonth() + 1;
+			if (parseInt(monthPiece,10) < 10)
+				monthPiece = '0' + monthPiece;
+			
+			var dayPiece = tempDate.getDate();
+			if (parseInt(dayPiece,10) < 10)
+				dayPiece = '0' + dayPiece;
+			
+			var dateInfo = yearPiece + "-" + monthPiece + "-" + dayPiece;
+			
+			var moddedSlot = {
+								startDate:  dateInfo + " " + startInfo[1],
+								endDate:  dateInfo + " " + endInfo[1]
+							 };
+			moddedSlots.push(moddedSlot);
+		}
+		console.log(moddedSlots);
+		return moddedSlots;
+	
+	}
+	else
+		alert("Something went wrong");
+}
+
 $('#moveExistingDates').on('click', function() {
 	
 	var toBeMovedRowArray = [];
@@ -178,7 +239,17 @@ $('#moveExistingDates').on('click', function() {
 	});
 	
 	if (toBeMovedRowArray.length < 1)
+	{
+		alert("No Existing Slot(s) selected");
 		return;
+	}
+	
+	var datesToBeMoved = [];
+	
+	for (let i = 0; i < toBeMovedRowArray.length; i++) {
+		var moveInfoObj = getEventInFormatFromTableCells(toBeMovedRowArray[i])
+		datesToBeMoved.push(moveInfoObj);
+	}
 	
 	buildModalForMoveSlots("Move Slots", toBeMovedRowArray);
 	
@@ -186,7 +257,31 @@ $('#moveExistingDates').on('click', function() {
 	
 	
 	$('#generalAcceptButton').on('click', function() {
-		$('#generalConfirm').modal('toggle');
+		var modValue = -1;
+		
+		$(".moveDatesRadio").each(function() {
+			if($(this).prop("checked")) {
+				modValue = $(this).val();
+			}
+		});
+		
+		var newSlots = modSlotsByChangeVal(datesToBeMoved, modValue);
+		var tempAllSlots = existingEventsArray.concat(stateOfEvent.addedSlots);
+		
+		if (arraysNoDuplicate(tempAllSlots, newSlots) == true)
+		{
+			for (let i = 0; i < newSlots.length; i++) {
+				
+				stateOfEvent.addedSlots.push(newSlots[i]);
+				var formattedTime = databaseDateFormatToReadable(newSlots[i]);
+
+				// Values passed in format: mm/dd/yyyy, nameOfDay (e.g. Tuesday), start time (hh:mm AM/PM) - endTime (hh:mm AM/PM)
+				appendToAddedTable(formattedTime.date, formattedTime.dayName, formattedTime.startTime, formattedTime.endTime);
+			}
+			$('#generalConfirm').modal('toggle');
+		}
+		else
+			alert("There is a slot that conflicts with an existing slot or a slot that is already being added. Edit cannot be made");
 	});
 				
 	$('#generalCancelButton').on('click', function() {
