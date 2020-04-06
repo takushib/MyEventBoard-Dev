@@ -13,10 +13,6 @@
     require_once 'php/twig.php';
 
 
-    // render page using twig
 
-    echo $twig -> render(
-        'views/400.twig' 
-    );
 
 ?>
