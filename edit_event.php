@@ -25,36 +25,7 @@
     $insertSuccess = TRUE;
     $deleteSuccess = TRUE;
 
-    if (count($added_slots) > 0) {
-      foreach($added_slots as $slot) {
-
-        $dateQuery = "SELECT mod_date, id FROM event WHERE hash = ?";
-        $statement = $database->prepare($dateQuery);
-        $statement->bind_param('s', $eventHash);
-        $statement->execute();
-        $result = $statement->get_result();
-        $result_array = $result->fetch_all(MYSQLI_ASSOC);
-        $oldModDate = $result_array[0]['mod_date'];
-        $eventKey = $result_array[0]['id'];
-
-        $bigString = $slot['start_date'] + $slot['end_date'] + $eventKey + time();
-        $slotHash = password_hash($bigstring, PASSWORD_BCRYPT);
-
-        $insert_query = 'CALL add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
-        $insert_statement = $database->prepare($insert_query);
-        $insert_statement->bind_param('sssssii', $oldModDate, $eventHash, $slotHash, $slot['start_date'], $slot['end_date'], $slot['duration'], $slot['slot_capacity']);
-        $insert_statement->execute();
-
-        $resultQuery = "SELECT @res2";
-        $addResult = $database->query($resultQuery);
-        $row = $result -> fetch_array(MYSQLI_NUM);
-        if($row != 0) {
-          $insertSuccess = FALSE;
-        }
-      }
-    }
-
-
+    // delete slots if slots exist
     if (count($deleted_slots) > 0) {
 
       foreach($deleted_slots as $slot) {
@@ -103,7 +74,38 @@
       }
     }
 
-    // response
+    // add slots if slots exist
+    if (count($added_slots) > 0) {
+      foreach($added_slots as $slot) {
+
+        $dateQuery = "SELECT mod_date, id FROM event WHERE hash = ?";
+        $statement = $database->prepare($dateQuery);
+        $statement->bind_param('s', $eventHash);
+        $statement->execute();
+        $result = $statement->get_result();
+        $result_array = $result->fetch_all(MYSQLI_ASSOC);
+        $oldModDate = $result_array[0]['mod_date'];
+        $eventKey = $result_array[0]['id'];
+
+        $bigString = $slot['start_date'] + $slot['end_date'] + $eventKey + time();
+        $slotHash = password_hash($bigstring, PASSWORD_BCRYPT);
+
+        $insert_query = 'CALL add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
+        $insert_statement = $database->prepare($insert_query);
+        $insert_statement->bind_param('sssssii', $oldModDate, $eventHash, $slotHash, $slot['start_date'], $slot['end_date'], $slot['duration'], $slot['slot_capacity']);
+        $insert_statement->execute();
+
+        $resultQuery = "SELECT @res2";
+        $addResult = $database->query($resultQuery);
+        $row = $result -> fetch_array(MYSQLI_NUM);
+        if($row != 0) {
+          $insertSuccess = FALSE;
+        }
+      }
+    }
+
+
+    // response to front end 
     if($insertSuccess && $deleteSuccess) {
       echo "Event successfully edited!";
     }
