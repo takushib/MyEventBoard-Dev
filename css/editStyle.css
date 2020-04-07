@@ -129,10 +129,6 @@ label
 	padding: 10px;
 }
 
-.disabled{
-
-}
-
 .fullSlot
 {
 	cursor: not-allowed !important;
@@ -144,8 +140,15 @@ label
     box-shadow: 0 5px white;
 }
 
+.disabledRow {
+	background-color: #ffcccb!important;
+	opacity: 0.75;
+	pointer-events: none;
+}
+
 .selectedRow {
 	background-color: blue!important;
+	color: white;
 }
 
 .toBeAddedSlots {

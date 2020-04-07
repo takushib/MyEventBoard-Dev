@@ -2,33 +2,31 @@ const fileUploadType = "FILEUPLOAD";
 const anonymousCheckType = "ANONYMOUS";
 const capacityType = "CAPACITY";
 const durationType = "DURATION";
+const EDITTAG = "EDIT";
+const CHANGEDDURATIONTAG = "CHANGED DURATION";
 const EVENT_DESCRIPT_LIST_LABEL = "EVENT_DESCRIPTION";
 const confirmationTypeList = [fileUploadType, anonymousCheckType, capacityType, durationType];
 const eventDeleteIndex = 1;
 
-const existingEventsArray = [	
-								{
-									startDate: "2020-04-14 17:00",
-									endDate: "2020-04-14 18:00"
-								}, 
-								{
-									startDate: "2020-05-14 17:00",
-									endDate: "2020-05-14 18:00"
-								}
-							]; // this will be changed to existing events from Database
+const existingEventsArray = []; // this will be changed to existing events from Database. Initially this will be empty and it will be loaded from the init function
+
+							
 const stateOfEvent = {
 						name: "",
 						eventDate: "",
+						eventLocation: "",
+						eventDescription: "",
 						capacity: "",
-						duration: "", 
+						duration: "",	// tracks the previous duration of the state
+						dbDuration: "",	// duration from the DB. Only gets updated on Init/Save
 						fileOption: false,
 						anonymousOption: true,
-						addedSlots: []
+						addedSlots: [],
+						dbSlots: [] // save the snapshot of the DB's existing slot. Only changes on init/save
 					 };
 
-stateOfEvent.capacity = $('#timeslotCapInput').val();
-stateOfEvent.duration = $('#durationSelector option:selected');
-
+const disabledStack = [];  // This will hold arrays of objects with a snapshot of what changes were made at that instance of an edit
+					 
 const weekday = new Array(7);
 
 weekday[0]="Sunday";
@@ -50,19 +48,98 @@ $(function () {
 	$('[data-toggle="tooltip"]').tooltip()
 })
 
-
+function resetTheState() {
+	$('#addEventsTable tbody').empty();
+					
+			$('.disabledRow').each(function() {
+			$('.disabledRow input[type=checkbox]').prop("checked", false);
+			$('.disabledRow input[type=checkbox]').off();
+			$(this).removeClass("disabledRow");
+	});
+					
+	while (disabledStack.length > 0)		
+		disabledStack.pop();
+	
+	stateOfEvent.addedSlots = [];
+}
 
 $(document).ready(function(){
-	initState();
+	var locationsDropDown;
+	
+	$.getJSON('OSU_locations.json',function(data){
+		$.each(data, function(i, locations) {
+			
+			locations.name = locations.name.replace("'", "&#39");
+	
+			locationsDropDown += "<option value='"
+			+locations.name+
+			"'>"+locations.name+"</option>"
+			});
+		$('#locationInput').append(locationsDropDown);
+	});
+	
+	initFormState();
+	initTimeState();
 });
 
-function initState() {
+function initTimeState() {
 	
-	for (let i = 0; i < existingEventsArray.length; i++)
+	var dbDuration = 60;  // Replace these with Duration data from DB
+	stateOfEvent.dbDuration = dbDuration;
+	$('#existingEventsTable tbody').empty();
+
+	 var dbExistingSlots = [{     // Put DB slots in here
+								startDate: "2020-04-14 17:00",
+								endDate: "2020-04-14 18:00"
+							}, 
+							{
+								startDate: "2020-04-15 17:00",
+								endDate: "2020-04-15 18:00"
+							}, 
+							{
+								startDate: "2020-05-14 17:00",
+								endDate: "2020-05-14 18:00"
+							}]; 
+	
+	while (existingEventsArray.length > 0)		
+		existingEventsArray.pop();
+	
+	for (let i = 0; i < dbExistingSlots.length; i++)
 	{
-		var dbObjToReadable = databaseDateFormatToReadable(existingEventsArray[i]);
+		stateOfEvent.dbSlots.push(dbExistingSlots[i]);
+		existingEventsArray.push(dbExistingSlots[i]);
+		var dbObjToReadable = databaseDateFormatToReadable(dbExistingSlots[i]);
 		appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
+		
 	}
+	console.log(existingEventsArray);
+	
+	stateOfEvent.duration = dbDuration;
+	$("#durationSelector").val(dbDuration);
+}
+
+function initFormState() {
+	
+	var dbEventName = "get Event Name from Database and replace this";
+	var dbEventLocation = "Kelly Engineer Center"; // Replace this with val from location in db
+	var dbCapacity = 1;   // Replaee This with Capacity Data from DB
+	var dbFileOption = false; // Replace this with File option from DB
+	var dbAnonymousOption = true; // Replace this with Anonymous option from DB
+	var dbEventDescription = "replace this with DB event description";
+	
+	stateOfEvent.name = dbEventName;
+	stateOfEvent.eventLocation = dbEventLocation;
+	stateOfEvent.fileOption = dbFileOption;
+	stateOfEvent.eventDescription = dbEventDescription;
+	stateOfEvent.anonymousOption = dbAnonymousOption;
+	stateOfEvent.capacity = $('#timeslotCapInput').val();
+	
+	$('#eventNameInput').val(dbEventName);
+	$('#locationInput').val(dbEventLocation);
+	$('#eventDescriptTextArea').val(dbEventDescription);
+	$('#timeslotCapInput').val(dbCapacity);
+	$('#anonymousCheck').prop("checked", dbAnonymousOption);
+	$('#fileUpload').prop("checked", dbFileOption);
 }
 
 function buildRadioInput(nameOfLabel, id, nameOfRadio, valueOfRadio) {
@@ -166,17 +243,17 @@ function buildModalForMoveSlots(modalHeaderName, moveRowArray) {
 
 function modSlotsByChangeVal(slotsToMod, modValue) {
 	
-	console.log(slotsToMod);
+	//console.log(slotsToMod);
 	var moddedSlots = [];
 	
 	if (modValue === -1 && $('#moveDateInput').val() !== "") {
 		modValue = $('#moveDateInput').val();
-		console.log(modValue);
+		//console.log(modValue);
 		
 		for (let i = 0; i < slotsToMod.length; i++)
 		{
-			var startInfo = slotsToMod[i].startTime.split(" ");
-			var endInfo = slotsToMod[i].endTime.split(" ");
+			var startInfo = slotsToMod[i].startDate.split(" ");
+			var endInfo = slotsToMod[i].endDate.split(" ");
 			
 			var datePieces = modValue.split("/");
 			
@@ -193,8 +270,8 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 		
 		for (let i = 0; i < slotsToMod.length; i++)
 		{
-			var startInfo = slotsToMod[i].startTime.split(" ");
-			var endInfo = slotsToMod[i].endTime.split(" ");
+			var startInfo = slotsToMod[i].startDate.split(" ");
+			var endInfo = slotsToMod[i].endDate.split(" ");
 			
 			
 			var datePieces = startInfo[0].split("-");
@@ -220,12 +297,45 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 							 };
 			moddedSlots.push(moddedSlot);
 		}
-		console.log(moddedSlots);
+		//console.log(moddedSlots);
 		return moddedSlots;
 	
 	}
 	else
 		alert("Something went wrong");
+}
+
+function createDisabledInstance(arrayToMoveFrom, toBeRemovedSlots, newSlots, tag) {
+
+	var temp_existing = arrayToMoveFrom;
+	
+	for (let i = 0; i < toBeRemovedSlots.length; i++)
+	{
+		for (let j = 0; j < temp_existing.length; j++)
+		{
+			if (temp_existing[j].startDate == toBeRemovedSlots[i].startDate)
+			{
+				temp_existing.splice(j,1);
+			}
+		}
+	}
+
+	if (arraysNoDuplicate(temp_existing, newSlots) == true)
+	{
+		arrayToMoveFrom = temp_existing;
+		var disabledInstance = {
+									nameOfChange: tag,
+									addedSlots: newSlots,
+									disabledSlots: toBeRemovedSlots
+							   };
+		disabledStack.push(disabledInstance);   
+		//console.log(disabledStack);
+		//console.log(arrayToMoveFrom);
+		return true;
+	}
+	else
+		return false;
+
 }
 
 $('#moveExistingDates').on('click', function() {
@@ -268,20 +378,39 @@ $('#moveExistingDates').on('click', function() {
 		var newSlots = modSlotsByChangeVal(datesToBeMoved, modValue);
 		var tempAllSlots = existingEventsArray.concat(stateOfEvent.addedSlots);
 		
-		if (arraysNoDuplicate(tempAllSlots, newSlots) == true)
+		if (arraysNoDuplicate(stateOfEvent.addedSlots, newSlots) == true)
 		{
-			for (let i = 0; i < newSlots.length; i++) {
-				
-				stateOfEvent.addedSlots.push(newSlots[i]);
-				var formattedTime = databaseDateFormatToReadable(newSlots[i]);
+			if (createDisabledInstance(existingEventsArray, datesToBeMoved, newSlots, EDITTAG) == true)
+			{
+				for (let i = 0; i < newSlots.length; i++) {
+					
+					toBeMovedRowArray[i].addClass("disabledRow");
+					toBeMovedRowArray[i].removeClass("selectedRow");
+					$('.disabledRow input[type=checkbox]').prop("checked", true);
+					$('.disabledRow input[type=checkbox]').on("click", function(e) {
+						e.preventDefault();
+					});
+					
+					
+					stateOfEvent.addedSlots.push(newSlots[i]);
+					var formattedTime = databaseDateFormatToReadable(newSlots[i]);
 
-				// Values passed in format: mm/dd/yyyy, nameOfDay (e.g. Tuesday), start time (hh:mm AM/PM) - endTime (hh:mm AM/PM)
-				appendToAddedTable(formattedTime.date, formattedTime.dayName, formattedTime.startTime, formattedTime.endTime);
+					// Values passed in format: mm/dd/yyyy, nameOfDay (e.g. Tuesday), start time (hh:mm AM/PM) - endTime (hh:mm AM/PM)
+					appendToAddedTable(formattedTime.date, formattedTime.dayName, formattedTime.startTime, formattedTime.endTime);
+				}
+				$('#generalConfirm').modal('toggle');
 			}
-			$('#generalConfirm').modal('toggle');
+			else
+			{
+				alert("duplicate detected");
+				return;
+			}
 		}
 		else
+		{
 			alert("There is a slot that conflicts with an existing slot or a slot that is already being added. Edit cannot be made");
+			return;
+		}
 	});
 				
 	$('#generalCancelButton').on('click', function() {
@@ -337,23 +466,6 @@ $('#hideAddedDates').on("click", function() {
 	$('#addEventsTable').toggleClass("doNotDisplay");
 });
 
-$(document).ready(function(){
-	
-	var locationsDropDown;
-	
-	$.getJSON('OSU_locations.json',function(data){
-		$.each(data, function(i, locations) {
-			
-			locations.name = locations.name.replace("'", "&#39");
-	
-			locationsDropDown += "<option value='"
-			+locations.name+
-			"'>"+locations.name+"</option>"
-			});
-		$('#locationInput').append(locationsDropDown);
-	});
-					
-});
 				
 $(document).ready(function () {
 
@@ -593,7 +705,7 @@ function deleteSelectedEvent(selectedEvent) {
 	$('#deleteSubmitButton').on('click', function () {
 		selectedEvent.parent().parent().remove();
 
-		updateStateFromDelete(deleteObjInfo.startTime);
+		updateStateFromDelete(deleteObjInfo.startDate);
 		$('#deleteConfirm').modal('toggle');
 		$('#feedBackModalDelete').modal('toggle');
 		//console.log(stateOfEvent.addedSlots);
@@ -611,8 +723,8 @@ function getEventInFormatFromTableCells(tableRow) {
 	
 	var formatStringObj = {
 						    displayValue: formattedEventString[0] + ", " + formattedEventString[1] + ", " + formattedEventString[2] + " - " + formattedEventString[3],
-						    startTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2]),
-						    endTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[3])
+						    startDate: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2]),
+						    endDate: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[3])
 					      }
 						  
 	return formatStringObj;
@@ -628,7 +740,7 @@ function massDelete(arrayWithReadyToDeleteEventRows) {
 	
 	arrayWithReadyToDeleteEventRows.forEach(number => {
 		var deleteObjInfo = getEventInFormatFromTableCells(number);
-		arrayOfEventSlotsToDelete.push(deleteObjInfo.startTime);
+		arrayOfEventSlotsToDelete.push(deleteObjInfo.startDate);
 		var listItem = $('<li> ' + deleteObjInfo.displayValue + ' </li>');
 		listItem.addClass('list-group-item');
 		$('.containerForEventsToDelete ul').append(listItem);
@@ -695,8 +807,8 @@ function resetCanceledInput() {
 	
 	var findSelectedDuration = $('#durationSelector').find(":selected");
 	
-	if (stateOfEvent.duration.val() != findSelectedDuration.val())
-		$('#durationSelector').find('option[value="'+ stateOfEvent.duration.val() +'"]').prop('selected', 'selected');
+	if (stateOfEvent.duration != findSelectedDuration.val())
+		$('#durationSelector').find('option[value="'+ stateOfEvent.duration +'"]').prop('selected', 'selected');
 
 	if (stateOfEvent.capacity != $('#timeslotCapInput').val())
 		$('#timeslotCapInput').val(stateOfEvent.capacity);
@@ -779,12 +891,52 @@ function callCheckConfirmation(confirmationType) {
 				$('#generalConfirm').modal('toggle');
 				
 				$('#generalAcceptButton').on('click', function() {
+					
+					resetTheState();
+					
+					if (parseInt($("#durationSelector option:selected").val(), 10) === parseInt((stateOfEvent.dbDuration),10)) {
+						$('.disabledRow').each(function() {
+							$(this).removeClass("disabledRow");
+							$('.disabledRow input[type=checkbox]').prop("checked", false);
+							$('.disabledRow input[type=checkbox]').off();
+						});
+						
+						$('#existingEventsTable tbody').empty();
+						while (existingEventsArray.length > 0)		
+								existingEventsArray.pop();
+						
+						for (let i = 0; i < stateOfEvent.dbSlots.length; i++)
+							existingEventsArray.push(stateOfEvent.dbSlots[i]);
+						
+						for (let i = 0; i < existingEventsArray.length; i++)
+						{	
+							var dbObjToReadable = databaseDateFormatToReadable(existingEventsArray[i]);
+							appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
+						}
+					}
+					else
+					{
+						var tempDisabledExistingEvents = [];
+						$('#existingEventsTable tbody tr').each(function() {
+							$(this).addClass("disabledRow");
+							tempDisabledExistingEvents.push(getEventInFormatFromTableCells($(this)));
+							$('.disabledRow input[type=checkbox]').prop("checked", true);
+							$('.disabledRow input[type=checkbox]').on("click", function(e) {
+								e.preventDefault();
+							});
+						});
+						createDisabledInstance(existingEventsArray, tempDisabledExistingEvents, [], CHANGEDDURATIONTAG);
+					}
+					
+					
 					changedDuration();
-					$('#addEventsTable tbody').empty();
-					$('#existingEventsTable').addClass("disabled");
-					stateOfEvent.addedSlots = [];
+					
+					console.log(stateOfEvent.addedSlots);
+					console.log(existingEventsArray);
+					console.log(disabledStack);
+					
 					$('#generalConfirm').modal('toggle');
-					stateOfEvent.duration = $("#durationSelector option:selected");
+					stateOfEvent.duration = $("#durationSelector option:selected").val();
 				});
 
 				break;
@@ -851,7 +1003,7 @@ function changedDuration() {
 			break;
 
 	}
-	
+
 	for (i = 0; i < totalHours; i++) {
 
 		for (j = 0; j < durationSlots; j++) {
@@ -949,6 +1101,8 @@ function saveFormChanges() {
 	eventSaveVals.push(newEventFileOption);
 	eventSaveVals.push(newEventAnonymousCheck);
 	
+	
+	// Make Save Form AJAX Call here
 	for (let i = 0; i < eventSaveVals.length; i++)
 		console.log(eventSaveVals[i]);
 
@@ -961,6 +1115,7 @@ $('#saveForm').on('click', function() {
 	
 	$('#generalAcceptButton').on('click', function() {
 		saveFormChanges();
+		initFormState();
 		$('#generalConfirm').modal('toggle');
 	});
 				
@@ -1019,6 +1174,8 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 }
 
 function saveTimeChanges(eventAddArray, eventDeleteArray) {
+	
+	// Make Save Time AJAX call here
 	console.log("ADDED SLOTS:")
 	console.log(eventAddArray);
 	console.log("DELETED SLOTS:")
@@ -1030,14 +1187,18 @@ $('#saveSlots').on('click', function() {
 	var deleteObjInfoHolder = [];
 
 	$("#existingEventsTable tr td:nth-last-child( " + eventDeleteIndex + " )").each(function () {
-		if ($(this).children().prop("checked")) {
+		if (!$(this).parent().hasClass("disabledRow") && $(this).children().prop("checked")) {
 			var deleteObjInfo = getEventInFormatFromTableCells($(this).parent());
 			deleteObjInfoHolder.push(deleteObjInfo);
 		}
 	});
 	
+	for (let i = 0; i < disabledStack.length; i++)	// Get the disabled slots back into the delete array
+		deleteObjInfoHolder = deleteObjInfoHolder.concat(disabledStack[i].disabledSlots);
+	
 	if (deleteObjInfoHolder.length < 1 && stateOfEvent.addedSlots < 1)
 		return;
+	
 	
 	buildModalForTimeSave("Confirm Save", stateOfEvent.addedSlots, deleteObjInfoHolder);
 	$('#generalConfirm').modal('toggle');	
@@ -1046,6 +1207,8 @@ $('#saveSlots').on('click', function() {
 	$('#generalAcceptButton').on('click', function() {
 		saveTimeChanges(stateOfEvent.addedSlots, deleteObjInfoHolder);
 		$('#generalConfirm').modal('toggle');
+		resetTheState();
+		initTimeState();
 	});
 				
 	$('#generalCancelButton').on('click', function() {
