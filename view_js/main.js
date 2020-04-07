@@ -128,7 +128,33 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	return newEvent;
 }
 
-function buildContainer(events, todaysDate)
+// Input takes a object with start date and end Date (Format: yyyy-mm-dd hh:mm)
+function databaseDateFormatToReadable(databaseDateObj) {
+	var timeInfo = databaseDateObj.start_time.split(' ');
+	var endTimeInfo = databaseDateObj.end_time.split(' ');
+		
+	var dateValue = timeInfo[0];
+	var timeValue = timeInfo[1];
+		
+	var datePieces = dateValue.split("-");
+		
+	datePieces[2] = datePieces[2]; //Remove leading 0's by casting to integer
+	var month = datePieces[1]; // save month to get correct month and day
+	datePieces[1] = datePieces[1] - 1; //day name for object month is off by 1;
+		
+	var dateObj = new Date(datePieces[0], datePieces[1], datePieces[2]);
+	
+	return formatedDateObject = {
+									year: datePieces[0],
+									month: month,
+									day: datePieces[2],
+									startTime: timeValue,
+									endTime: endTimeInfo[1]
+								}
+}
+
+
+function buildContainer(events)
 {
 	//console.log(events);
 	var newEvent;
@@ -136,11 +162,20 @@ function buildContainer(events, todaysDate)
 	
 	var eventContainer = $('<div></div>');
 	
-	if (formatDate(events[0].start_time) == todaysDate)
+	var	timeObj = databaseDateFormatToReadable(events[0]);
+	
+	var eventDateObj = new Date(timeObj.year, timeObj.month-1, timeObj.day, 0, 0, 0, 0);
+	
+	var todaysDate = new Date();
+	todaysDate.setHours(0,0,0,0);
+	
+	
+	if (todaysDate == eventDateObj)
 	{
 		eventContainer.addClass("todayContainerStyle");
 	}
-	else if (formatDate(events[0].start_time) < todaysDate) {
+	else if (eventDateObj < todaysDate) {
+			
 		eventContainer.addClass("finishedEvent");
 	}
 
@@ -256,7 +291,7 @@ $(document).ready(function () {
 			{
 				if (tempDayHolder.length > 0)
 				{
-					buildContainer(tempDayHolder, getDate(new Date()));
+					buildContainer(tempDayHolder);
 					isThereEvents = true;
 				}
 				tempDayHolder = [];
@@ -266,7 +301,7 @@ $(document).ready(function () {
 
 		}
 		if (tempDayHolder.length > 0) {
-			buildContainer(tempDayHolder, getDate(new Date()));
+			buildContainer(tempDayHolder);
 			isThereEvents = true;
 		}
 		
