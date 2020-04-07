@@ -104,6 +104,8 @@ function initTimeState() {
 	while (existingEventsArray.length > 0)		
 		existingEventsArray.pop();
 	
+	stateOfEvent.dbSlots = [];
+	
 	for (let i = 0; i < dbExistingSlots.length; i++)
 	{
 		stateOfEvent.dbSlots.push(dbExistingSlots[i]);
