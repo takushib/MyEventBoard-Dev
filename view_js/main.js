@@ -169,12 +169,11 @@ function buildContainer(events)
 	var todaysDate = new Date();
 	todaysDate.setHours(0,0,0,0);
 	
-	
-	if (todaysDate == eventDateObj)
+	if (todaysDate.getDate() === eventDateObj.getDate())
 	{
 		eventContainer.addClass("todayContainerStyle");
 	}
-	else if (eventDateObj < todaysDate) {
+	else if (eventDateObj.getDate() < todaysDate.getDate()) {
 			
 		eventContainer.addClass("finishedEvent");
 	}
