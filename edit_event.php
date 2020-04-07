@@ -35,7 +35,6 @@
 
     }
 
-<<<<<<< HEAD
     $added_slots = json_decode($_POST['addedSlots'], true);
     $deleted_slots = json_decode($_POST['deletedSlots'], true);
 
@@ -49,10 +48,6 @@
       // delete slots here
     }
     echo "Event successfully edited!";
-=======
-    $added_slots = json_decode($_POST['added_slots'], true);
-    $deleted_slots = json_decode($_POST['deleted_slots'], true);
->>>>>>> 39632dfc4ab0d2d5bca6bd5d4a7001a4ffd4e449
 
 
 
