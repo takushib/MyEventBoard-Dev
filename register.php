@@ -10,7 +10,12 @@
 
     // set up twig
 
-	require_once 'php/twig.php';
+    require_once 'php/twig.php';
+    
+    // include code for rendering view for errors
+
+    require_once 'php/render_error.php';
+
 
     // get key for event from URL
 
@@ -30,7 +35,8 @@
     // if event data could not be found, show error page
 
     if ($resultRow == NULL) {
-        echo $twig -> render('views/404.twig');
+        $errorCode = 404;
+        render_error($twig, $errorCode, $errorMessages[$errorCode]);
         exit;
     }
 
@@ -54,8 +60,7 @@
             ON T.id = B.fk_timeslot_id
         LEFT JOIN user U 
             ON B.fk_user_id = U.id
-        WHERE 
-            E.hash = ?
+        WHERE E.hash = ?
 
     ";
 

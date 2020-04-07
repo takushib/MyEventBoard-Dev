@@ -12,11 +12,17 @@
 
     require_once 'php/twig.php';
 
+    // include functions for rendering view for errors
+
+    require_once 'php/render_error.php';
+
+
+    // get error code from URL
+
+    $errorCode = ($_GET["code"]);
 
     // render page using twig
 
-    echo $twig -> render(
-        'views/400.twig' 
-    );
+    render_error($twig, $errorCode, $errorMessages[$errorCode]);
 
 ?>

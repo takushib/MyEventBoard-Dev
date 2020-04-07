@@ -6,10 +6,8 @@
 {% block page_content %}
 
 <div class="container text-center objectSpace">
-
-    <h1>Error 400</h1>
-    <p>Oops. Something Went Wrong</p>
-
+    <h1>Error {{ error_code }}</h1>
+    <p>{{ error_message }}</p><br>
 </div>
 
 {% endblock %}
