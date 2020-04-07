@@ -33,7 +33,7 @@
 			<div class="form-group text-nowrap">
 				<label for="locationInput">Location</label>
 				<select name="locationSelector" class="form-control input-lg" id="locationInput">
-					<option selected value=""> Enter a Location </option>
+					<option value=""> Enter a Location </option>
 				
 				</select>
 			</div>
@@ -79,8 +79,8 @@
 
 			
 			<div class="nextBackField">
-				<button type="button" class="btn btn-dark nextBackField" id="clearButton">Clear</button>
-				<button type="button" class="btn btn-dark" id="saveForm">Save Above Changes</button>
+				<button type="button" class="btn btn-dark nextBackField" id="clearFormButton">Clear</button>
+				<button type="button" class="btn btn-dark" id="saveForm">Save Form Changes</button>
 			</div>
 			
 		</form>
@@ -88,7 +88,7 @@
 
 	
 
-	<div class="container collapse entryField2">
+<div class="container collapse entryField2">
 
 	<form>
 
@@ -103,75 +103,87 @@
 			<select class="browser-default custom-select" id="durationSelector">
 			  <option value="15">15 Minutes</option>
 			  <option value="30">30 Minutes</option>
-			  <option value="60" selected>1 Hour </option>
+			  <option value="60">1 Hour </option>
 			</select>
 		</div>
 	</form>
-
+	
 	<div class="manageEditEventsField">
-		<div class="existingEvents">
+		<div class="existingEventsContainer">
 		
 			<div class="form-group">
-				<label id="labelForExistingDates" for="eventDateInput">Existing Dates</label>
+				<label id="labelForExistingDates">Existing Dates</label>
+				<button class="btn btn-sm btn-dark hide" id="moveExistingDates"> <i class="fas fa-edit" aria-hidden="true"></i> </button>
+				<button class="btn btn-sm btn-dark hide" id="hideExistingDates"> <i class="fa fa-eye-slash" aria-hidden="true"></i> </button>
+			</div>
+		
+			<table class="table table-sm" id="existingEventsTable">
+					<thead>
+						<tr>
+						<th scope="col">Date</th>
+						<th scope="col">Day Name</th>
+						<th scope="col">Start Time</th>
+						<th scope="col">End Time</th>
+						<th scope="col">
+						<i class="fa fa-trash selectTrash" aria-hidden="true"></i>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+			</table>
+		</div>
+		<br>
+		<br>
+		<br>
+		<br>
+		<div class="addedEventsContainer">
+		
+			<div class="form-group">
+				<label id="labelForAddedDates" for="eventDateInput">Added Dates</label>
 				<button class="btn btn-sm btn-dark openAddEvents" id="openAddEvents"> <i class="fa fa-plus" aria-hidden="true"></i> </button>
+				<button class="btn btn-sm btn-dark hide" id="hideAddedDates"> <i class="fa fa-eye-slash" aria-hidden="true"></i> </button>
+				
 			</div>
 
-			<table class="table table-sm" id="existingEventsTable">
+			<table class="table table-sm" id="addEventsTable">
 				<thead>
 					<tr>
-					<th scope="col">Date</th>
-					<th scope="col">Day Name</th>
-					<th scope="col">Start Time</th>
-					<th scope="col">End Time</th>
-					<th scope="col">
-						<button class="eventManageButton deleteSelectButton">
-							<i class="fa fa-trash selectTrash" aria-hidden="true"></i>
-							<text> Select </text>
-						</button></th>
+						<th scope="col">Date</th>
+						<th scope="col">Day Name</th>
+						<th scope="col">Start Time</th>
+						<th scope="col">End Time</th>
+						<th scope="col">
+						
+						<div class="btn-group" role="group" aria-label="Basic example">
+							<button class="eventManageButton deleteSelectButton">
+								<i class="fa fa-trash selectTrash" aria-hidden="true"></i>
+								<text> Select </text>
+							</button>
+								<button class="doNotDisplay deleteSelectButtonConfirm">
+								<text> Remove </text>
+							</button>
+						</div>
+						</th>
 					</tr>
 				</thead>
 				<tbody>
 				</tbody>
 			</table>
-			
-			<div id="deleteSelectedConfirmBox">
-				<button class="doNotDisplay btn btn-dark deleteSelectButtonConfirm">
-					<i class="fa fa-trash" aria-hidden="true"></i>
-					<text> Delete Selected Slots </text>
-				</button>
-			</div>
 		
 		</div>
-	
+		<br>
+		<br>
+		<br>
+		<br>
+		<div class="nextBackField">
+				<button type="button" class="btn btn-dark nextBackField" id="clearSlotsButton">Clear</button>
+				<button type="button" class="btn btn-dark" id="saveSlots">Save Slot Changes</button>
+		</div>
 		
 	</div>
 
 	
 </div>
-
-	<!-- Modal -->
-	<div id="generalConfirm" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 id="generalHeaderLabel"></h1>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-				
-				<div class="confirmationDescriptionContainer modal-body">
-				</div>
-				
-				<div class="modal-footer">
-					<button type="button" class="btn btn-dark" id="generalCancelButton" data-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-dark" id="generalAcceptButton">Confirm</button>
-				</div>
-			</div>
-
-		</div>
-
-	</div>
 	
 	<!-- Modal -->
 	<div id="addEventModal" class="modal fade" data-keyboard="false" data-backdrop="static" role="dialog">
@@ -281,12 +293,12 @@
 			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
-					<h1> Confirm Deletion </h1>
+					<h1> Confirm Removal </h1>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
 				<div class="containerForEventsToDelete">
-					<h4 id="deleteEventsHeader"> Slot(s) to be Deleted: </h4>
+					<h4 id="deleteEventsHeader"> Added slot(s) to be Removed: </h4>
 
 					<ul class="list-group"></ul>
 				</div>
@@ -294,7 +306,7 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-dark" id="deleteCancelButton"
 						data-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-dark" id="deleteSubmitButton">Delete</button>
+					<button type="button" class="btn btn-dark" id="deleteSubmitButton">Remove</button>
 				</div>
 			</div>
 
@@ -310,8 +322,32 @@
 			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 id="feedbackDelete" class="modal-title">Slot(s) Deleted!</h4>
+					<h4 id="feedbackDelete" class="modal-title">Slot(s) removed!</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	
+	<!-- Modal -->
+	<div id="generalConfirm" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 id="generalHeaderLabel"></h1>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				
+				<div class="confirmationDescriptionContainer modal-body">
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-dark" id="generalCancelButton" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-dark" id="generalAcceptButton">Confirm</button>
 				</div>
 			</div>
 
