@@ -16,10 +16,12 @@
 
     require_once 'php/notify_user.php';
 
-
+    // get data from POST request
     $added_slots = json_decode($_POST['addedSlots'], true);
     $deleted_slots = json_decode($_POST['deletedSlots'], true);
+    $eventHash = $_POST['eventHash'];
 
+    // initialize error codes
     $insertSuccess = TRUE;
     $deleteSuccess = TRUE;
 
