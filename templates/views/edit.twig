@@ -4,7 +4,7 @@
 	
 	<link rel="stylesheet" href="css/editStyle.css"> 
 
-	{% if user_ONID %} <script>var myONID ='{{user_ONID}}';</script> {% endif %}
+	{% if user_ONID %} <script>var myONID ='{{ user_ONID }}';</script> {% endif %}		
 	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
@@ -12,6 +12,17 @@
 
 
 {% block page_content %}
+
+{% if event_data %} 
+
+	{% for entry in event_data %} 
+	
+		<span class="d-none eventDataEntry">{{ entry|raw }}</span> 
+		
+	{% endfor %}
+
+{% endif %}
+
 
 <div class="container objectSpace">
 
