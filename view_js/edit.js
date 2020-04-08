@@ -38,21 +38,6 @@ weekday[5] = "Friday";
 weekday[6] = "Saturday";
 
 
-
-var eventDataObject = {};
-
-$(document).ready(function () {
-
-	var rawEntries = document.getElementsByClassName('eventDataEntry');
-
-	for (var entry of rawEntries) {
-		var parsedEntry = JSON.parse(entry.innerText);
-		eventDataObject[parsedEntry['slotHash']] = parsedEntry;
-	}
-
-});
-
-
 // Returns week day name of a date obj
 function getDayName(dateObj) {
 	var dayOfWeek = weekday[dateObj.getUTCDay()];
@@ -79,42 +64,52 @@ function resetTheState() {
 }
 
 $(document).ready(function () {
+
 	var locationsDropDown;
 
 	$.getJSON('OSU_locations.json', function (data) {
+
 		$.each(data, function (i, locations) {
-
 			locations.name = locations.name.replace("'", "&#39");
-
-			locationsDropDown += "<option value='"
-				+ locations.name +
-				"'>" + locations.name + "</option>"
+			locationsDropDown += "<option value='" + locations.name + "'>" + locations.name + "</option>"
 		});
+
 		$('#locationInput').append(locationsDropDown);
+
 	});
+
+	var rawEntries = document.getElementsByClassName('eventDataEntry');
+
+	for (var entry of rawEntries) {
+		var parsedEntry = JSON.parse(entry.innerText);
+		existingEventsArray.push(parsedEntry);
+	}
 
 	initFormState();
 	initTimeState();
+
 });
 
 function initTimeState() {
 
-	var dbDuration = 60;  // Replace these with Duration data from DB
+	var timeSlotObjects = [];
+
+	var rawEntries = document.getElementsByClassName('eventDataEntry');
+
+	for (var entry of rawEntries) {
+		var parsedEntry = JSON.parse(entry.innerText);
+		timeSlotObjects.push(parsedEntry);
+	}
+
+	while (rawEntries.length > 0) rawEntries[0].remove();
+
+	var dbExistingSlots = timeSlotObjects;
+
+
+	var dbDuration = dbExistingSlots[0]['duration'];
 	stateOfEvent.dbDuration = dbDuration;
 	$('#existingEventsTable tbody').empty();
-
-	var dbExistingSlots = [{     // Put DB slots in here
-		startDate: "2020-04-14 17:00",
-		endDate: "2020-04-14 18:00"
-	},
-	{
-		startDate: "2020-04-15 17:00",
-		endDate: "2020-04-15 18:00"
-	},
-	{
-		startDate: "2020-05-14 17:00",
-		endDate: "2020-05-14 18:00"
-	}];
+	
 
 	while (existingEventsArray.length > 0)
 		existingEventsArray.pop();
@@ -132,16 +127,17 @@ function initTimeState() {
 
 	stateOfEvent.duration = dbDuration;
 	$("#durationSelector").val(dbDuration);
+
 }
 
 function initFormState() {
 
-	var dbEventName = "get Event Name from Database and replace this";
-	var dbEventLocation = "Kelly Engineer Center"; // Replace this with val from location in db
-	var dbCapacity = 1;   // Replaee This with Capacity Data from DB
+	var dbEventName = existingEventsArray[0]['name'];
+	var dbEventLocation = existingEventsArray[0]['location']; // Replace this with val from location in db
+	var dbCapacity = existingEventsArray[0]['capacity'];   // Replaee This with Capacity Data from DB
 	var dbFileOption = false; // Replace this with File option from DB
 	var dbAnonymousOption = true; // Replace this with Anonymous option from DB
-	var dbEventDescription = "replace this with DB event description";
+	var dbEventDescription = existingEventsArray[0]['description'];
 
 	stateOfEvent.name = dbEventName;
 	stateOfEvent.eventLocation = dbEventLocation;
@@ -156,6 +152,7 @@ function initFormState() {
 	$('#timeslotCapInput').val(dbCapacity);
 	$('#anonymousCheck').prop("checked", dbAnonymousOption);
 	$('#fileUpload').prop("checked", dbFileOption);
+
 }
 
 function buildRadioInput(nameOfLabel, id, nameOfRadio, valueOfRadio) {
@@ -238,7 +235,7 @@ function buildModalForMoveSlots(modalHeaderName, moveRowArray) {
 	$('.confirmationDescriptionContainer').append(datePickerForMove);
 
 	$('#moveDatePicker').datepicker({
-		startDate: new Date(),
+		startTime: new Date(),
 		multidate: false,
 		format: "mm/dd/yyyy",
 		daysOfWeekHighlighted: "5,6",
@@ -267,14 +264,14 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 		//console.log(modValue);
 
 		for (let i = 0; i < slotsToMod.length; i++) {
-			var startInfo = slotsToMod[i].startDate.split(" ");
-			var endInfo = slotsToMod[i].endDate.split(" ");
+			var startInfo = slotsToMod[i].startTime.split(" ");
+			var endInfo = slotsToMod[i].endTime.split(" ");
 
 			var datePieces = modValue.split("/");
 
 			var moddedSlot = {
-				startDate: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + startInfo[1],
-				endDate: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + endInfo[1]
+				startTime: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + startInfo[1],
+				endTime: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + endInfo[1]
 			};
 			moddedSlots.push(moddedSlot);
 		}
@@ -284,8 +281,8 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 	else if (modValue !== -1) {
 
 		for (let i = 0; i < slotsToMod.length; i++) {
-			var startInfo = slotsToMod[i].startDate.split(" ");
-			var endInfo = slotsToMod[i].endDate.split(" ");
+			var startInfo = slotsToMod[i].startTime.split(" ");
+			var endInfo = slotsToMod[i].endTime.split(" ");
 
 
 			var datePieces = startInfo[0].split("-");
@@ -306,8 +303,8 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 			var dateInfo = yearPiece + "-" + monthPiece + "-" + dayPiece;
 
 			var moddedSlot = {
-				startDate: dateInfo + " " + startInfo[1],
-				endDate: dateInfo + " " + endInfo[1]
+				startTime: dateInfo + " " + startInfo[1],
+				endTime: dateInfo + " " + endInfo[1]
 			};
 			moddedSlots.push(moddedSlot);
 		}
@@ -325,7 +322,7 @@ function createDisabledInstance(arrayToMoveFrom, toBeRemovedSlots, newSlots, tag
 
 	for (let i = 0; i < toBeRemovedSlots.length; i++) {
 		for (let j = 0; j < temp_existing.length; j++) {
-			if (temp_existing[j].startDate == toBeRemovedSlots[i].startDate) {
+			if (temp_existing[j].startTime == toBeRemovedSlots[i].startTime) {
 				temp_existing.splice(j, 1);
 			}
 		}
@@ -475,13 +472,8 @@ $('#hideAddedDates').on("click", function () {
 $(document).ready(function () {
 
 	document.getElementById("field1to2").addEventListener("click", function () {
-
-
 		$('.entryField1').addClass('collapse');
 		$('.entryField2').removeClass('collapse');
-
-
-
 	})
 
 	document.getElementById("field2to1").addEventListener("click", function () {
@@ -505,7 +497,7 @@ $(document).ready(function () {
 
 	$('#datepicker').datepicker({
 
-		startDate: new Date(),
+		startTime: new Date(),
 		multidate: true,
 		format: "mm/dd/yyyy",
 		daysOfWeekHighlighted: "5,6",
@@ -608,8 +600,8 @@ function addNewCol(e) {
 		var time = formatTime($(this).children().find('div').text());
 		var date = formatDate(newDateHeader.text());
 		var startValCheckForDupe = [{
-			startDate: (date + " " + time),
-			endDate: null
+			startTime: (date + " " + time),
+			endTime: null
 		}
 		];
 
@@ -684,11 +676,11 @@ $('.deleteEvent').on('click', function () {
 	deleteSelectedEvent($(this));
 })
 
-function updateStateFromDelete(startDateValToBeRemoved) {
+function updateStateFromDelete(startTimeValToBeRemoved) {
 
-	console.log(startDateValToBeRemoved);
+	console.log(startTimeValToBeRemoved);
 	for (let i = 0; i < stateOfEvent.addedSlots.length; i++) {
-		if (stateOfEvent.addedSlots[i].startDate == startDateValToBeRemoved) {
+		if (stateOfEvent.addedSlots[i].startTime == startTimeValToBeRemoved) {
 			stateOfEvent.addedSlots.splice(i, 1);
 		}
 	}
@@ -709,7 +701,7 @@ function deleteSelectedEvent(selectedEvent) {
 	$('#deleteSubmitButton').on('click', function () {
 		selectedEvent.parent().parent().remove();
 
-		updateStateFromDelete(deleteObjInfo.startDate);
+		updateStateFromDelete(deleteObjInfo.startTime);
 		$('#deleteConfirm').modal('toggle');
 		$('#feedBackModalDelete').modal('toggle');
 		//console.log(stateOfEvent.addedSlots);
@@ -727,8 +719,8 @@ function getEventInFormatFromTableCells(tableRow) {
 
 	var formatStringObj = {
 		displayValue: formattedEventString[0] + ", " + formattedEventString[1] + ", " + formattedEventString[2] + " - " + formattedEventString[3],
-		startDate: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2]),
-		endDate: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[3])
+		startTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2]),
+		endTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[3])
 	}
 
 	return formatStringObj;
@@ -744,7 +736,7 @@ function massDelete(arrayWithReadyToDeleteEventRows) {
 
 	arrayWithReadyToDeleteEventRows.forEach(number => {
 		var deleteObjInfo = getEventInFormatFromTableCells(number);
-		arrayOfEventSlotsToDelete.push(deleteObjInfo.startDate);
+		arrayOfEventSlotsToDelete.push(deleteObjInfo.startTime);
 		var listItem = $('<li> ' + deleteObjInfo.displayValue + ' </li>');
 		listItem.addClass('list-group-item');
 		$('.containerForEventsToDelete ul').append(listItem);
@@ -1228,11 +1220,11 @@ function arraysNoDuplicate(superset, subset) {
 		return false;
 
 	let set1 = superset.map((value) => {
-		return value.startDate;
+		return value.startTime;
 	});
 
 	let set2 = subset.map((value) => {
-		return value.startDate;
+		return value.startTime;
 	});
 
 	let createSet = new Set(set1.concat(set2));  // Creating a set will remove all duplicate start Dates
@@ -1318,8 +1310,8 @@ function appendToAddedTable(date, nameOfDay, startTime, endTime) {
 
 // Input takes a object with start date and end Date (Format: yyyy-mm-dd hh:mm)
 function databaseDateFormatToReadable(databaseDateObj) {
-	var timeInfo = databaseDateObj.startDate.split(' ');
-	var endTimeInfo = databaseDateObj.endDate.split(' ');
+	var timeInfo = databaseDateObj.startTime.split(' ');
+	var endTimeInfo = databaseDateObj.endTime.split(' ');
 
 	var dateValue = timeInfo[0];
 	var timeValue = timeInfo[1];
@@ -1406,8 +1398,8 @@ function addEventSlots() {
 					var date = formatDate(currDate);
 					var currTime = $(this).closest('tr').find('th').children().text();
 					var slot = {
-						startDate: date + " " + formatTime(currTime),
-						endDate: date + " " + formatEndTime(currTime)
+						startTime: date + " " + formatTime(currTime),
+						endTime: date + " " + formatEndTime(currTime)
 					};
 					slotArray.push(slot);
 					hasSelected = true;
