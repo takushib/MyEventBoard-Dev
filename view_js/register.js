@@ -130,8 +130,30 @@ function getTodayDate() {
 
 }
 
-$("#submitButton").click(function () {
+function resetMySlot(timeSlotObjects) {
+	
+	$('.mySlot td').text("");
+	$('.mySlot').removeClass("mySlot");		
+	
+	var timeSlotKeys = Object.keys(timeSlotObjects);
+	
+	for (var timeSlotKey of timeSlotKeys) // store current day times into an array to loop through
+	{
+		var timeSlot = timeSlotObjects[timeSlotKey];
+		if(timeSlot.my_slot == 1) {
+			timeSlot.my_slot = 0;
+		}
+	}
+		
+}
 
+$('#myModal').on('hidden.bs.modal', function () {
+	$('#submitButton').off();
+});
+
+function saveRegister() {
+	
+	//console.log("Test");
 	var selectedSlot = getColumnSelect();
 	
 	var selectedDate = $('#dateLabel').text();
@@ -140,13 +162,16 @@ $("#submitButton").click(function () {
 	//console.log(curDate);
 	//console.log(selectedDate);
 	
-	if (selectedSlot === false)
+
+	if (selectedSlot === false) {
 		alert("Please pick a slot.");
+		addSubmitListenerToSubmitButton(); 
+	}
 	else if (checkTimeIfLessThanToday(selectedSlot.prev().children().text(), getCurrentTime()) == true && selectedDate === curDate) {
 		alert("This slot is past the current time. Please pick a different slot");
+		addSubmitListenerToSubmitButton(); 
 	}
 	else {
-
 		var slotKey = selectedSlot.parent().attr('id');
 		$.ajax({
 			type: "POST",
@@ -166,9 +191,12 @@ $("#submitButton").click(function () {
 					"The time slot was full! Please select another one!";
 				$('.fileUpload').addClass('doNotDisplay');
 				$('#feedBackModal').modal('toggle');
+				
+				addSubmitListenerToSubmitButton();
 			}
 			else if (response == 0) {
-				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
+				resetMySlot(timeSlotObjects);
+				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);			
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				document.getElementById('feedbackMessage').textContent = "You have been registered!";
 				$('.fileUpload').removeClass('doNotDisplay');
@@ -176,12 +204,14 @@ $("#submitButton").click(function () {
 				$('#feedBackModal').modal('toggle');
 			}
 			else {
+				
+				resetMySlot(timeSlotObjects);
+				
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
 				timeSlotObjects[slotKey].space = response;
 			}
-
 			monthDayAvailableSpace = getMonthDayAvailableSpace();
 
 			selectedSlot[0].classList.remove('slotSelected');
@@ -189,8 +219,7 @@ $("#submitButton").click(function () {
 		});
 
 	}
-
-});
+}
 
 
 const monthEnum = {
@@ -286,6 +315,12 @@ $(function () {
 
 });
 
+function addSubmitListenerToSubmitButton() {
+	$("#submitButton").one('click', function () {
+		saveRegister();
+	});
+}
+
 // Source: https://jsfiddle.net/christianklemp_imt/b20paum2/
 $(document).ready(function () {
 
@@ -299,6 +334,8 @@ $(document).ready(function () {
 			$('.modal-body #dayLabel').text(dayOfWeek);
 			$('.modal-body #dateLabel').text(e.format());
 			createFields();
+			
+			addSubmitListenerToSubmitButton();
 
 		});
 
