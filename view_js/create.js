@@ -147,7 +147,7 @@ $(document).ready(function () {
 		
 		if (checkIfElementsHaveBeenMaliciouslyRemoved() == false || checkIfElementsHaveBeenMaliciouslyChanged() == false)
 		{
-			window.location = "./400";
+			window.location = "./error?code=400";
 			return;
 		}
 		
@@ -178,7 +178,7 @@ $(document).ready(function () {
 		//	console.log(checkIfElementsHaveBeenMaliciouslyRemoved());
 		//	console.log(checkIfElementsHaveBeenMaliciouslyChanged());
 		//	console.log(checkIfRequiredElementsAreIncorrect());
-			window.location = "./400";
+			window.location = "./error?code=400";
 			return;
 		}
 		

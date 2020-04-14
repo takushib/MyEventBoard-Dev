@@ -12,30 +12,30 @@ const existingEventsArray = []; // this will be changed to existing events from 
 
 
 const stateOfEvent = {
-						name: "",
-						eventDate: "",
-						eventLocation: "",
-						eventDescription: "",
-						capacity: "",
-						duration: "",	// tracks the previous duration of the state
-						dbDuration: "",	// duration from the DB. Only gets updated on Init/Save
-						fileOption: false,
-						anonymousOption: true,
-						addedSlots: [],
-						dbSlots: [] // save the snapshot of the DB's existing slot. Only changes on init/save
-					 };
+	name: "",
+	eventDate: "",
+	eventLocation: "",
+	eventDescription: "",
+	capacity: "",
+	duration: "",	// tracks the previous duration of the state
+	dbDuration: "",	// duration from the DB. Only gets updated on Init/Save
+	fileOption: false,
+	anonymousOption: true,
+	addedSlots: [],
+	dbSlots: [] // save the snapshot of the DB's existing slot. Only changes on init/save
+};
 
 const disabledStack = [];  // This will hold arrays of objects with a snapshot of what changes were made at that instance of an edit
 
 const weekday = new Array(7);
 
-weekday[0]="Sunday";
-weekday[1]="Monday";
-weekday[2]="Tuesday";
-weekday[3]="Wednesday";
-weekday[4]="Thursday";
-weekday[5]="Friday";
-weekday[6]="Saturday";
+weekday[0] = "Sunday";
+weekday[1] = "Monday";
+weekday[2] = "Tuesday";
+weekday[3] = "Wednesday";
+weekday[4] = "Thursday";
+weekday[5] = "Friday";
+weekday[6] = "Saturday";
 
 
 // Returns week day name of a date obj
@@ -49,85 +49,97 @@ $(function () {
 })
 
 function resetTheState() {
+
 	$('#addEventsTable tbody').empty();
 
-			$('.disabledRow').each(function() {
-			$('.disabledRow input[type=checkbox]').prop("checked", false);
-			$('.disabledRow input[type=checkbox]').off();
-			$(this).removeClass("disabledRow");
+	$('.disabledRow').each(function() {
+		$('.disabledRow input[type=checkbox]').prop("checked", false);
+		$('.disabledRow input[type=checkbox]').off();
+		$(this).removeClass("disabledRow");
 	});
 
 	while (disabledStack.length > 0)
 		disabledStack.pop();
 
 	stateOfEvent.addedSlots = [];
+	
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
+
 	var locationsDropDown;
 
-	$.getJSON('OSU_locations.json',function(data){
-		$.each(data, function(i, locations) {
+	$.getJSON('OSU_locations.json', function (data) {
 
+		$.each(data, function (i, locations) {
 			locations.name = locations.name.replace("'", "&#39");
+			locationsDropDown += "<option value='" + locations.name + "'>" + locations.name + "</option>"
+		});
 
-			locationsDropDown += "<option value='"
-			+locations.name+
-			"'>"+locations.name+"</option>"
-			});
 		$('#locationInput').append(locationsDropDown);
+
 	});
+
+	var rawEntries = document.getElementsByClassName('eventDataEntry');
+
+	for (var entry of rawEntries) {
+		var parsedEntry = JSON.parse(entry.innerText);
+		existingEventsArray.push(parsedEntry);
+	}
 
 	initFormState();
 	initTimeState();
+
 });
 
 function initTimeState() {
 
-	var dbDuration = 60;  // Replace these with Duration data from DB
+	var timeSlotObjects = [];
+
+	var rawEntries = document.getElementsByClassName('eventDataEntry');
+
+	for (var entry of rawEntries) {
+		var parsedEntry = JSON.parse(entry.innerText);
+		timeSlotObjects.push(parsedEntry);
+	}
+
+	while (rawEntries.length > 0) rawEntries[0].remove();
+
+	var dbExistingSlots = timeSlotObjects;
+
+
+	var dbDuration = dbExistingSlots[0]['duration'];
 	stateOfEvent.dbDuration = dbDuration;
 	$('#existingEventsTable tbody').empty();
-
-	 var dbExistingSlots = [{     // Put DB slots in here
-								startDate: "2020-04-14 17:00",
-								endDate: "2020-04-14 18:00"
-							},
-							{
-								startDate: "2020-04-15 17:00",
-								endDate: "2020-04-15 18:00"
-							},
-							{
-								startDate: "2020-05-14 17:00",
-								endDate: "2020-05-14 18:00"
-							}];
+	
 
 	while (existingEventsArray.length > 0)
 		existingEventsArray.pop();
 
 	stateOfEvent.dbSlots = [];
 
-	for (let i = 0; i < dbExistingSlots.length; i++)
-	{
+	for (let i = 0; i < dbExistingSlots.length; i++) {
 		stateOfEvent.dbSlots.push(dbExistingSlots[i]);
 		existingEventsArray.push(dbExistingSlots[i]);
 		var dbObjToReadable = databaseDateFormatToReadable(dbExistingSlots[i]);
 		appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
-
 	}
+	
 	console.log(existingEventsArray);
 
 	stateOfEvent.duration = dbDuration;
 	$("#durationSelector").val(dbDuration);
+
 }
 
 function initFormState() {
 
-	var dbEventName = "get Event Name from Database and replace this";
-	var dbEventLocation = "Kelly Engineer Center"; // Replace this with val from location in db
-	var dbCapacity = 1;   // Replaee This with Capacity Data from DB
+	var dbEventName = existingEventsArray[0]['name'];
+	var dbEventLocation = existingEventsArray[0]['location']; // Replace this with val from location in db
+	var dbCapacity = existingEventsArray[0]['capacity'];   // Replaee This with Capacity Data from DB
 	var dbFileOption = false; // Replace this with File option from DB
 	var dbAnonymousOption = true; // Replace this with Anonymous option from DB
-	var dbEventDescription = "replace this with DB event description";
+	var dbEventDescription = existingEventsArray[0]['description'];
 
 	stateOfEvent.name = dbEventName;
 	stateOfEvent.eventLocation = dbEventLocation;
@@ -142,6 +154,7 @@ function initFormState() {
 	$('#timeslotCapInput').val(dbCapacity);
 	$('#anonymousCheck').prop("checked", dbAnonymousOption);
 	$('#fileUpload').prop("checked", dbFileOption);
+
 }
 
 function buildRadioInput(nameOfLabel, id, nameOfRadio, valueOfRadio) {
@@ -160,7 +173,7 @@ function buildRadioInput(nameOfLabel, id, nameOfRadio, valueOfRadio) {
 	var radioLabel = $('<label></label>');
 	radioLabel.append(nameOfLabel);
 	radioLabel.addClass('custom-control-label');
-	radioLabel.attr("for",id);
+	radioLabel.attr("for", id);
 
 	container.append(radioInput);
 	container.append(radioLabel);
@@ -172,74 +185,74 @@ function buildRadioInput(nameOfLabel, id, nameOfRadio, valueOfRadio) {
 function buildModalForMoveSlots(modalHeaderName, moveRowArray) {
 	$('#generalHeaderLabel').text(modalHeaderName);
 
-		var toBeMoved = $('<div></div>');
-		var toBeMovedLabel = $('<label> Slots to be MOVED: </label>');
-		var moveList = $('<ul></ul>');
-		moveList.addClass('list-group saveItemList');
-		toBeMoved.append(toBeMovedLabel);
+	var toBeMoved = $('<div></div>');
+	var toBeMovedLabel = $('<label> Slots to be MOVED: </label>');
+	var moveList = $('<ul></ul>');
+	moveList.addClass('list-group saveItemList');
+	toBeMoved.append(toBeMovedLabel);
 
-		for (let i = 0; i < moveRowArray.length; i++) {
-			var listItemInfo = getEventInFormatFromTableCells(moveRowArray[i])
-			var listItem = $('<li>'+listItemInfo.displayValue+' </li>');
-			listItem.addClass('list-group-item toBeDeletedSlots');
-			moveList.append(listItem);
-		}
+	for (let i = 0; i < moveRowArray.length; i++) {
+		var listItemInfo = getEventInFormatFromTableCells(moveRowArray[i])
+		var listItem = $('<li>' + listItemInfo.displayValue + ' </li>');
+		listItem.addClass('list-group-item toBeDeletedSlots');
+		moveList.append(listItem);
+	}
 
-		toBeMoved.append(moveList);
-		$('.confirmationDescriptionContainer').append(toBeMoved);
-		$('.confirmationDescriptionContainer').append('<br><br>');
+	toBeMoved.append(moveList);
+	$('.confirmationDescriptionContainer').append(toBeMoved);
+	$('.confirmationDescriptionContainer').append('<br><br>');
 
-		$('.confirmationDescriptionContainer').append(buildRadioInput("Tomorrow", "radiOneDay", "moveDatesRadio", 1));
-		$('.confirmationDescriptionContainer').append(buildRadioInput("Next Week", "radioOneWeek", "moveDatesRadio", 7));
-		$('.confirmationDescriptionContainer').append(buildRadioInput("Next Two Weeks", "radioTwoWeeks", "moveDatesRadio", 14));
+	$('.confirmationDescriptionContainer').append(buildRadioInput("Tomorrow", "radiOneDay", "moveDatesRadio", 1));
+	$('.confirmationDescriptionContainer').append(buildRadioInput("Next Week", "radioOneWeek", "moveDatesRadio", 7));
+	$('.confirmationDescriptionContainer').append(buildRadioInput("Next Two Weeks", "radioTwoWeeks", "moveDatesRadio", 14));
 
-		var datePickerForMove = $('<div></div>');
-		datePickerForMove.addClass('input-group date mb-3');
-		datePickerForMove.attr("id", "moveDatePicker");
+	var datePickerForMove = $('<div></div>');
+	datePickerForMove.addClass('input-group date mb-3');
+	datePickerForMove.attr("id", "moveDatePicker");
 
-		var moveDateInput = $('<input></input>');
-		moveDateInput.attr('readonly', true);
-		moveDateInput.attr("type", "text");
-		moveDateInput.attr("name", "moveDates");
-		moveDateInput.attr("id", "moveDateInput");
-		moveDateInput.attr("required", "");
-		moveDateInput.attr("placeholder", "Enter a Date to Move To");
-		moveDateInput.addClass("form-control");
-		datePickerForMove.append(moveDateInput);
+	var moveDateInput = $('<input></input>');
+	moveDateInput.attr('readonly', true);
+	moveDateInput.attr("type", "text");
+	moveDateInput.attr("name", "moveDates");
+	moveDateInput.attr("id", "moveDateInput");
+	moveDateInput.attr("required", "");
+	moveDateInput.attr("placeholder", "Enter a Date to Move To");
+	moveDateInput.addClass("form-control");
+	datePickerForMove.append(moveDateInput);
 
-		var calendarWidget = $('<span></span>');
-		calendarWidget.addClass("input-group-addon");
+	var calendarWidget = $('<span></span>');
+	calendarWidget.addClass("input-group-addon");
 
-		var calendarImage = $('<i></i>');
-		calendarImage.addClass("glyphicon glyphicon-calendar");
+	var calendarImage = $('<i></i>');
+	calendarImage.addClass("glyphicon glyphicon-calendar");
 
-		var spanCount = $('<span></span>');
-		spanCount.addClass('count');
+	var spanCount = $('<span></span>');
+	spanCount.addClass('count');
 
-		calendarWidget.append(calendarImage);
-		calendarWidget.append(spanCount);
+	calendarWidget.append(calendarImage);
+	calendarWidget.append(spanCount);
 
-		datePickerForMove.append(calendarWidget);
+	datePickerForMove.append(calendarWidget);
 
-		$('.confirmationDescriptionContainer').append(datePickerForMove);
+	$('.confirmationDescriptionContainer').append(datePickerForMove);
 
-		$('#moveDatePicker').datepicker({
-			startDate: new Date(),
-			multidate: false,
-			format: "mm/dd/yyyy",
-			daysOfWeekHighlighted: "5,6",
-			language: 'en'
-		}).on('changeDate', function (e) {
+	$('#moveDatePicker').datepicker({
+		startTime: new Date(),
+		multidate: false,
+		format: "mm/dd/yyyy",
+		daysOfWeekHighlighted: "5,6",
+		language: 'en'
+	}).on('changeDate', function (e) {
 
-			$(".moveDatesRadio").each(function() {
-				$(this).prop("checked", false);
-			});
-
+		$(".moveDatesRadio").each(function () {
+			$(this).prop("checked", false);
 		});
 
-		$('.moveDatesRadio').on("click", function() {
-			$('#moveDatePicker').datepicker('update', '');
-		});
+	});
+
+	$('.moveDatesRadio').on("click", function () {
+		$('#moveDatePicker').datepicker('update', '');
+	});
 
 }
 
@@ -252,17 +265,16 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 		modValue = $('#moveDateInput').val();
 		//console.log(modValue);
 
-		for (let i = 0; i < slotsToMod.length; i++)
-		{
-			var startInfo = slotsToMod[i].startDate.split(" ");
-			var endInfo = slotsToMod[i].endDate.split(" ");
+		for (let i = 0; i < slotsToMod.length; i++) {
+			var startInfo = slotsToMod[i].startTime.split(" ");
+			var endInfo = slotsToMod[i].endTime.split(" ");
 
 			var datePieces = modValue.split("/");
 
 			var moddedSlot = {
-								startDate: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + startInfo[1],
-								endDate: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + endInfo[1]
-							 };
+				startTime: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + startInfo[1],
+				endTime: datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + endInfo[1]
+			};
 			moddedSlots.push(moddedSlot);
 		}
 		return moddedSlots;
@@ -270,11 +282,10 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 	}
 	else if (modValue !== -1) {
 
-		for (let i = 0; i < slotsToMod.length; i++)
-		{
-			var startInfo = slotsToMod[i].startDate.split(" ");
-			var endInfo = slotsToMod[i].endDate.split(" ");
+		for (let i = 0; i < slotsToMod.length; i++) {
 
+			var startInfo = slotsToMod[i].startTime.split(" ");
+			var endInfo = slotsToMod[i].endTime.split(" ");
 
 			var datePieces = startInfo[0].split("-");
 
@@ -284,19 +295,19 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 			var yearPiece = tempDate.getFullYear();
 
 			var monthPiece = tempDate.getMonth() + 1;
-			if (parseInt(monthPiece,10) < 10)
+			if (parseInt(monthPiece, 10) < 10)
 				monthPiece = '0' + monthPiece;
 
 			var dayPiece = tempDate.getDate();
-			if (parseInt(dayPiece,10) < 10)
+			if (parseInt(dayPiece, 10) < 10)
 				dayPiece = '0' + dayPiece;
 
 			var dateInfo = yearPiece + "-" + monthPiece + "-" + dayPiece;
 
 			var moddedSlot = {
-								startDate:  dateInfo + " " + startInfo[1],
-								endDate:  dateInfo + " " + endInfo[1]
-							 };
+				startTime: dateInfo + " " + startInfo[1],
+				endTime: dateInfo + " " + endInfo[1]
+			};
 			moddedSlots.push(moddedSlot);
 		}
 		//console.log(moddedSlots);
@@ -311,25 +322,21 @@ function createDisabledInstance(arrayToMoveFrom, toBeRemovedSlots, newSlots, tag
 
 	var temp_existing = arrayToMoveFrom;
 
-	for (let i = 0; i < toBeRemovedSlots.length; i++)
-	{
-		for (let j = 0; j < temp_existing.length; j++)
-		{
-			if (temp_existing[j].startDate == toBeRemovedSlots[i].startDate)
-			{
-				temp_existing.splice(j,1);
+	for (let i = 0; i < toBeRemovedSlots.length; i++) {
+		for (let j = 0; j < temp_existing.length; j++) {
+			if (temp_existing[j].startTime == toBeRemovedSlots[i].startTime) {
+				temp_existing.splice(j, 1);
 			}
 		}
 	}
 
-	if (arraysNoDuplicate(temp_existing, newSlots) == true)
-	{
+	if (arraysNoDuplicate(temp_existing, newSlots) == true) {
 		arrayToMoveFrom = temp_existing;
 		var disabledInstance = {
-									nameOfChange: tag,
-									addedSlots: newSlots,
-									disabledSlots: toBeRemovedSlots
-							   };
+			nameOfChange: tag,
+			addedSlots: newSlots,
+			disabledSlots: toBeRemovedSlots
+		};
 		disabledStack.push(disabledInstance);
 		//console.log(disabledStack);
 		//console.log(arrayToMoveFrom);
@@ -340,18 +347,17 @@ function createDisabledInstance(arrayToMoveFrom, toBeRemovedSlots, newSlots, tag
 
 }
 
-$('#moveExistingDates').on('click', function() {
+$('#moveExistingDates').on('click', function () {
 
 	var toBeMovedRowArray = [];
 
-	$('#existingEventsTable tbody tr').each(function() {
+	$('#existingEventsTable tbody tr').each(function () {
 
 		if ($(this).hasClass("selectedRow"))
 			toBeMovedRowArray.push($(this));
 	});
 
-	if (toBeMovedRowArray.length < 1)
-	{
+	if (toBeMovedRowArray.length < 1) {
 		alert("No Existing Slot(s) selected");
 		return;
 	}
@@ -368,11 +374,11 @@ $('#moveExistingDates').on('click', function() {
 	$('#generalConfirm').modal('toggle');
 
 
-	$('#generalAcceptButton').on('click', function() {
+	$('#generalAcceptButton').on('click', function () {
 		var modValue = -1;
 
-		$(".moveDatesRadio").each(function() {
-			if($(this).prop("checked")) {
+		$(".moveDatesRadio").each(function () {
+			if ($(this).prop("checked")) {
 				modValue = $(this).val();
 			}
 		});
@@ -380,16 +386,14 @@ $('#moveExistingDates').on('click', function() {
 		var newSlots = modSlotsByChangeVal(datesToBeMoved, modValue);
 		var tempAllSlots = existingEventsArray.concat(stateOfEvent.addedSlots);
 
-		if (arraysNoDuplicate(stateOfEvent.addedSlots, newSlots) == true)
-		{
-			if (createDisabledInstance(existingEventsArray, datesToBeMoved, newSlots, EDITTAG) == true)
-			{
+		if (arraysNoDuplicate(stateOfEvent.addedSlots, newSlots) == true) {
+			if (createDisabledInstance(existingEventsArray, datesToBeMoved, newSlots, EDITTAG) == true) {
 				for (let i = 0; i < newSlots.length; i++) {
 
 					toBeMovedRowArray[i].addClass("disabledRow");
 					toBeMovedRowArray[i].removeClass("selectedRow");
 					$('.disabledRow input[type=checkbox]').prop("checked", true);
-					$('.disabledRow input[type=checkbox]').on("click", function(e) {
+					$('.disabledRow input[type=checkbox]').on("click", function (e) {
 						e.preventDefault();
 					});
 
@@ -402,20 +406,18 @@ $('#moveExistingDates').on('click', function() {
 				}
 				$('#generalConfirm').modal('toggle');
 			}
-			else
-			{
+			else {
 				alert("duplicate detected");
 				return;
 			}
 		}
-		else
-		{
+		else {
 			alert("There is a slot that conflicts with an existing slot or a slot that is already being added. Edit cannot be made");
 			return;
 		}
 	});
 
-	$('#generalCancelButton').on('click', function() {
+	$('#generalCancelButton').on('click', function () {
 		$('#generalConfirm').modal('toggle');
 	});
 
@@ -425,21 +427,21 @@ function appendToExistingEventTable(date, nameOfDay, startTime, endTime) {
 	var newRow = $('<tr></tr>');
 	newRow.addClass('editableField');
 
-	newRow.on("click", function() {
+	newRow.on("click", function () {
 		$(this).toggleClass("selectedRow");
 	});
 
-	newRow.on("click", 'td:last-child', function(e) {
+	newRow.on("click", 'td:last-child', function (e) {
 		e.stopPropagation();
 	});
 
-	var eventDate = $('<td>'+date+'</td>');
+	var eventDate = $('<td>' + date + '</td>');
 
-	var eventDayName = $('<td>'+nameOfDay+'</td>');
+	var eventDayName = $('<td>' + nameOfDay + '</td>');
 
-	var eventStartTime = $('<td>'+startTime+'</td>');
+	var eventStartTime = $('<td>' + startTime + '</td>');
 
-	var eventEndTime = $('<td>'+endTime+'</td>');
+	var eventEndTime = $('<td>' + endTime + '</td>');
 
 	var deleteOptionCell = $('<td></td>');
 	var checkedForDelete = $('<input></input>');
@@ -458,12 +460,12 @@ function appendToExistingEventTable(date, nameOfDay, startTime, endTime) {
 
 }
 
-$('#hideExistingDates').on("click", function() {
+$('#hideExistingDates').on("click", function () {
 	$(this).toggleClass('buttonActive');
 	$('#existingEventsTable').toggleClass("doNotDisplay");
 });
 
-$('#hideAddedDates').on("click", function() {
+$('#hideAddedDates').on("click", function () {
 	$(this).toggleClass('buttonActive');
 	$('#addEventsTable').toggleClass("doNotDisplay");
 });
@@ -472,13 +474,8 @@ $('#hideAddedDates').on("click", function() {
 $(document).ready(function () {
 
 	document.getElementById("field1to2").addEventListener("click", function () {
-
-
 		$('.entryField1').addClass('collapse');
 		$('.entryField2').removeClass('collapse');
-
-
-
 	})
 
 	document.getElementById("field2to1").addEventListener("click", function () {
@@ -502,7 +499,7 @@ $(document).ready(function () {
 
 	$('#datepicker').datepicker({
 
-		startDate: new Date(),
+		startTime: new Date(),
 		multidate: true,
 		format: "mm/dd/yyyy",
 		daysOfWeekHighlighted: "5,6",
@@ -600,26 +597,27 @@ function addNewCol(e) {
 	newDateColumn.addClass("removeOnClear");
 	$("#timeSelector tr").not(':first').not(':last').append(newDateColumn);
 
-	$("#timeSelector tr").not(':first').not(':last').each(function() {
+	$("#timeSelector tr").not(':first').not(':last').each(function () {
 
 		var time = formatTime($(this).children().find('div').text());
 		var date = formatDate(newDateHeader.text());
 		var startValCheckForDupe = [{
-										startDate: (date + " " + time),
-										endDate: null}
-								   ];
+			startTime: (date + " " + time),
+			endTime: null
+		}];
 
 		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
 		if (arraysNoDuplicate(allSlotsTempArray, startValCheckForDupe) == false)
 			$(this).children().last().addClass("fullSlot");
+			
 	});
 
 }
 
 function formatDate(currDate) {
 	var year = currDate.substr(-4);
-	var month = currDate.slice(0,2);
-	var day = currDate.slice(3,5);
+	var month = currDate.slice(0, 2);
+	var day = currDate.slice(3, 5);
 	var newDate = year + "-" + month + "-" + day;
 	return newDate;
 }
@@ -655,18 +653,18 @@ function dragTable() {
 
 	$("#timeSelector td").mousedown(function () {
 
-			isMouseDown = true;
+		isMouseDown = true;
+		$(this).toggleClass("selected");
+
+		return false; // prevent text selection
+
+	}).mouseover(function () {
+
+		if (isMouseDown) {
 			$(this).toggleClass("selected");
+		}
 
-			return false; // prevent text selection
-
-		}).mouseover(function () {
-
-			if (isMouseDown) {
-				$(this).toggleClass("selected");
-			}
-
-		});
+	});
 
 	$(document).mouseup(function () {
 		isMouseDown = false;
@@ -680,16 +678,14 @@ $('.deleteEvent').on('click', function () {
 	deleteSelectedEvent($(this));
 })
 
-function updateStateFromDelete(startDateValToBeRemoved) {
+function updateStateFromDelete(startTimeValToBeRemoved) {
 
-		console.log(startDateValToBeRemoved);
-		for(let i=0; i < stateOfEvent.addedSlots.length; i++)
-		{
-			if(stateOfEvent.addedSlots[i].startDate == startDateValToBeRemoved)
-			{
-				stateOfEvent.addedSlots.splice(i, 1);
-			}
+	console.log(startTimeValToBeRemoved);
+	for (let i = 0; i < stateOfEvent.addedSlots.length; i++) {
+		if (stateOfEvent.addedSlots[i].startTime == startTimeValToBeRemoved) {
+			stateOfEvent.addedSlots.splice(i, 1);
 		}
+	}
 
 }
 
@@ -707,7 +703,7 @@ function deleteSelectedEvent(selectedEvent) {
 	$('#deleteSubmitButton').on('click', function () {
 		selectedEvent.parent().parent().remove();
 
-		updateStateFromDelete(deleteObjInfo.startDate);
+		updateStateFromDelete(deleteObjInfo.startTime);
 		$('#deleteConfirm').modal('toggle');
 		$('#feedBackModalDelete').modal('toggle');
 		//console.log(stateOfEvent.addedSlots);
@@ -717,17 +713,17 @@ function deleteSelectedEvent(selectedEvent) {
 function getEventInFormatFromTableCells(tableRow) {
 	var formattedEventString = [];
 
-	tableRow.find('td').not(':last').each(function() {
+	tableRow.find('td').not(':last').each(function () {
 		formattedEventString.push($(this).text());
 	});
 
 	var yyyy_mm_dd_format = formatDate(formattedEventString[0]);
 
 	var formatStringObj = {
-						    displayValue: formattedEventString[0] + ", " + formattedEventString[1] + ", " + formattedEventString[2] + " - " + formattedEventString[3],
-						    startDate: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2]),
-						    endDate: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[3])
-					      }
+		displayValue: formattedEventString[0] + ", " + formattedEventString[1] + ", " + formattedEventString[2] + " - " + formattedEventString[3],
+		startTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[2]),
+		endTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[3])
+	}
 
 	return formatStringObj;
 }
@@ -742,21 +738,23 @@ function massDelete(arrayWithReadyToDeleteEventRows) {
 
 	arrayWithReadyToDeleteEventRows.forEach(number => {
 		var deleteObjInfo = getEventInFormatFromTableCells(number);
-		arrayOfEventSlotsToDelete.push(deleteObjInfo.startDate);
+		arrayOfEventSlotsToDelete.push(deleteObjInfo.startTime);
 		var listItem = $('<li> ' + deleteObjInfo.displayValue + ' </li>');
 		listItem.addClass('list-group-item');
 		$('.containerForEventsToDelete ul').append(listItem);
 	});
 
 	$('#deleteMassSubmitButton').on('click', function () {
+
 		$('#deleteConfirm').modal('toggle');
 
-		for (let i = 0; i < arrayOfEventSlotsToDelete.length; i++)
-		{
+		for (let i = 0; i < arrayOfEventSlotsToDelete.length; i++) {
 			updateStateFromDelete(arrayOfEventSlotsToDelete[i]);
 			arrayWithReadyToDeleteEventRows[i].remove();
 		}
- 		$('#feedBackModalDelete').modal('toggle');
+		
+		$('#feedBackModalDelete').modal('toggle');
+		
 	})
 
 }
@@ -768,7 +766,7 @@ $('#deleteConfirm').on('hidden.bs.modal', function () {
 
 $('.deleteSelectButton').on('click', function () {
 
-	$('.massDeleteOn').each(function() {
+	$('.massDeleteOn').each(function () {
 		$($(this)).prop('checked', false);
 	});
 
@@ -810,7 +808,7 @@ function resetCanceledInput() {
 	var findSelectedDuration = $('#durationSelector').find(":selected");
 
 	if (stateOfEvent.duration != findSelectedDuration.val())
-		$('#durationSelector').find('option[value="'+ stateOfEvent.duration +'"]').prop('selected', 'selected');
+		$('#durationSelector').find('option[value="' + stateOfEvent.duration + '"]').prop('selected', 'selected');
 
 	if (stateOfEvent.capacity != $('#timeslotCapInput').val())
 		$('#timeslotCapInput').val(stateOfEvent.capacity);
@@ -831,7 +829,7 @@ function buildModalForChangeConfirmation(modalHeaderName, description) {
 
 	var warningLabel = $('<label>*Warning*</label>');
 	warningLabel.attr("id", "warningTag");
-	var warningMessage = $('<text> '+description+' </text>');
+	var warningMessage = $('<text> ' + description + ' </text>');
 	warningMessage.attr("id", "confirmationDescription");
 
 	$('.confirmationDescriptionContainer').append(warningLabel);
@@ -845,16 +843,15 @@ function buildModalForChangeConfirmation(modalHeaderName, description) {
 }
 
 function callCheckConfirmation(confirmationType) {
-	if (confirmationTypeList.includes(confirmationType))
-	{
-		switch(confirmationType) {
+	if (confirmationTypeList.includes(confirmationType)) {
+		switch (confirmationType) {
 
 			case fileUploadType:
 
 				buildModalForChangeConfirmation("Confirm Change", "Unchecking the File Upload Check box will cause files currently uploaded to this event to be deleted");
 				$('#generalConfirm').modal('toggle');
 
-				$('#generalAcceptButton').on('click', function() {
+				$('#generalAcceptButton').on('click', function () {
 					$('#generalConfirm').modal('toggle');
 					$('#fileUpload').prop("checked", !$('#fileUpload').prop("checked"));
 				});
@@ -866,7 +863,7 @@ function callCheckConfirmation(confirmationType) {
 				buildModalForChangeConfirmation("Confirm Change", "Unchecking the Anonymous Check box will make registered users visible to other users upon event registration.");
 				$('#generalConfirm').modal('toggle');
 
-				$('#generalAcceptButton').on('click', function() {
+				$('#generalAcceptButton').on('click', function () {
 					$('#generalConfirm').modal('toggle');
 					$('#anonymousCheck').prop("checked", !$('#anonymousCheck').prop("checked"));
 				});
@@ -879,7 +876,7 @@ function callCheckConfirmation(confirmationType) {
 
 				$('#generalConfirm').modal('toggle');
 
-				$('#generalAcceptButton').on('click', function() {
+				$('#generalAcceptButton').on('click', function () {
 					$('#generalConfirm').modal('toggle');
 					stateOfEvent.capacity = $('#timeslotCapInput').val();
 				});
@@ -892,12 +889,12 @@ function callCheckConfirmation(confirmationType) {
 
 				$('#generalConfirm').modal('toggle');
 
-				$('#generalAcceptButton').on('click', function() {
+				$('#generalAcceptButton').on('click', function () {
 
 					resetTheState();
 
-					if (parseInt($("#durationSelector option:selected").val(), 10) === parseInt((stateOfEvent.dbDuration),10)) {
-						$('.disabledRow').each(function() {
+					if (parseInt($("#durationSelector option:selected").val(), 10) === parseInt((stateOfEvent.dbDuration), 10)) {
+						$('.disabledRow').each(function () {
 							$(this).removeClass("disabledRow");
 							$('.disabledRow input[type=checkbox]').prop("checked", false);
 							$('.disabledRow input[type=checkbox]').off();
@@ -905,25 +902,23 @@ function callCheckConfirmation(confirmationType) {
 
 						$('#existingEventsTable tbody').empty();
 						while (existingEventsArray.length > 0)
-								existingEventsArray.pop();
+							existingEventsArray.pop();
 
 						for (let i = 0; i < stateOfEvent.dbSlots.length; i++)
 							existingEventsArray.push(stateOfEvent.dbSlots[i]);
 
-						for (let i = 0; i < existingEventsArray.length; i++)
-						{
+						for (let i = 0; i < existingEventsArray.length; i++) {
 							var dbObjToReadable = databaseDateFormatToReadable(existingEventsArray[i]);
 							appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
 						}
 					}
-					else
-					{
+					else {
 						var tempDisabledExistingEvents = [];
-						$('#existingEventsTable tbody tr').each(function() {
+						$('#existingEventsTable tbody tr').each(function () {
 							$(this).addClass("disabledRow");
 							tempDisabledExistingEvents.push(getEventInFormatFromTableCells($(this)));
 							$('.disabledRow input[type=checkbox]').prop("checked", true);
-							$('.disabledRow input[type=checkbox]').on("click", function(e) {
+							$('.disabledRow input[type=checkbox]').on("click", function (e) {
 								e.preventDefault();
 							});
 						});
@@ -953,21 +948,21 @@ function callCheckConfirmation(confirmationType) {
 
 }
 
-$('#fileUpload').on('click', function(e) {
+$('#fileUpload').on('click', function (e) {
 	e.preventDefault();
 	callCheckConfirmation(fileUploadType);
 });
 
-$('#anonymousCheck').on('click', function(e) {
+$('#anonymousCheck').on('click', function (e) {
 	e.preventDefault();
 	callCheckConfirmation(anonymousCheckType);
 });
 
-$('#timeslotCapInput').on('change', function(e) {
+$('#timeslotCapInput').on('change', function (e) {
 	callCheckConfirmation(capacityType);
 });
 
-$('#durationSelector').on('change', function(e) {
+$('#durationSelector').on('change', function (e) {
 	callCheckConfirmation(durationType);
 });
 
@@ -1047,37 +1042,32 @@ function buildModalForFormSave(modalHeaderName) {
 	list.addClass('list-group saveItemList');
 	$('.confirmationDescriptionContainer').append(list);
 
-	for(let i = 0; i < eventSaveVals.length; i++)
-	{
-		if (typeof eventSaveVals[i][1] === "boolean"){
+	for (let i = 0; i < eventSaveVals.length; i++) {
+		if (typeof eventSaveVals[i][1] === "boolean") {
 
-			if (eventSaveVals[i][1] === false)
-			{
+			if (eventSaveVals[i][1] === false) {
 				var offLabel = $('<text>OFF</text>');
 				offLabel.addClass('offLabel');
-				var changeItem = $('<li><label>'+eventSaveVals[i][0]+':</label> </li>');
+				var changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> </li>');
 				changeItem.append(offLabel);
 			}
-			else if (eventSaveVals[i][1] === true)
-			{
+			else if (eventSaveVals[i][1] === true) {
 				var onLabel = $('<text>ON</text>');
 				onLabel.addClass('onLabel');
-				var changeItem = $('<li><label>'+eventSaveVals[i][0]+':</label> </li>');
+				var changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> </li>');
 				changeItem.append(onLabel);
 			}
 		}
-		else if (eventSaveVals[i][1] === "")
-		{
+		else if (eventSaveVals[i][1] === "") {
 			if (eventSaveVals[i][0] === EVENT_DESCRIPT_LIST_LABEL)
-				var changeItem = $('<li><label>'+eventSaveVals[i][0] +':</label> No Description</li>');
+				var changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> No Description</li>');
 			else
-				var changeItem = $('<li><label>'+eventSaveVals[i][0] +':</label> Unchanged</li>');
+				var changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> Unchanged</li>');
 		}
-		else
-		{
-			var itemValue = $('<text>'+eventSaveVals[i][1]+'</text>');
+		else {
+			var itemValue = $('<text>' + eventSaveVals[i][1] + '</text>');
 			itemValue.addClass('changedLabel');
-			var changeItem = $('<li><label>'+eventSaveVals[i][0] +':</label> </li>');
+			var changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> </li>');
 			changeItem.append(itemValue);
 		}
 		changeItem.addClass('list-group-item');
@@ -1110,18 +1100,18 @@ function saveFormChanges() {
 
 }
 
-$('#saveForm').on('click', function() {
+$('#saveForm').on('click', function () {
 
 	buildModalForFormSave("Confirm Save");
 	$('#generalConfirm').modal('toggle');
 
-	$('#generalAcceptButton').on('click', function() {
+	$('#generalAcceptButton').on('click', function () {
 		saveFormChanges();
 		initFormState();
 		$('#generalConfirm').modal('toggle');
 	});
 
-	$('#generalCancelButton').on('click', function() {
+	$('#generalCancelButton').on('click', function () {
 		$('#generalConfirm').modal('toggle');
 	});
 
@@ -1131,19 +1121,17 @@ $('#saveForm').on('click', function() {
 function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 	$('#generalHeaderLabel').text(modalHeaderName);
 
-	if (addArray.length > 0)
-	{
+	if (addArray.length > 0) {
 		var toBeAdded = $('<div></div>');
 		var toBeAddLabel = $('<label> Slots to be ADDED: </label>');
 		toBeAdded.append(toBeAddLabel);
 
-		var addList =  $('<ul></ul>');
+		var addList = $('<ul></ul>');
 		addList.addClass('list-group saveItemList');
 
-		for (let i = 0; i < addArray.length; i++)
-		{
+		for (let i = 0; i < addArray.length; i++) {
 			var slotInfo = databaseDateFormatToReadable(addArray[i]);
-			var listItem = $('<li>'+slotInfo.date+' , '+slotInfo.dayName+'  , '+slotInfo.startTime+' - '+slotInfo.endTime+' </li>');
+			var listItem = $('<li>' + slotInfo.date + ' , ' + slotInfo.dayName + '  , ' + slotInfo.startTime + ' - ' + slotInfo.endTime + ' </li>');
 			listItem.addClass('list-group-item toBeAddedSlots');
 			addList.append(listItem);
 		}
@@ -1152,8 +1140,7 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 		$('.confirmationDescriptionContainer').append('<br><br>');
 	}
 
-	if (deleteArray.length > 0)
-	{
+	if (deleteArray.length > 0) {
 		var toBeDeleted = $('<div></div>');
 		var toBeDeletedLabel = $('<label> Slots to be DELETED: </label>');
 		var deleteList = $('<ul></ul>');
@@ -1163,7 +1150,7 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 		var deleteObjInfoHolder = [];
 
 		for (let i = 0; i < deleteArray.length; i++) {
-			var listItem = $('<li>'+deleteArray[i].displayValue+' </li>');
+			var listItem = $('<li>' + deleteArray[i].displayValue + ' </li>');
 			listItem.addClass('list-group-item toBeDeletedSlots');
 			deleteList.append(listItem);
 		}
@@ -1176,8 +1163,6 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 }
 
 function saveTimeChanges(eventAddArray, eventDeleteArray) {
-	var newAddArr = JSON.stringify(eventAddArray);
-	var newDeleteArr = JSON.stringify(eventDeleteArray);
 	// Make Save Time AJAX call here
 	$.ajax({
 		type: "POST",
@@ -1195,7 +1180,7 @@ function saveTimeChanges(eventAddArray, eventDeleteArray) {
 	console.log(eventDeleteArray);
 }
 
-$('#saveSlots').on('click', function() {
+$('#saveSlots').on('click', function () {
 
 	var deleteObjInfoHolder = [];
 
@@ -1217,21 +1202,21 @@ $('#saveSlots').on('click', function() {
 	$('#generalConfirm').modal('toggle');
 
 
-	$('#generalAcceptButton').on('click', function() {
+	$('#generalAcceptButton').on('click', function () {
 		saveTimeChanges(stateOfEvent.addedSlots, deleteObjInfoHolder);
 		$('#generalConfirm').modal('toggle');
 		resetTheState();
 		initTimeState();
 	});
 
-	$('#generalCancelButton').on('click', function() {
+	$('#generalCancelButton').on('click', function () {
 		$('#generalConfirm').modal('toggle');
 	});
 
 });
 
 
-$('#openAddEvents').on('click', function() {
+$('#openAddEvents').on('click', function () {
 	$('#addEventModal').modal('toggle');
 	$('#datepicker').datepicker('update', ''); // clear all dates
 	changedDuration(); // update the add cells
@@ -1245,18 +1230,18 @@ $('#addEventModal').on('hidden.bs.modal', function () {
 //source: https://truetocode.com/check-for-duplicates-in-array-of-javascript-objects/
 function arraysNoDuplicate(superset, subset) {
 
-    if (!Array.isArray(superset) || ! Array.isArray(subset))
-      return false;
+	if (!Array.isArray(superset) || !Array.isArray(subset))
+		return false;
 
-	let set1 =  superset.map((value)=>{
-		return value.startDate;
+	let set1 = superset.map((value) => {
+		return value.startTime;
 	});
 
-	let set2 = subset.map((value)=>{
-		return value.startDate;
+	let set2 = subset.map((value) => {
+		return value.startTime;
 	});
 
-	let createSet  = new Set(set1.concat(set2));  // Creating a set will remove all duplicate start Dates
+	let createSet = new Set(set1.concat(set2));  // Creating a set will remove all duplicate start Dates
 
 	let unionSet = set1.concat(set2);
 
@@ -1267,16 +1252,14 @@ function arraysNoDuplicate(superset, subset) {
 
 }
 
-$('#addEventsButton').on('click', function() {
+$('#addEventsButton').on('click', function () {
 	var addEventsCheck = addEventSlots();
 
 	if (addEventsCheck === false || $('#Dates').val() == "")  //addEventsCheck is false when incorrect information is passed. Otherwise it is the slots from adding.
 		alert("Must have an inputted date before adding!");
-	else
-	{
+	else {
 		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
-		if (arraysNoDuplicate(allSlotsTempArray, addEventsCheck) === true)
-		{
+		if (arraysNoDuplicate(allSlotsTempArray, addEventsCheck) === true) {
 			//for (let i = 0; i < addEventsCheck.length; i++)
 			stateOfEvent.addedSlots = stateOfEvent.addedSlots.concat(addEventsCheck);
 
@@ -1292,13 +1275,13 @@ $('#addEventsButton').on('click', function() {
 function appendToAddedTable(date, nameOfDay, startTime, endTime) {
 	var newRow = $('<tr></tr>');
 
-	var eventDate = $('<td>'+date+'</td>');
+	var eventDate = $('<td>' + date + '</td>');
 
-	var eventDayName = $('<td>'+nameOfDay+'</td>');
+	var eventDayName = $('<td>' + nameOfDay + '</td>');
 
-	var eventStartTime = $('<td>'+startTime+'</td>');
+	var eventStartTime = $('<td>' + startTime + '</td>');
 
-	var eventEndTime = $('<td>'+endTime+'</td>');
+	var eventEndTime = $('<td>' + endTime + '</td>');
 
 	var deleteOptionCell = $('<td></td>');
 	var massDeleteOption = $('<input></input>');
@@ -1322,7 +1305,7 @@ function appendToAddedTable(date, nameOfDay, startTime, endTime) {
 	deleteButton.append(deleteIcon);
 	deleteButton.append(deleteText);
 
-	deleteButton.on("click", function() {
+	deleteButton.on("click", function () {
 		deleteSelectedEvent($(this));
 	});
 
@@ -1341,8 +1324,8 @@ function appendToAddedTable(date, nameOfDay, startTime, endTime) {
 
 // Input takes a object with start date and end Date (Format: yyyy-mm-dd hh:mm)
 function databaseDateFormatToReadable(databaseDateObj) {
-	var timeInfo = databaseDateObj.startDate.split(' ');
-	var endTimeInfo = databaseDateObj.endDate.split(' ');
+	var timeInfo = databaseDateObj.startTime.split(' ');
+	var endTimeInfo = databaseDateObj.endTime.split(' ');
 
 	var dateValue = timeInfo[0];
 	var timeValue = timeInfo[1];
@@ -1357,11 +1340,11 @@ function databaseDateFormatToReadable(databaseDateObj) {
 	var nameOfDay = getDayName(dateObj);
 
 	return formatedDateObject = {
-									date: month + "/" + datePieces[2] + "/" + datePieces[0],
-									dayName: nameOfDay,
-									startTime: convertMilitaryTimeToAMPM(timeValue),
-									endTime: convertMilitaryTimeToAMPM(endTimeInfo[1])
-								}
+		date: month + "/" + datePieces[2] + "/" + datePieces[0],
+		dayName: nameOfDay,
+		startTime: convertMilitaryTimeToAMPM(timeValue),
+		endTime: convertMilitaryTimeToAMPM(endTimeInfo[1])
+	}
 }
 
 function addToExistingEvent(newSlots) {
@@ -1380,12 +1363,12 @@ function addToExistingEvent(newSlots) {
 //Military Time to 12 Hour AM/PM
 function convertMilitaryTimeToAMPM(timeInMilitaryFormat) {
 
-    var timeVal = timeInMilitaryFormat.split(":");
+	var timeVal = timeInMilitaryFormat.split(":");
 
-	var hours = parseInt(timeVal[0],10) > 12 ? parseInt(timeVal[0],10) - 12 : parseInt(timeVal[0],10);
-	var AM_PM = parseInt(timeVal[0],10) >= 12 ? "PM" : "AM";
+	var hours = parseInt(timeVal[0], 10) > 12 ? parseInt(timeVal[0], 10) - 12 : parseInt(timeVal[0], 10);
+	var AM_PM = parseInt(timeVal[0], 10) >= 12 ? "PM" : "AM";
 	hours = hours < 10 ? hours : hours;
-	var minutes = parseInt(timeVal[1],10) < 10 ? "0" + parseInt(timeVal[1],10) : parseInt(timeVal[1],10);
+	var minutes = parseInt(timeVal[1], 10) < 10 ? "0" + parseInt(timeVal[1], 10) : parseInt(timeVal[1], 10);
 
 	time = hours + ":" + minutes + " " + AM_PM;
 	return time;
@@ -1398,12 +1381,12 @@ function convertAMPMToMilitary(timeInAMPM) {
 	var hours = Number(time.match(/^(\d+)/)[1]);
 	var minutes = Number(time.match(/:(\d+)/)[1]);
 	var AMPM = time.match(/\s(.*)$/)[1];
-	if(AMPM == "PM" && hours<12) hours = hours+12;
-	if(AMPM == "AM" && hours==12) hours = hours-12;
+	if (AMPM == "PM" && hours < 12) hours = hours + 12;
+	if (AMPM == "AM" && hours == 12) hours = hours - 12;
 	var sHours = hours.toString();
 	var sMinutes = minutes.toString();
-	if(hours<10) sHours = sHours;
-	if(minutes<10) sMinutes = "0" + sMinutes;
+	if (hours < 10) sHours = sHours;
+	if (minutes < 10) sMinutes = "0" + sMinutes;
 	return sHours + ":" + sMinutes;
 }
 
@@ -1429,8 +1412,8 @@ function addEventSlots() {
 					var date = formatDate(currDate);
 					var currTime = $(this).closest('tr').find('th').children().text();
 					var slot = {
-						startDate: date + " " + formatTime(currTime),
-						endDate: date + " " + formatEndTime(currTime)
+						startTime: date + " " + formatTime(currTime),
+						endTime: date + " " + formatEndTime(currTime)
 					};
 					slotArray.push(slot);
 					hasSelected = true;
@@ -1445,7 +1428,7 @@ function addEventSlots() {
 
 	if (hasSelected == false) {
 		return false; // return false if not all column have a selected time
- 	}
+	}
 	else {
 		return slotArray;
 	}

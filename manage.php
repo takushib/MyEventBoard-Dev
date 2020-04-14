@@ -12,6 +12,11 @@
 
 	require_once 'php/twig.php';
 
+    // include code for rendering view for errors
+
+    require_once 'php/render_error.php';
+
+    
     // get key for event from URL
 
     $eventKey = ($_GET["key"]);
@@ -37,7 +42,8 @@
     $resultRow = $result -> fetch_assoc();
 
     if ($resultRow == NULL) {
-        echo $twig -> render('views/404.twig');
+        $errorCode = 404;
+        render_error($twig, $errorCode, $errorMessages[$errorCode]);
         exit;
     }
 
