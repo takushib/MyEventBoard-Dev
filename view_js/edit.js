@@ -1168,6 +1168,7 @@ function saveTimeChanges(eventAddArray, eventDeleteArray) {
 		type: "POST",
 		url: "edit_event.php",
 		data: {
+			eventHash: existingEventsArray[0].eventHash,
 			addedSlots: newAddArr,
 			deletedSlots: newDeleteArr
 		}
