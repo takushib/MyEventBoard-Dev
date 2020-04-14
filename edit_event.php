@@ -17,10 +17,11 @@
     require_once 'php/notify_user.php';
 
     // get data from POST request
+    $siteURL = $_POST['siteURL'];
+    $eventHash = $_POST['eventHash'];
     $added_slots = json_decode($_POST['addedSlots'], true);
     $deleted_slots = json_decode($_POST['deletedSlots'], true);
-    $eventHash = $_POST['eventHash'];
-
+    
     // initialize error codes
     $insertSuccess = TRUE;
     $deleteSuccess = TRUE;
@@ -69,7 +70,7 @@
         // email users who were kicked off after slot was successfully deleted
         if ($emailResult && ($deleteSuccess == TRUE)) {
           $removed_users = $result->fetch_all(MYSQLI_ASSOC);
-          emailUsers($removed_users, $eventHash);
+          emailUsers($removed_users, $siteURL, $eventHash);
         }
       }
     }

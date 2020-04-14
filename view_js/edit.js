@@ -1163,11 +1163,17 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 }
 
 function saveTimeChanges(eventAddArray, eventDeleteArray) {
+
+	var siteURL = window.location.hostname + window.location.pathname;
+	siteURL = window.location.protocol + '//' + siteURL;
+	siteURL = siteURL.slice(0, -4);
+
 	// Make Save Time AJAX call here
 	$.ajax({
 		type: "POST",
 		url: "edit_event.php",
 		data: {
+			siteURL: siteURL,
 			eventHash: existingEventsArray[0].eventHash,
 			addedSlots: newAddArr,
 			deletedSlots: newDeleteArr
@@ -1175,10 +1181,12 @@ function saveTimeChanges(eventAddArray, eventDeleteArray) {
 	}).done(function(response) {
 		alert(response);
 	});
+
 	console.log("ADDED SLOTS:")
 	console.log(eventAddArray);
 	console.log("DELETED SLOTS:")
 	console.log(eventDeleteArray);
+
 }
 
 $('#saveSlots').on('click', function () {
