@@ -69,7 +69,7 @@
         // email users who were kicked off after slot was successfully deleted
         if ($emailResult && ($deleteSuccess == TRUE)) {
           $removed_users = $result->fetch_all(MYSQLI_ASSOC);
-          emailUsers($removed_users, $eventHash);
+          emailUsers($removed_users);
         }
       }
     }
