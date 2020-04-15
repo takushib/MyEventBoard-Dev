@@ -62,7 +62,7 @@ function resetTheState() {
 		disabledStack.pop();
 
 	stateOfEvent.addedSlots = [];
-
+	
 }
 
 $(document).ready(function () {
@@ -87,8 +87,9 @@ $(document).ready(function () {
 		existingEventsArray.push(parsedEntry);
 	}
 
-  initTimeState();
 	initFormState();
+	initTimeState();
+
 });
 
 function initTimeState() {
@@ -606,10 +607,9 @@ function addNewCol(e) {
 		}];
 
 		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
-
 		if (arraysNoDuplicate(allSlotsTempArray, startValCheckForDupe) == false)
 			$(this).children().last().addClass("fullSlot");
-
+			
 	});
 
 }
@@ -752,9 +752,9 @@ function massDelete(arrayWithReadyToDeleteEventRows) {
 			updateStateFromDelete(arrayOfEventSlotsToDelete[i]);
 			arrayWithReadyToDeleteEventRows[i].remove();
 		}
-
+		
 		$('#feedBackModalDelete').modal('toggle');
-
+		
 	})
 
 }
@@ -1164,26 +1164,20 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 
 function saveTimeChanges(eventAddArray, eventDeleteArray) {
 	// Make Save Time AJAX call here
-}
-
-function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
-
-	var eventSlotsFromCacheToBeDeleted = [];
-
-	for (let i = 0; i < deleteDatesArray.length; i++) {
-
-		for (let j = 0; j < dbSlots.length; j++)
-		{
-			if (deleteDatesArray[i].startTime == dbSlots[j].startTime)
-				eventSlotsFromCacheToBeDeleted.push(dbSlots[j]);
+	$.ajax({
+		type: "POST",
+		url: "edit_event.php",
+		data: {
+			addedSlots: newAddArr,
+			deletedSlots: newDeleteArr
 		}
-	}
-	//console.log(eventSlotsFromCacheToBeDeleted);
-	//console.log(deleteDatesArray);
-	//console.log(dbSlots);
-	return eventSlotsFromCacheToBeDeleted;
+	}).done(function(response) {
+		alert(response);
+	});
+	console.log("ADDED SLOTS:")
+	console.log(eventAddArray);
+	console.log("DELETED SLOTS:")
 	console.log(eventDeleteArray);
-
 }
 
 $('#saveSlots').on('click', function () {
@@ -1265,7 +1259,6 @@ $('#addEventsButton').on('click', function () {
 		alert("Must have an inputted date before adding!");
 	else {
 		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
-    
 		if (arraysNoDuplicate(allSlotsTempArray, addEventsCheck) === true) {
 			//for (let i = 0; i < addEventsCheck.length; i++)
 			stateOfEvent.addedSlots = stateOfEvent.addedSlots.concat(addEventsCheck);
