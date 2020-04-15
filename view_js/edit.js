@@ -1183,11 +1183,6 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 }
 
 function saveTimeChanges(eventAddArray, eventDeleteArray) {
-
-	var siteURL = window.location.hostname + window.location.pathname;
-	siteURL = window.location.protocol + '//' + siteURL;
-	siteURL = siteURL.slice(0, -4);
-
 	// Make Save Time AJAX call here
 
 	console.log(eventAddArray);
@@ -1196,13 +1191,13 @@ function saveTimeChanges(eventAddArray, eventDeleteArray) {
 		type: "POST",
 		url: "edit_event.php",
 		data: {
-			addedSlots: eventAddArray,
-			deletedSlots: eventDeleteArray
+			eventHash: existingEventsArray[0].eventHash,
+			addedSlots: newAddArr,
+			deletedSlots: newDeleteArr
 		}
 	}).done(function(response) {
 		alert(response);
 	});
-
 	console.log("ADDED SLOTS:")
 	console.log(eventAddArray);
 	console.log("DELETED SLOTS:")
@@ -1226,6 +1221,7 @@ function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
 	//console.log(deleteDatesArray);
 	//console.log(dbSlots);
 	return eventSlotsFromCacheToBeDeleted;
+
 }
 
 $('#saveSlots').on('click', function () {
