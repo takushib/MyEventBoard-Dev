@@ -1168,6 +1168,7 @@ function saveTimeChanges(eventAddArray, eventDeleteArray) {
 		type: "POST",
 		url: "edit_event.php",
 		data: {
+			eventHash: window.location.search.split('?key=')[1],
 			addedSlots: newAddArr,
 			deletedSlots: newDeleteArr
 		}

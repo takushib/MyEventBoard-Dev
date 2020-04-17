@@ -1,5 +1,5 @@
 <?php
-  function emailUsers($users) {
+  function emailUsers($users, $eventHash) {
     foreach($users as $user) {
       // format email message
       $format = "Hi %s,\n\nThe host for %s has removed the slot that you reserved.\n\n
