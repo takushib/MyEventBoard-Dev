@@ -62,7 +62,7 @@ function resetTheState() {
 		disabledStack.pop();
 
 	stateOfEvent.addedSlots = [];
-	
+
 }
 
 $(document).ready(function () {
@@ -83,7 +83,7 @@ $(document).ready(function () {
 	getDataFromDB();
 	initTimeState();
 	initFormState();
-	
+
 });
 
 function getDataFromDB() {
@@ -97,20 +97,20 @@ function getDataFromDB() {
 	}
 
 	while (rawEntries.length > 0) rawEntries[0].remove();
-	
+
 	while (dbSlots.length > 0)
 		dbSlots.pop();
-	
+
 	for (let i = 0; i < timeSlotObjects.length; i++)
 	{
 		dbSlots.push(timeSlotObjects[i]);
 	}
-	
+
 	for (let i = 0; i < dbSlots.length; i++) {		// Remove the seconds field off start and end time (i.e :00)
 		dbSlots[i].startTime = dbSlots[i].startTime.substring(0, dbSlots[i].startTime.length-3);
 		dbSlots[i].endTime   = dbSlots[i].endTime.substring(0, dbSlots[i].endTime.length-3);
 	}
-	
+
 	console.log(dbSlots);
 }
 
@@ -121,10 +121,10 @@ function initTimeState() {
 	var dbDuration = dbExistingSlots[0]['duration'];
 	stateOfEvent.dbDuration = dbDuration;
 	$('#existingEventsTable tbody').empty();
-	
+
 	while (existingEventsArray.length > 0)
 		existingEventsArray.pop();
-	
+
 
 	stateOfEvent.dbSlots = [];
 
@@ -134,7 +134,7 @@ function initTimeState() {
 		var dbObjToReadable = databaseDateFormatToReadable(dbExistingSlots[i]);
 		appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
 	}
-	
+
 	//console.log(existingEventsArray);
 
 	stateOfEvent.duration = dbDuration;
@@ -331,7 +331,7 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 function createDisabledInstance(arrayToMoveFrom, toBeRemovedSlots, newSlots, tag) {
 
 	var temp_existing = arrayToMoveFrom;
-	
+
 	for (let i = 0; i < toBeRemovedSlots.length; i++) {
 		for (let j = 0; j < temp_existing.length; j++) {
 			if (temp_existing[j].startTime == toBeRemovedSlots[i].startTime) {
@@ -610,7 +610,7 @@ function addNewCol(e) {
 	$("#timeSelector tr").not(':first').not(':last').each(function () {
 
 		var time = formatTime($(this).children().find('div').text());
-	
+
 		var date = formatDate(newDateHeader.text());
 		var startValCheckForDupe = [{
 			startTime: (date + " " + time),
@@ -618,13 +618,13 @@ function addNewCol(e) {
 		}];
 
 		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
-		
+
 	//	console.log(allSlotsTempArray);
 		//console.log(startValCheckForDupe);
-		
+
 		if (arraysNoDuplicate(allSlotsTempArray, startValCheckForDupe) == false)
 			$(this).children().last().addClass("fullSlot");
-			
+
 	});
 
 }
@@ -771,9 +771,9 @@ function massDelete(arrayWithReadyToDeleteEventRows) {
 			updateStateFromDelete(arrayOfEventSlotsToDelete[i]);
 			arrayWithReadyToDeleteEventRows[i].remove();
 		}
-		
+
 		$('#feedBackModalDelete').modal('toggle');
-		
+
 	})
 
 }
@@ -1184,14 +1184,14 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 
 function saveTimeChanges(eventAddArray, eventDeleteArray) {
 	// Make Save Time AJAX call here
-	
+	//console.log(window.location.search.split('?key=')[1]);
 	$.ajax({
 		type: "POST",
 		url: "edit_event.php",
 		data: {
 			eventHash: window.location.search.split('?key=')[1],
-			addedSlots: newAddArr,
-			deletedSlots: newDeleteArr
+			addedSlots: eventAddArray,
+			deletedSlots: eventDeleteArray
 		}
 	}).done(function(response) {
 		alert(response);
@@ -1203,11 +1203,11 @@ function saveTimeChanges(eventAddArray, eventDeleteArray) {
 }
 
 function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
-	
+
 	var eventSlotsFromCacheToBeDeleted = [];
-	
+
 	for (let i = 0; i < deleteDatesArray.length; i++) {
-	
+
 		for (let j = 0; j < dbSlots.length; j++)
 		{
 			if (deleteDatesArray[i].startTime == dbSlots[j].startTime)
@@ -1303,10 +1303,10 @@ $('#addEventsButton').on('click', function () {
 	if (addEventsCheck === false || $('#Dates').val() == "")  //addEventsCheck is false when incorrect information is passed. Otherwise it is the slots from adding.
 		alert("Must have an inputted date before adding!");
 	else {
-		
-		
+
+
 		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
-		
+
 		if (arraysNoDuplicate(allSlotsTempArray, addEventsCheck) === true) {
 			//for (let i = 0; i < addEventsCheck.length; i++)
 			stateOfEvent.addedSlots = stateOfEvent.addedSlots.concat(addEventsCheck);
