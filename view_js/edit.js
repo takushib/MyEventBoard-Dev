@@ -9,7 +9,7 @@ const confirmationTypeList = [fileUploadType, anonymousCheckType, capacityType, 
 const eventDeleteIndex = 1;
 
 const existingEventsArray = []; // this will be changed to existing events from Database. Initially this will be empty and it will be loaded from the init function
-
+const dbSlots = [];
 
 const stateOfEvent = {
 	name: "",
@@ -80,20 +80,13 @@ $(document).ready(function () {
 
 	});
 
-	var rawEntries = document.getElementsByClassName('eventDataEntry');
-
-	for (var entry of rawEntries) {
-		var parsedEntry = JSON.parse(entry.innerText);
-		existingEventsArray.push(parsedEntry);
-	}
-
-	initFormState();
+	getDataFromDB();
 	initTimeState();
-
+	initFormState();
+	
 });
 
-function initTimeState() {
-
+function getDataFromDB() {
 	var timeSlotObjects = [];
 
 	var rawEntries = document.getElementsByClassName('eventDataEntry');
@@ -104,17 +97,34 @@ function initTimeState() {
 	}
 
 	while (rawEntries.length > 0) rawEntries[0].remove();
+	
+	while (dbSlots.length > 0)
+		dbSlots.pop();
+	
+	for (let i = 0; i < timeSlotObjects.length; i++)
+	{
+		dbSlots.push(timeSlotObjects[i]);
+	}
+	
+	for (let i = 0; i < dbSlots.length; i++) {		// Remove the seconds field off start and end time (i.e :00)
+		dbSlots[i].startTime = dbSlots[i].startTime.substring(0, dbSlots[i].startTime.length-3);
+		dbSlots[i].endTime   = dbSlots[i].endTime.substring(0, dbSlots[i].endTime.length-3);
+	}
+	
+	console.log(dbSlots);
+}
 
-	var dbExistingSlots = timeSlotObjects;
+function initTimeState() {
 
+	var dbExistingSlots = dbSlots;
 
 	var dbDuration = dbExistingSlots[0]['duration'];
 	stateOfEvent.dbDuration = dbDuration;
 	$('#existingEventsTable tbody').empty();
 	
-
 	while (existingEventsArray.length > 0)
 		existingEventsArray.pop();
+	
 
 	stateOfEvent.dbSlots = [];
 
@@ -125,7 +135,7 @@ function initTimeState() {
 		appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
 	}
 	
-	console.log(existingEventsArray);
+	//console.log(existingEventsArray);
 
 	stateOfEvent.duration = dbDuration;
 	$("#durationSelector").val(dbDuration);
@@ -134,12 +144,12 @@ function initTimeState() {
 
 function initFormState() {
 
-	var dbEventName = existingEventsArray[0]['name'];
-	var dbEventLocation = existingEventsArray[0]['location']; // Replace this with val from location in db
-	var dbCapacity = existingEventsArray[0]['capacity'];   // Replaee This with Capacity Data from DB
+	var dbEventName = dbSlots[0]['name'];
+	var dbEventLocation = dbSlots[0]['location']; // Replace this with val from location in db
+	var dbCapacity = dbSlots[0]['capacity'];   // Replaee This with Capacity Data from DB
 	var dbFileOption = false; // Replace this with File option from DB
 	var dbAnonymousOption = true; // Replace this with Anonymous option from DB
-	var dbEventDescription = existingEventsArray[0]['description'];
+	var dbEventDescription = dbSlots[0]['description'];
 
 	stateOfEvent.name = dbEventName;
 	stateOfEvent.eventLocation = dbEventLocation;
@@ -321,7 +331,7 @@ function modSlotsByChangeVal(slotsToMod, modValue) {
 function createDisabledInstance(arrayToMoveFrom, toBeRemovedSlots, newSlots, tag) {
 
 	var temp_existing = arrayToMoveFrom;
-
+	
 	for (let i = 0; i < toBeRemovedSlots.length; i++) {
 		for (let j = 0; j < temp_existing.length; j++) {
 			if (temp_existing[j].startTime == toBeRemovedSlots[i].startTime) {
@@ -600,6 +610,7 @@ function addNewCol(e) {
 	$("#timeSelector tr").not(':first').not(':last').each(function () {
 
 		var time = formatTime($(this).children().find('div').text());
+	
 		var date = formatDate(newDateHeader.text());
 		var startValCheckForDupe = [{
 			startTime: (date + " " + time),
@@ -607,6 +618,10 @@ function addNewCol(e) {
 		}];
 
 		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
+		
+	//	console.log(allSlotsTempArray);
+		//console.log(startValCheckForDupe);
+		
 		if (arraysNoDuplicate(allSlotsTempArray, startValCheckForDupe) == false)
 			$(this).children().last().addClass("fullSlot");
 			
@@ -630,8 +645,12 @@ function formatTime(temp) {
 	var hours = startHour + Math.floor(totalMinutes / 60);
 	var minutes = totalMinutes % 60;
 	if (minutes == 0) {
+		if (parseInt(hours,10) < 10)
+			hours = "0" + hours;
 		return hours + ":" + minutes + "0";
 	}
+	if (parseInt(hours,10) < 10)
+		hours = "0" + hours;
 	return hours + ":" + minutes;
 }
 
@@ -848,7 +867,7 @@ function callCheckConfirmation(confirmationType) {
 
 			case fileUploadType:
 
-				buildModalForChangeConfirmation("Confirm Change", "Unchecking the File Upload Check box will cause files currently uploaded to this event to be deleted");
+				buildModalForChangeConfirmation("Confirm Change", "Saving this field unchecked (File Upload Field) will cause files currently uploaded to this event to be deleted");
 				$('#generalConfirm').modal('toggle');
 
 				$('#generalAcceptButton').on('click', function () {
@@ -860,7 +879,7 @@ function callCheckConfirmation(confirmationType) {
 
 			case anonymousCheckType:
 
-				buildModalForChangeConfirmation("Confirm Change", "Unchecking the Anonymous Check box will make registered users visible to other users upon event registration.");
+				buildModalForChangeConfirmation("Confirm Change", "Saving this field unchecked (Anonymous Field) will make registered users visible to other users upon event registration.");
 				$('#generalConfirm').modal('toggle');
 
 				$('#generalAcceptButton').on('click', function () {
@@ -872,7 +891,7 @@ function callCheckConfirmation(confirmationType) {
 
 			case capacityType:
 
-				buildModalForChangeConfirmation("Confirm Change", "Changing the slot capacity may cause currently booked users to be removed off the event in the case the number of booked users exceeds the changed value.");
+				buildModalForChangeConfirmation("Confirm Change", "Saving a change to the slot capacity may cause currently booked users to be removed off the event in the case the number of booked users exceeds the changed value.");
 
 				$('#generalConfirm').modal('toggle');
 
@@ -885,7 +904,7 @@ function callCheckConfirmation(confirmationType) {
 
 			case durationType:
 
-				buildModalForChangeConfirmation("Confirm Change", "Changing the event duration will remove ALL EXISTING EVENT SLOTS and USERS tied to this event.");
+				buildModalForChangeConfirmation("Confirm Change", "Saving a change to the event duration will remove ALL EXISTING EVENT SLOTS and USERS tied to this event.");
 
 				$('#generalConfirm').modal('toggle');
 
@@ -916,6 +935,7 @@ function callCheckConfirmation(confirmationType) {
 						var tempDisabledExistingEvents = [];
 						$('#existingEventsTable tbody tr').each(function () {
 							$(this).addClass("disabledRow");
+							$(this).removeClass("selectedRow");
 							tempDisabledExistingEvents.push(getEventInFormatFromTableCells($(this)));
 							$('.disabledRow input[type=checkbox]').prop("checked", true);
 							$('.disabledRow input[type=checkbox]').on("click", function (e) {
@@ -1164,6 +1184,7 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 
 function saveTimeChanges(eventAddArray, eventDeleteArray) {
 	// Make Save Time AJAX call here
+	
 	$.ajax({
 		type: "POST",
 		url: "edit_event.php",
@@ -1181,10 +1202,29 @@ function saveTimeChanges(eventAddArray, eventDeleteArray) {
 	console.log(eventDeleteArray);
 }
 
+function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
+	
+	var eventSlotsFromCacheToBeDeleted = [];
+	
+	for (let i = 0; i < deleteDatesArray.length; i++) {
+	
+		for (let j = 0; j < dbSlots.length; j++)
+		{
+			if (deleteDatesArray[i].startTime == dbSlots[j].startTime)
+				eventSlotsFromCacheToBeDeleted.push(dbSlots[j]);
+		}
+	}
+	//console.log(eventSlotsFromCacheToBeDeleted);
+	//console.log(deleteDatesArray);
+	//console.log(dbSlots);
+	return eventSlotsFromCacheToBeDeleted;
+}
+
 $('#saveSlots').on('click', function () {
 
 	var deleteObjInfoHolder = [];
 
+	//console.log(disabledStack);
 	$("#existingEventsTable tr td:nth-last-child( " + eventDeleteIndex + " )").each(function () {
 		if (!$(this).parent().hasClass("disabledRow") && $(this).children().prop("checked")) {
 			var deleteObjInfo = getEventInFormatFromTableCells($(this).parent());
@@ -1204,7 +1244,7 @@ $('#saveSlots').on('click', function () {
 
 
 	$('#generalAcceptButton').on('click', function () {
-		saveTimeChanges(stateOfEvent.addedSlots, deleteObjInfoHolder);
+		saveTimeChanges(stateOfEvent.addedSlots, getExistingEventsFromDBCachedSlots(deleteObjInfoHolder));
 		$('#generalConfirm').modal('toggle');
 		resetTheState();
 		initTimeState();
@@ -1230,6 +1270,10 @@ $('#addEventModal').on('hidden.bs.modal', function () {
 
 //source: https://truetocode.com/check-for-duplicates-in-array-of-javascript-objects/
 function arraysNoDuplicate(superset, subset) {
+
+
+	//console.log(superset);
+	//console.log(subset);
 
 	if (!Array.isArray(superset) || !Array.isArray(subset))
 		return false;
@@ -1259,7 +1303,10 @@ $('#addEventsButton').on('click', function () {
 	if (addEventsCheck === false || $('#Dates').val() == "")  //addEventsCheck is false when incorrect information is passed. Otherwise it is the slots from adding.
 		alert("Must have an inputted date before adding!");
 	else {
+		
+		
 		var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
+		
 		if (arraysNoDuplicate(allSlotsTempArray, addEventsCheck) === true) {
 			//for (let i = 0; i < addEventsCheck.length; i++)
 			stateOfEvent.addedSlots = stateOfEvent.addedSlots.concat(addEventsCheck);
@@ -1350,7 +1397,7 @@ function databaseDateFormatToReadable(databaseDateObj) {
 
 function addToExistingEvent(newSlots) {
 
-	console.log(newSlots);
+	//console.log(newSlots);
 
 	for (let i = 0; i < newSlots.length; i++) {
 		var formattedTime = databaseDateFormatToReadable(newSlots[i]);
@@ -1386,7 +1433,7 @@ function convertAMPMToMilitary(timeInAMPM) {
 	if (AMPM == "AM" && hours == 12) hours = hours - 12;
 	var sHours = hours.toString();
 	var sMinutes = minutes.toString();
-	if (hours < 10) sHours = sHours;
+	if (hours < 10) sHours = "0" + sHours;
 	if (minutes < 10) sMinutes = "0" + sMinutes;
 	return sHours + ":" + sMinutes;
 }
