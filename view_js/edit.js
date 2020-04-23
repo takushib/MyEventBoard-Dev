@@ -849,7 +849,7 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray, newDurati
 	var warningLabel2 = $('<label>*WARNING!*</label>');
 	warningLabel2.addClass('warning offLabel');
 	
-	if (newDuration === stateOfEvent.dbDuration)
+	if (newDuration == stateOfEvent.dbDuration)
 		durationText.append(" (Unchanged)");
 	else
 	{
@@ -859,7 +859,7 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray, newDurati
 		durationText.addClass('onLabel');
 	}
 	
-	if (newCapacity === stateOfEvent.dbCapacity)
+	if (newCapacity == stateOfEvent.dbCapacity)
 		capacityText.append(" (Unchanged)");
 	else
 	{
