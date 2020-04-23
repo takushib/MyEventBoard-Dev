@@ -1,8 +1,6 @@
 <?php
 
     // set up session
-    echo "hi";
-    exit();
     require_once 'php/session.php';
 
     // set up connection to database via MySQLi
@@ -35,12 +33,15 @@
 
             // query for existing reservations
 
+
             $emailQuery = "
-                SELECT u.email, u.first_name FROM timeslot t
+                SELECT u.email, u.first_name, e.name as 'event_name' FROM timeslot t
                 INNER JOIN booking b
                 ON t.id = b.fk_timeslot_id
                 INNER JOIN user u
                 ON b.fk_user_id = u.id
+                INNER JOIN event e
+                ON t.fk_event_id = e.id
                 WHERE t.hash = ?
             ";
 
@@ -70,7 +71,7 @@
             $deleteResult = $database->query($resultQuery);
             $row = $result -> fetch_array(MYSQLI_NUM);
 
-            if($row != 0) {
+            if($row[0] != 0) {
                 $deleteSuccess = FALSE;
             }
 
@@ -81,7 +82,7 @@
 
             // email users who were kicked off after slot was successfully deleted
             if ($emailResult && ($deleteSuccess == TRUE)) {
-                $removed_users = $result->fetch_all(MYSQLI_ASSOC);
+                $removed_users = $emailResult->fetch_all(MYSQLI_ASSOC);
                 emailUsers($removed_users, $siteURL);
             }
 
@@ -91,6 +92,7 @@
     // add slots if slots exist
 
     if (count($added_slots) > 0) {
+
         foreach($added_slots as $slot) {
 
             $dateQuery = "SELECT mod_date, id FROM event WHERE hash = ?";
@@ -104,18 +106,18 @@
 
             $bigString = $slot['startTime'] + $slot['endTime'] + $eventKey + time();
             $slotHash = password_hash($bigstring, PASSWORD_BCRYPT);
-
+            $newSD = $slot['startTime'] . ':00';
+            $newED = $slot['endTime'] . ':00';
             $insert_query = 'CALL add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
             $insert_statement = $database->prepare($insert_query);
-            $insert_statement->bind_param('sssssii',
-            $oldModDate, $eventHash, $slotHash, $slot['startTime'], $slot['endTime'], $slot['duration'], $slot['capacity']);
+            $insert_statement->bind_param('sssssii', $oldModDate, $eventHash, $slotHash, $newSD, $newED, $slot['duration'], $slot['capacity']);
             $insert_statement->execute();
 
             $resultQuery = "SELECT @res2";
             $addResult = $database->query($resultQuery);
             $row = $result -> fetch_array(MYSQLI_NUM);
 
-            if($row != 0) {
+            if($row[0] != 0) {
                 $insertSuccess = FALSE;
             }
 
@@ -135,7 +137,7 @@
         if ($insertSuccess && ($deleteSuccess == FALSE)) {
             $errorCode = 2;
         }
-        elseif (($insertSuccess == FALSE)) && $deleteSuccess) {
+        elseif (($insertSuccess == FALSE) && $deleteSuccess) {
             $errorCode = 1;
         }
         else {

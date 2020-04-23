@@ -1185,13 +1185,16 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
 function saveTimeChanges(eventAddArray, eventDeleteArray) {
 	// Make Save Time AJAX call here
 	//console.log(window.location.search.split('?key=')[1]);
+	var newAddArray = JSON.stringify(eventAddArray);
+	var newDeleteArray = JSON.stringify(eventDeleteArray);
 	$.ajax({
 		type: "POST",
 		url: "edit_event.php",
 		data: {
 			eventHash: window.location.search.split('?key=')[1],
-			addedSlots: eventAddArray,
-			deletedSlots: eventDeleteArray
+			addedSlots: newAddArray,
+			deletedSlots: newDeleteArray,
+			slot_duration: parseInt($('#durationSelector').find(":selected").val(), 10)
 		}
 	}).done(function(response) {
 		alert(response);
