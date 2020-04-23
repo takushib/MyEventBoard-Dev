@@ -1,7 +1,6 @@
 <?php
 
     // set up session
-
     require_once 'php/session.php';
 
     // set up connection to database via MySQLi
@@ -23,28 +22,31 @@
     $deleted_slots = json_decode($_POST['deletedSlots'], true);
 
     // initialize error codes
-    
+
     $insertSuccess = TRUE;
     $deleteSuccess = TRUE;
 
     // delete slots if slots exist
-    
+
     if (count($deleted_slots) > 0) {
         foreach($deleted_slots as $slot) {
-        
+
             // query for existing reservations
-            
+
+
             $emailQuery = "
-                SELECT u.email, u.first_name FROM timeslot t
+                SELECT u.email, u.first_name, e.name as 'event_name' FROM timeslot t
                 INNER JOIN booking b
                 ON t.id = b.fk_timeslot_id
                 INNER JOIN user u
                 ON b.fk_user_id = u.id
+                INNER JOIN event e
+                ON t.fk_event_id = e.id
                 WHERE t.hash = ?
             ";
 
             $statement = $database->prepare($emailQuery);
-            $statement->bind_param("s", $slot['hash']);
+            $statement->bind_param("s", $slot['slotHash']);
             $statement->execute();
             $emailResult = $statement->get_result();
 
@@ -62,17 +64,17 @@
 
             $deleteQuery = 'CALL delete_slot(?, ?, ?, @res3)';
             $delete_statement = $database->prepare($deleteQuery);
-            $delete_statement->bind_param("sss", $oldModDate, $eventHash, $slot['hash']);
+            $delete_statement->bind_param("sss", $oldModDate, $eventHash, $slot['slotHash']);
             $delete_statement->execute();
 
             $resultQuery = "SELECT @res3";
             $deleteResult = $database->query($resultQuery);
             $row = $result -> fetch_array(MYSQLI_NUM);
 
-            if($row != 0) {
+            if($row[0] != 0) {
                 $deleteSuccess = FALSE;
             }
-        
+
             // build URL that leads to sign-up page for event
             $developerONID = substr(getcwd(), strlen('/nfs/stak/users/'), -1 * strlen('/public_html/MyEventBoard'));
             $siteURL = 'http://web.engr.oregonstate.edu/~' . $developerONID . '/MyEventBoard/';
@@ -80,7 +82,7 @@
 
             // email users who were kicked off after slot was successfully deleted
             if ($emailResult && ($deleteSuccess == TRUE)) {
-                $removed_users = $result->fetch_all(MYSQLI_ASSOC);
+                $removed_users = $emailResult->fetch_all(MYSQLI_ASSOC);
                 emailUsers($removed_users, $siteURL);
             }
 
@@ -90,6 +92,7 @@
     // add slots if slots exist
 
     if (count($added_slots) > 0) {
+
         foreach($added_slots as $slot) {
 
             $dateQuery = "SELECT mod_date, id FROM event WHERE hash = ?";
@@ -101,20 +104,20 @@
             $oldModDate = $result_array[0]['mod_date'];
             $eventKey = $result_array[0]['id'];
 
-            $bigString = $slot['start_date'] + $slot['end_date'] + $eventKey + time();
+            $bigString = $slot['startTime'] + $slot['endTime'] + $eventKey + time();
             $slotHash = password_hash($bigstring, PASSWORD_BCRYPT);
-
+            $newSD = $slot['startTime'] . ':00';
+            $newED = $slot['endTime'] . ':00';
             $insert_query = 'CALL add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
             $insert_statement = $database->prepare($insert_query);
-            $insert_statement->bind_param('sssssii', 
-            $oldModDate, $eventHash, $slotHash, $slot['start_date'], $slot['end_date'], $slot['duration'], $slot['slot_capacity']);
+            $insert_statement->bind_param('sssssii', $oldModDate, $eventHash, $slotHash, $newSD, $newED, $slot['duration'], $slot['capacity']);
             $insert_statement->execute();
 
             $resultQuery = "SELECT @res2";
             $addResult = $database->query($resultQuery);
             $row = $result -> fetch_array(MYSQLI_NUM);
-            
-            if($row != 0) {
+
+            if($row[0] != 0) {
                 $insertSuccess = FALSE;
             }
 
@@ -122,7 +125,7 @@
     }
 
 
-    // response to front end 
+    // response to front end
 
     if($insertSuccess && $deleteSuccess) {
         echo "Event successfully edited!";
@@ -134,7 +137,7 @@
         if ($insertSuccess && ($deleteSuccess == FALSE)) {
             $errorCode = 2;
         }
-        elseif (($insertSuccess == FALSE)) && $deleteSuccess) {
+        elseif (($insertSuccess == FALSE) && $deleteSuccess) {
             $errorCode = 1;
         }
         else {
