@@ -666,16 +666,10 @@ function deleteAddSlots(arrayWithReadyToDeleteEventRows) {
 		arrayOfEventSlotsToDelete.push(deleteObjInfo.startTime);
 	});
 
-  $('#deleteConfirm').modal('toggle');
-
-		for (let i = 0; i < arrayOfEventSlotsToDelete.length; i++) {
-			updateStateFromDelete(arrayOfEventSlotsToDelete[i]);
-			arrayWithReadyToDeleteEventRows[i].remove();
-		}
-
-		$('#feedBackModalDelete').modal('toggle');
-
-	})
+	for (let i = 0; i < arrayOfEventSlotsToDelete.length; i++) {
+		updateStateFromDelete(arrayOfEventSlotsToDelete[i]);
+		arrayWithReadyToDeleteEventRows[i].remove();
+	}
 
 }
 
