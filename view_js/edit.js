@@ -11,6 +11,7 @@ const stateOfEvent = {
 	capacity: "",
 	duration: "",	// tracks the previous duration of the state
 	dbDuration: "",	// duration from the DB. Only gets updated on Init/Save
+	dbCapacity: "",	// capacity from the DB. Only gets updated on Init/Save
 	addedSlots: [],
 	dbSlots: [] // save the snapshot of the DB's existing slot. Only changes on init/save
 };
@@ -98,6 +99,7 @@ function initTimeState() {
 	stateOfEvent.dbDuration = dbDuration; //snapshot of duration from DB
 	stateOfEvent.duration = dbDuration;	//track previous duration
 	stateOfEvent.capacity = dbCapacity; 
+	stateOfEvent.dbCapacity = dbCapacity; 
 	
 	$("#durationSelector").val(dbDuration);
 	$("#timeslotCapInput").val(dbCapacity);
@@ -829,8 +831,59 @@ function changedDuration() {
 }
 
 
-function buildModalForTimeSave(modalHeaderName, addArray, deleteArray) {
+function buildModalForTimeSave(modalHeaderName, addArray, deleteArray, newDuration, newCapacity) {
 	$('#generalHeaderLabel').text(modalHeaderName);
+	
+	var durationContainerField = $('<div></div>');
+	var durationField = $('<label>Duration: </label>');
+	
+	var capacityContainerField = $('<div></div>');
+	var capacityField = $('<label>Capacity: </label>');
+	
+	var durationText = $('<text> '+newDuration+' Minutes </text>');
+	var capacityText = $('<text> '+newCapacity+' </text>');
+	
+	var warningLabel = $('<label>*WARNING!*</label>');
+	warningLabel.addClass('warning offLabel');
+	
+	var warningLabel2 = $('<label>*WARNING!*</label>');
+	warningLabel2.addClass('warning offLabel');
+	
+	if (newDuration === stateOfEvent.dbDuration)
+		durationText.append(" (Unchanged)");
+	else
+	{
+		durationContainerField.append(warningLabel);
+		durationContainerField.append('<br>');
+		durationContainerField.append("<text>Saving this change will remove all users off the event!</text>");
+		durationText.addClass('onLabel');
+	}
+	
+	if (newCapacity === stateOfEvent.dbCapacity)
+		capacityText.append(" (Unchanged)");
+	else
+	{
+		if (newCapacity < stateOfEvent.dbCapacity)
+		{
+			capacityContainerField.append(warningLabel2);
+			capacityContainerField.append('<br>');
+			capacityContainerField.append("<text>Saving this change may remove users off an existing slot!</text>");
+		}
+		capacityText.addClass('onLabel');
+	}
+	durationField.append(durationText);
+	durationContainerField.append(durationField);
+	
+	capacityField.append(capacityText);
+	capacityContainerField.append(capacityField);
+	
+	$('.confirmationDescriptionContainer').append(durationContainerField);
+	$('.confirmationDescriptionContainer').append('<br>');
+	$('.confirmationDescriptionContainer').append(capacityContainerField);
+	$('.confirmationDescriptionContainer').append('<br>');
+	
+	
+	$('.confirmationDescriptionContainer').append('<br><br>');
 
 	if (addArray.length > 0) {
 		var toBeAdded = $('<div></div>');
@@ -892,7 +945,10 @@ function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
 	return eventSlotsFromCacheToBeDeleted;
 }
 
-function saveTimeChanges(eventAddArray, eventDeleteArray) {
+function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, eventNewCapacity) {
+	
+	console.log(eventNewDuration);
+	console.log(eventNewCapacity);
 	// Make Save Time AJAX call here
 	//console.log(window.location.search.split('?key=')[1]);
 	var newAddArray = JSON.stringify(eventAddArray);
@@ -915,7 +971,7 @@ function saveTimeChanges(eventAddArray, eventDeleteArray) {
 	console.log(eventDeleteArray);
 }
 
-$('#saveSlots').one('click', function () {
+$('#saveSlots').on('click', function () {
 
 	var deleteObjInfoHolder = [];
 
@@ -930,16 +986,20 @@ $('#saveSlots').one('click', function () {
 	for (let i = 0; i < disabledStack.length; i++)	// Get the disabled slots back into the delete array
 		deleteObjInfoHolder = deleteObjInfoHolder.concat(disabledStack[i].disabledSlots);
 
-	if (deleteObjInfoHolder.length < 1 && stateOfEvent.addedSlots < 1)
+	console.log(stateOfEvent.capacity);
+	console.log(stateOfEvent.dbCapacity);
+	if (deleteObjInfoHolder.length < 1 && stateOfEvent.addedSlots < 1 && stateOfEvent.capacity == stateOfEvent.dbCapacity)
+	{
+		alert("No Changes have been made");
 		return;
+	}
 
-
-	buildModalForTimeSave("Confirm Save", stateOfEvent.addedSlots, deleteObjInfoHolder);
+	buildModalForTimeSave("Confirm Save", stateOfEvent.addedSlots, deleteObjInfoHolder, stateOfEvent.duration, stateOfEvent.capacity);
 	$('#generalConfirm').modal('toggle');
 
 
 	$('#generalAcceptButton').one('click', function () {
-		saveTimeChanges(stateOfEvent.addedSlots, getExistingEventsFromDBCachedSlots(deleteObjInfoHolder), stateOfEvent);
+		saveTimeChanges(stateOfEvent.addedSlots, getExistingEventsFromDBCachedSlots(deleteObjInfoHolder), stateOfEvent.duration, stateOfEvent.capacity);
 		$('#generalConfirm').modal('toggle');
 		resetTheState();
 	});
