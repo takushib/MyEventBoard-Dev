@@ -16,11 +16,13 @@
 {% if event_data %} 
 
 	{% for entry in event_data %} 
-	
-		<span class="d-none eventDataEntry">{{ entry|raw }}</span> 
 		
+		<span class="d-none eventDataForFormEntry">{{ entry|raw }}</span>
+		<span class="d-none eventDataEntry">{{ entry|raw }}</span> 
+			
 	{% endfor %}
-
+ 
+	
 {% endif %}
 
 
@@ -55,12 +57,6 @@
 				<textarea class="form-control rounded-0" id="eventDescriptTextArea" rows="3"></textarea>
 			</div>
 
-			<div class="form-group text-nowrap">
-				<label for="timeslotCapInput">Capacity per Timeslot</label>
-				<span style="padding-left:10px; color:orange;" class="fa fa-exclamation-triangle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Changing this value may cause users booked to a slot in this event to be removed off."></span>
-				<input type="number" min="1" oninput="validity.valid||(value='');" class="form-control mb-4" id="timeslotCapInput" placeholder="Enter a capacity (default: 1)">
-			</div>
-
 			<!--  This is the input text where you can insert a file with a list of ONIDs to send emails to. Not implemented for now.
 			<div class="form-group text-nowrap">
 				<label for="dumpFileInput">User Notification Dump File</label>
@@ -90,7 +86,7 @@
 
 			
 			<div class="nextBackField">
-				<button type="button" class="btn btn-dark nextBackField" id="clearFormButton">Clear</button>
+				<button type="button" class="btn btn-dark nextBackField" id="resetFormButton">Reset</button>
 				<button type="button" class="btn btn-dark" id="saveForm">Save Form Changes</button>
 			</div>
 			
@@ -109,6 +105,12 @@
 			</div>
 		</div>
 		
+		<div class="form-group text-nowrap">
+			<label for="timeslotCapInput">Capacity per Timeslot</label>
+			<span style="padding-left:10px; color:orange;" class="fa fa-exclamation-triangle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Changing this value may cause users booked to a slot in this event to be removed off."></span>
+			<input type="number" min="1" oninput="validity.valid||(value='');" class="form-control mb-4" id="timeslotCapInput" placeholder="Enter a capacity (default: 1)">
+		</div>
+		
 		<div class="form-group">
 			<label for="eventSlotDurationInput">Slot Duration <i style="padding-left: 10px; color: red;" class="fa fa-exclamation-triangle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="WARNING: Changing this value will cause all existing event slots to be deleted!"></i></label>
 			<select class="browser-default custom-select" id="durationSelector">
@@ -124,7 +126,7 @@
 		
 			<div class="form-group">
 				<label id="labelForExistingDates">Existing Dates</label>
-				<button class="btn btn-sm btn-dark hide" id="moveExistingDates"> <i class="fas fa-edit" aria-hidden="true"></i> </button>
+				<button class="btn btn-sm btn-dark hide" id="editExistingSlots"> <i class="fas fa-edit" aria-hidden="true"></i> </button>
 				<button class="btn btn-sm btn-dark hide" id="hideExistingDates"> <i class="fa fa-eye-slash" aria-hidden="true"></i> </button>
 			</div>
 		
@@ -164,16 +166,9 @@
 						<th scope="col">Start Time</th>
 						<th scope="col">End Time</th>
 						<th scope="col">
-						
-						<div class="btn-group" role="group" aria-label="Basic example">
 							<button class="eventManageButton deleteSelectButton">
 								<i class="fa fa-trash selectTrash" aria-hidden="true"></i>
-								<text> Select </text>
 							</button>
-								<button class="doNotDisplay deleteSelectButtonConfirm">
-								<text> Remove </text>
-							</button>
-						</div>
 						</th>
 					</tr>
 				</thead>
@@ -394,8 +389,15 @@
 	
 <!-- UI specific javascripts -->
 <script type="text/javascript" src="view_js/ui.js"></script>	
+
+<!-- JavaScript specific to this page -->
+<script type="text/javascript" src="view_js/editGeneralFunctions.js"></script>
 	
 <!-- JavaScript specific to this page -->
 <script type="text/javascript" src="view_js/edit.js"></script>
+
+<!-- JavaScript specific to this page -->
+<script type="text/javascript" src="view_js/editFormSection.js"></script>
+
 
 {% endblock %}
