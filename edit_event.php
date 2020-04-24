@@ -104,13 +104,24 @@
             $oldModDate = $result_array[0]['mod_date'];
             $eventKey = $result_array[0]['id'];
 
-            $bigString = $slot['startTime'] + $slot['endTime'] + $eventKey + time();
-            $slotHash = password_hash($bigstring, PASSWORD_BCRYPT);
-            $newSD = $slot['startTime'] . ':00';
-            $newED = $slot['endTime'] . ':00';
             $insert_query = 'CALL add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
             $insert_statement = $database->prepare($insert_query);
-            $insert_statement->bind_param('sssssii', $oldModDate, $eventHash, $slotHash, $newSD, $newED, $slot['duration'], $slot['capacity']);
+
+            $bigString = $slot['startTime'] + $slot['endTime'] + $eventKey + time();
+            $slotHash = password_hash($bigstring, PASSWORD_BCRYPT);
+
+            $newSD = $slot['startTime'] . ':00';
+            $newED = $slot['endTime'] . ':00';
+
+            $slotDuration = intval($slot['duration']);
+            $slotCapacity = intval($slot['capacity']);
+
+            $insert_statement->bind_param(
+                'sssssii', 
+                $oldModDate, $eventHash, $slotHash, $newSD, $newED, 
+                $slotDuration, $slotCapacity
+            );
+
             $insert_statement->execute();
 
             $resultQuery = "SELECT @res2";
