@@ -1,15 +1,12 @@
 <?php
 
-    // set up session
-    require_once 'php/session.php';
-
     // set up connection to database via MySQLi
 
     require_once 'php/database.php';
 
-    // set up twig
+    // include functions for generating hashes
 
-    require_once 'php/twig.php';
+	require_once 'php/hash.php';
 
     // get email function
 
@@ -107,14 +104,13 @@
             $insert_query = 'CALL add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
             $insert_statement = $database->prepare($insert_query);
 
-            $bigString = $slot['startTime'] + $slot['endTime'] + $eventKey + time();
-            $slotHash = password_hash($bigstring, PASSWORD_BCRYPT);
-
             $newSD = $slot['startTime'] . ':00';
             $newED = $slot['endTime'] . ':00';
 
             $slotDuration = intval($slot['duration']);
             $slotCapacity = intval($slot['capacity']);
+
+            $slotHash = createTimeSlotHash($newSD, $newED, $eventHash);
 
             $insert_statement->bind_param(
                 'sssssii', 
