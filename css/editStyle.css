@@ -21,33 +21,37 @@ label
 	text-align: right !important;
 }
 
-.timeSelector
+.timeSelector, .editTimeSelector
 {
 	background-color: white;
 	padding:5px;
 
 }
 
-.timeSelector table
+.timeSelector table, .editTimeSelector table
 {
 	table-layout: fixed;
 	min-width: 100%;
 	border: none;
 }
 
-.timeSelector td
+.timeSelector td, .editTimeSelector td
 {
 	cursor: pointer;
 	border: 1px solid black;
 }
 
-.timeSelector th
+.timeSelector th, .editTimeSelector th
 {
 	font-size: 10px;
 	padding-top:0 !important;
 	border: none;
 }
 
+#editTimeSelector td.selected
+{
+	background-color:#ccc;
+}
 
 #timeSelector td.selected
 {
@@ -69,12 +73,6 @@ label
 	display:inline-block;
 	min-width: 100% !important;
 	overflow-x: auto;
-}
-
-.eventManageButton {
-	border: none;
-	background: none;
-	color: #0000EE ;
 }
 
 .toggled {
@@ -119,12 +117,6 @@ label
 	cursor: pointer;
 }
 
-.deleteSelectButtonConfirm {
-	background: black;
-	color: white;
-	border: none;
-}
-
 #deleteEventsHeader {
 	padding: 10px;
 }
@@ -157,4 +149,8 @@ label
 
 .toBeDeletedSlots {
 	color: red;
+}
+
+.editSlotHeading {
+	text-align: center !important;
 }

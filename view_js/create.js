@@ -306,8 +306,6 @@ $(document).ready(function () {
 		startDate: new Date(),
 		multidate: true,
 		format: "mm/dd/yyyy",
-		daysOfWeekHighlighted: "5,6",
-		datesDisabled: ['31/08/2017'],
 		language: 'en'
 
 	}).on('changeDate', function (e) {
