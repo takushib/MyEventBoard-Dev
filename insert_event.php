@@ -4,6 +4,10 @@
 
 	require_once 'php/database.php';
 	
+	// include functions for generating hashes
+
+	require_once 'php/hash.php';
+
 	// get user ID using ONID from database
 
     require_once 'php/get_user.php';
@@ -37,8 +41,8 @@
 		$eCapacity = $_POST['eventCap'];
 		$eOpenSlots = $eCapacity;
 
-		$bigString = $eName + $eDescription + $eCreator + $eLocation + time();
-		$eHash = password_hash($bigString, PASSWORD_BCRYPT);
+		$eHash = createEventHash($eName, $eDescription, $eCreator, $eLocation);
+		echo $eHash;
 
 		$statement -> execute();
 
@@ -68,8 +72,8 @@
 			$sFull = 0;
 			$sEventID = $newEventID;
 
-			$bigString = $sStartDate + $sEndDate + $sEventID + time();
-			$sHash = password_hash($bigString, PASSWORD_BCRYPT);
+			$sHash = createTimeSlotHash($sStartDate, $sEndDate, $sEventID);
+			echo $sHash;
 
 			$statement -> execute();
 
