@@ -66,7 +66,7 @@
 
             $resultQuery = "SELECT @res3";
             $deleteResult = $database->query($resultQuery);
-            $row = $result -> fetch_array(MYSQLI_NUM);
+            $row = $deleteResult -> fetch_array(MYSQLI_NUM);
 
             if($row[0] != 0) {
                 $deleteSuccess = FALSE;
