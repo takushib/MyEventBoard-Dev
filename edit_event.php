@@ -107,14 +107,14 @@
             $newSD = $slot['startTime'] . ':00';
             $newED = $slot['endTime'] . ':00';
 
-            $slotDuration = intval($slot['duration']);
-            $slotCapacity = intval($slot['capacity']);
+            $slotDuration = $_POST['slot_duration'];
+            $slotCapacity = $_POST['slot_capacity'];
 
             $slotHash = createTimeSlotHash($newSD, $newED, $eventHash);
 
             $insert_statement->bind_param(
-                'sssssii', 
-                $oldModDate, $eventHash, $slotHash, $newSD, $newED, 
+                'sssssii',
+                $oldModDate, $eventHash, $slotHash, $newSD, $newED,
                 $slotDuration, $slotCapacity
             );
 
