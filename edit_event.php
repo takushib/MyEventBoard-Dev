@@ -1,15 +1,12 @@
 <?php
 
-    // set up session
-    require_once 'php/session.php';
-
     // set up connection to database via MySQLi
 
     require_once 'php/database.php';
 
-    // set up twig
+    // include functions for generating hashes
 
-    require_once 'php/twig.php';
+	require_once 'php/hash.php';
 
     // get email function
 
@@ -69,7 +66,7 @@
 
             $resultQuery = "SELECT @res3";
             $deleteResult = $database->query($resultQuery);
-            $row = $result -> fetch_array(MYSQLI_NUM);
+            $row = $deleteResult -> fetch_array(MYSQLI_NUM);
 
             if($row[0] != 0) {
                 $deleteSuccess = FALSE;
@@ -107,18 +104,17 @@
             $insert_query = 'CALL add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
             $insert_statement = $database->prepare($insert_query);
 
-            $bigString = $slot['startTime'] + $slot['endTime'] + $eventKey + time();
-            $slotHash = password_hash($bigstring, PASSWORD_BCRYPT);
-
             $newSD = $slot['startTime'] . ':00';
             $newED = $slot['endTime'] . ':00';
 
-            $slotDuration = intval($slot['duration']);
-            $slotCapacity = intval($slot['capacity']);
+            $slotDuration = $_POST['slot_duration'];
+            $slotCapacity = $_POST['slot_capacity'];
+
+            $slotHash = createTimeSlotHash($newSD, $newED, $eventHash);
 
             $insert_statement->bind_param(
-                'sssssii', 
-                $oldModDate, $eventHash, $slotHash, $newSD, $newED, 
+                'sssssii',
+                $oldModDate, $eventHash, $slotHash, $newSD, $newED,
                 $slotDuration, $slotCapacity
             );
 
