@@ -883,13 +883,12 @@ function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, even
 
 	console.log(eventNewDuration);
 	console.log(eventNewCapacity);
-	// Make Save Time AJAX call here
-	//console.log(window.location.search.split('?key=')[1]);
+
 	var newAddArray = JSON.stringify(eventAddArray);
 	var newDeleteArray = JSON.stringify(eventDeleteArray);
 	$.ajax({
 		type: "POST",
-		url: "edit_event.php",
+		url: "edit_event_slots.php",
 		data: {
 			eventHash: window.location.search.split('?key=')[1],
 			addedSlots: newAddArray,
@@ -900,10 +899,12 @@ function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, even
 	}).done(function(response) {
 		alert(response);
 	});
+	
 	console.log("ADDED SLOTS:")
 	console.log(eventAddArray);
 	console.log("DELETED SLOTS:")
 	console.log(eventDeleteArray);
+
 }
 
 $('#saveSlots').on('click', function () {

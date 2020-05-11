@@ -1,10 +1,10 @@
 const formState = {
-						eventName: "",
-						eventLocation: "",
-						eventDescription: "",
-						eventFileOption: false,
-						eventAnonymousOption: true
-				  };
+	eventName: "",
+	eventLocation: "",
+	eventDescription: "",
+	eventFileOption: false,
+	eventAnonymousOption: true
+};
 
 $(document).ready(function () {
 
@@ -23,7 +23,6 @@ $(document).ready(function () {
 
 	initFormState();
 	
-
 });
 
 function initFormState() {
@@ -175,6 +174,7 @@ $('#saveForm').on('click', function () {
 	$('#generalCancelButton').on('click', function () {
 		$('#generalConfirm').modal('toggle');
 	});
+
 });
 
 
@@ -191,13 +191,26 @@ function saveFormChanges() {
 	eventSaveVals.push(newEventName);
 	eventSaveVals.push(newEventLocation);
 	eventSaveVals.push(newEventDescript);
-	eventSaveVals.push(newEventFileOption);
 	eventSaveVals.push(newEventAnonymousCheck);
+	eventSaveVals.push(newEventFileOption);
 
+	console.log(eventSaveVals);
 
-	// Make Save Form AJAX Call here
-	for (let i = 0; i < eventSaveVals.length; i++)
-		console.log(eventSaveVals[i]);
+	$.ajax({
+		type: "POST",
+		url: "edit_event_details.php",
+		data: {
+			eventHash: window.location.search.split('?key=')[1],
+			eventName: eventSaveVals[0],
+			eventLocation: eventSaveVals[1],
+			eventDescription: eventSaveVals[2],
+			isAnonymous: eventSaveVals[3],
+			enableUpload: eventSaveVals[4]
+		}
+	}).done(function(response) {
+		alert(response);
+	});
 
 	// Reinitialize cached data needs to be done after ajax call
+
 }
