@@ -57,8 +57,9 @@ $(document).ready(function () {
 
 	getDataFromDB();
 	initTimeState();
-	changedDuration(ADD_TIME_TABLE_ELEMENT); // update the add cells
-	changedDuration(EDIT_TIME_TABLE_ELEMENT); // update the add cells
+	changedDuration(ADD_TIME_TABLE_ELEMENT); // update the time selection cells when adding a time slot
+	changedDuration(EDIT_TIME_TABLE_ELEMENT); // update the time selection cells when editing a time slot
+	
 	updateEditSlotTimeTable();
 
 });
@@ -567,10 +568,14 @@ function updateStateFromDelete(startTimeValToBeRemoved) {
 	}
 }
 
+
+//Deletes slots cached in the added slots state array
 function deleteAddSlots(arrayWithReadyToDeleteEventRows) {
 
 	var arrayOfEventSlotsToDelete = [];
 
+	console.log(arrayWithReadyToDeleteEventRows);
+	
 	arrayWithReadyToDeleteEventRows.forEach(number => {
 		var deleteObjInfo = getEventInFormatFromTableCells(number);
 		arrayOfEventSlotsToDelete.push(deleteObjInfo.startTime);
@@ -580,28 +585,14 @@ function deleteAddSlots(arrayWithReadyToDeleteEventRows) {
 		updateStateFromDelete(arrayOfEventSlotsToDelete[i]);
 		arrayWithReadyToDeleteEventRows[i].remove();
 	}
-
 }
 
-$('.deleteSelectButton').on('click', function () {
-	var atLeastOnSelected = false;
+function removeAddSlotFromTable(deleteButton) {
+	
 	var tempHolder = [];
-
-
-	$("#addEventsTable tr td:nth-last-child( " + eventDeleteIndex + " )").each(function () {
-		if ($(this).children().prop("checked")) {
-			tempHolder.push($(this).parent());
-			atLeastOnSelected = true;
-		}
-	});
-
-	if (atLeastOnSelected == false)
-		alert("No Event Selected");
-	else
-	{
-		deleteAddSlots(tempHolder);
-	}
-})
+	tempHolder.push(deleteButton.parent().parent());
+	deleteAddSlots(tempHolder);
+}
 
 
 
@@ -613,19 +604,27 @@ function resetCanceledInput() {
 		$('#durationSelector').find('option[value="' + stateOfEvent.duration + '"]').prop('selected', 'selected');
 
 	if (stateOfEvent.capacity != $('#timeslotCapInput').val())
-		$('#timeslotCapInput').val(stateOfEvent.capacity);
+		$('#timeslotCapInput').val(stateOfEvent.dbCapacity);
 }
 
 
 $('#timeslotCapInput').on('change', function (e) {
-	buildModalForChangeConfirmation("Confirm Change", "Saving a change to the slot capacity may cause currently booked users to be removed off the event in the case the number of booked users exceeds the changed value.");
-
-	$('#generalConfirm').modal('toggle');
-
-	$('#generalAcceptButton').on('click', function () {
-		$('#generalConfirm').modal('toggle');
+	
+	if (stateOfEvent.dbCapacity < $('#timeslotCapInput').val())
+	{
 		stateOfEvent.capacity = $('#timeslotCapInput').val();
-	});
+	}
+	else
+	{
+		buildModalForChangeConfirmation("Confirm Change", "Saving a time slot capacity less than the current capacity will only apply to slots with enough space to be decremented. Time slots with users booked to that slot that EXCEEDS the new capacity will retain it's original size. ");
+
+		$('#generalConfirm').modal('toggle');
+
+		$('#generalAcceptButton').on('click', function () {
+			$('#generalConfirm').modal('toggle');
+			stateOfEvent.capacity = $('#timeslotCapInput').val();
+		});
+	}
 });
 
 $('#durationSelector').on('change', function (e) {
@@ -955,6 +954,7 @@ $('#openAddEvents').on('click', function () {
 
 $('#addEventModal').on('hidden.bs.modal', function () {
 	//$('#datepicker').datepicker('update', ''); // clear all dates
+	$('#datepicker').datepicker('setDate', null);
 	$('.removeOnClear').remove(); //Clear all cells
 });
 
@@ -1022,11 +1022,19 @@ function appendToAddedTable(date, nameOfDay, startTime, endTime) {
 	var eventEndTime = $('<td>' + endTime + '</td>');
 
 	var deleteOptionCell = $('<td></td>');
-	var massDeleteOption = $('<input></input>');
-	massDeleteOption.attr("type", "checkbox");
-	massDeleteOption.attr("unchecked");
 
-	deleteOptionCell.append(massDeleteOption);
+	var deleteIcon = $('<i></i>');
+	deleteIcon.addClass("fa fa-times");
+	
+	var deleteButton = $('<button></button>');
+	deleteButton.addClass('deleteAddedSlot');
+	deleteButton.append(deleteIcon);
+	
+	deleteButton.on("click", function() {
+		removeAddSlotFromTable($(this));
+	});
+	
+	deleteOptionCell.append(deleteButton);
 
 	newRow.append(eventDate);
 	newRow.append(eventDayName);
@@ -1150,13 +1158,3 @@ function addEventSlots() {
 	}
 
 }
-
-$('#existingSlotsDelete').on("click", function() {
-
-	$('#existingEventsTable tbody tr').each(function () {
-		if ($(this).hasClass("disabledRow") == false) {
-			$(this).find("input[type=checkbox]").prop("checked", true);
-		}
-	});
-
-});

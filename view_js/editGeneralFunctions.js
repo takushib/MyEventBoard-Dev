@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+	disableEnterInputOnFields();
+	
 	document.getElementById("field1to2").addEventListener("click", function () {
 		$('.entryField1').addClass('collapse');
 		$('.entryField2').removeClass('collapse');
@@ -12,6 +14,15 @@ $(document).ready(function () {
 
 });
 
+function disableEnterInputOnFields() {
+
+	$('form input').keydown(function (e) {
+		if (e.keyCode == 13) {
+			e.preventDefault();
+			return false;
+		}
+	});
+}
 
 function buildModalForChangeConfirmation(modalHeaderName, description) {
 
@@ -46,7 +57,7 @@ function clearModal() {
 	$('#generalCancelButton').off();
 	$('.close').off();
 	$('#generalHeaderLabel').text("");
-};
+}
 
 $(function () {
 	$('[data-toggle="tooltip"]').tooltip()

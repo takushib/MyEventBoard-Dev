@@ -45,10 +45,8 @@
 			
 			<div class="form-group text-nowrap">
 				<label for="locationInput">Location</label>
-				<select name="locationSelector" class="form-control input-lg" id="locationInput">
-					<option value=""> Enter a Location </option>
-				
-				</select>
+				<input name="locationSelector" class="form-control input-lg" list="locationDatalist" id="locationInput"></input>
+				<datalist id="locationDatalist"></datalist>
 			</div>
 			
 
@@ -138,10 +136,7 @@
 						<th scope="col">Start Time</th>
 						<th scope="col">End Time</th>
 						<th scope="col">
-							<button class="existingSlotsDelete" id="existingSlotsDelete">
-								<i class="fa fa-trash selectTrash" aria-hidden="true"></i>
-								Select All
-							</button>
+							<i class="fa fa-trash" aria-hidden="true"></i>
 						</tr>
 					</thead>
 					<tbody>
@@ -169,10 +164,7 @@
 						<th scope="col">Start Time</th>
 						<th scope="col">End Time</th>
 						<th scope="col">
-							<button class="deleteSelectButton">
-								<i class="fa fa-trash selectTrash" aria-hidden="true"></i>
-								Remove
-							</button>
+							<i class="fa fa-trash" aria-hidden="true"></i>
 						</th>
 					</tr>
 				</thead>
@@ -186,7 +178,7 @@
 		<br>
 		<br>
 		<div class="nextBackField">
-				<button type="button" class="btn btn-dark nextBackField" id="clearButton">Clear</button>
+				<button type="button" class="btn btn-dark nextBackField" id="resetButton">Reset</button>
 				<button type="button" class="btn btn-dark" id="saveSlots">Save Slot Changes</button>
 		</div>
 		
