@@ -9,6 +9,7 @@ weekday[5]="Friday";
 weekday[6]="Saturday";
 
 
+
 // Returns week day name of a date obj
 
 function getDayName(dateObj) {
@@ -65,7 +66,7 @@ function setMySlot(modalTimeSlot, timeSlotObject) {
 
 
 function getCurrentTime() {
-   
+
 	var date = new Date();
 	var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
 	var AM_PM = date.getHours() >= 12 ? "PM" : "AM";
@@ -78,38 +79,38 @@ function getCurrentTime() {
 };
 
 function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
-	
+
 	if (!((timeToBeChecked.includes("AM") || timeToBeChecked.includes("PM") || todayTimeStamp.includes("PM") || todayTimeStamp.includes("AM"))))
-	{	
+	{
 		alert("incorrect arguments");
 		return false;
 	}
-	
-	
+
+
 	var checkedArrayHour = timeToBeChecked.split(":");
 	var todayArrayHour = todaysTime.split(":");
-	
+
 	var checkedMinutesArray = checkedArrayHour[1].split(" ");
 	var todayMinutesArray = todayArrayHour[1].split(" ");
-	
+
 	if (checkedMinutesArray[0].charAt(0) == '0')
 		checkedMinutesArray[0] = checkedMinutesArray[0].replace('0','');
-	
+
 	if (todayMinutesArray[0].charAt(0) == '0')
 		todayMinutesArray[0] = todayMinutesArray[0].replace('0','');
-	
+
 	if (checkedMinutesArray[1] == 'PM' & checkedArrayHour[0] != "12")
 		checkedArrayHour[0] = checkedArrayHour[0] + 12;
-	
+
 	if (todayMinutesArray[1] == 'PM' & todayArrayHour[0] != "12")
 		todayArrayHour[0] = todayArrayHour[0] + 12;
-	
-	
+
+
 	var checkTime = parseInt(checkedArrayHour[0]) * 60 + parseInt(checkedMinutesArray[0]);
 	var todayTime = parseInt(todayArrayHour[0]) * 60 + parseInt(todayMinutesArray[0])
 
-	
-	
+
+
 	if (checkTime < todayTime)
 		return true;
 	else
@@ -117,13 +118,13 @@ function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
 }
 
 function getTodayDate() {
-	
+
 	// Returns mm/dd/yyyy
-	
+
 	var today = new Date();
 	var dd = today.getDate();
 
-	var mm = today.getMonth()+1; 
+	var mm = today.getMonth()+1;
 	var yyyy = today.getFullYear();
 
 	return mm+'/'+dd+'/'+yyyy;
@@ -131,12 +132,12 @@ function getTodayDate() {
 }
 
 function resetMySlot(timeSlotObjects) {
-	
+
 	$('.mySlot td').text("");
-	$('.mySlot').removeClass("mySlot");		
-	
+	$('.mySlot').removeClass("mySlot");
+
 	var timeSlotKeys = Object.keys(timeSlotObjects);
-	
+
 	for (var timeSlotKey of timeSlotKeys) // store current day times into an array to loop through
 	{
 		var timeSlot = timeSlotObjects[timeSlotKey];
@@ -144,35 +145,38 @@ function resetMySlot(timeSlotObjects) {
 			timeSlot.my_slot = 0;
 		}
 	}
-		
+
 }
 
 $('#myModal').on('hidden.bs.modal', function () {
 	$('#submitButton').off();
 });
 
+var previous_slot = null;
+
 function saveRegister() {
-	
+
 	//console.log("Test");
 	var selectedSlot = getColumnSelect();
-	
+
 	var selectedDate = $('#dateLabel').text();
-	
+
 	var curDate = getTodayDate();
 	//console.log(curDate);
 	//console.log(selectedDate);
-	
+
 
 	if (selectedSlot === false) {
 		alert("Please pick a slot.");
-		addSubmitListenerToSubmitButton(); 
+		addSubmitListenerToSubmitButton();
 	}
 	else if (checkTimeIfLessThanToday(selectedSlot.prev().children().text(), getCurrentTime()) == true && selectedDate === curDate) {
 		alert("This slot is past the current time. Please pick a different slot");
-		addSubmitListenerToSubmitButton(); 
+		addSubmitListenerToSubmitButton();
 	}
 	else {
 		var slotKey = selectedSlot.parent().attr('id');
+		previous_slot = slotKey;
 		$.ajax({
 			type: "POST",
 			url: "reserve_slot.php",
@@ -191,12 +195,12 @@ function saveRegister() {
 					"The time slot was full! Please select another one!";
 				$('.fileUpload').addClass('doNotDisplay');
 				$('#feedBackModal').modal('toggle');
-				
+
 				addSubmitListenerToSubmitButton();
 			}
 			else if (response == 0) {
 				resetMySlot(timeSlotObjects);
-				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);			
+				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				document.getElementById('feedbackMessage').textContent = "You have been registered!";
 				$('.fileUpload').removeClass('doNotDisplay');
@@ -204,9 +208,9 @@ function saveRegister() {
 				$('#feedBackModal').modal('toggle');
 			}
 			else {
-				
+
 				resetMySlot(timeSlotObjects);
-				
+
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
@@ -253,32 +257,32 @@ function formatDate(d) {
 }
 
 $(function () {
-	
+
 	var timeSlotKeys = Object.keys(timeSlotObjects);
 	var eventLocation = timeSlotObjects[timeSlotKeys[0]].event_location;
-	
-	var eventDesLabel = "Event Description "; 
-	
+
+	var eventDesLabel = "Event Description ";
+
 	$('#eventLocation').append(eventLocation);
 	var eventDescription = timeSlotObjects[timeSlotKeys[0]].description;
-	
+
 	if (eventDescription == "" || eventDescription == undefined || eventDescription == null)
 	{
 		// do nothing
 	}
-	else	
+	else
 	{
 		$('#eventDescriptionLabel').append(eventDesLabel);
 		$('#eventDescription').append(eventDescription);
 	}
-	
-	
+
+
 	var selectableDates = getSelectableDates();
 	var cur_date = new Date();
 	cur_date.setHours(0,0,0,0);
-	
+
 	var past_event = true;
-	
+
 	for (let i = 0; i < selectableDates.length; i++) {
 		var try_date = new Date(selectableDates[i]);
 
@@ -287,13 +291,13 @@ $(function () {
 			past_event = false;
 		}
 	}
-	
-	
+
+
 	if (past_event == true) {
 		$('#datepicker2').remove();
 		$('.calendarField').append('<h2> This Event has Expired <i class="fa fa-frown-o" aria-hidden="true"></i></h2>');
 		return;
-		
+
 	}
 
 	$("#datepicker2").datepicker({
@@ -325,16 +329,16 @@ function addSubmitListenerToSubmitButton() {
 $(document).ready(function () {
 
 	if($('#datepicker2') != undefined || $('#datepicker2') != null)  {
-		
+
 		$('#datepicker2').datepicker().on('changeDate', function (e) {
-	
+
 			$('#myModal').modal('toggle');
-	
+
 			var dayOfWeek = getDayName($(this));
 			$('.modal-body #dayLabel').text(dayOfWeek);
 			$('.modal-body #dateLabel').text(e.format());
 			createFields();
-			
+
 			addSubmitListenerToSubmitButton();
 
 		});
@@ -423,7 +427,7 @@ function addBlankSpace() {
 }
 
 function createCells(startTime, spaceAvailable, isFull, id, isMySlot) {
-	
+
 	var rowContent = '<tr><th><div>' + totalMinutesToFormat(startTime);
 	if (isMySlot != 1) {
 		rowContent += '</div></th><td>' + spaceAvailable +'</td></tr>';
@@ -589,7 +593,7 @@ function getMonthDayAvailableSpace() {
 
 		if (!monthDayAvailableSpace[month][day]) monthDayAvailableSpace[month][day] = 0;
 
-		// add available space for time slot to total 
+		// add available space for time slot to total
 		// for month and day in data object
 
 		monthDayAvailableSpace[month][day] += Number(space);
@@ -618,7 +622,7 @@ function highlightCalendar() {
 		var calendarDays = $('td[class="day"]');
 
 		for (day of calendarDays) {
-			
+
 			var sameDay = day.textContent == timeSlot.start_time.day;
 
 			var space = monthDayAvailableSpace[monthEnum[calendarMonth]][day.textContent];
@@ -630,7 +634,7 @@ function highlightCalendar() {
 				day.classList.add('disabled');
 				day.style.color = 'black';
 			}
- 
+
 		}
 
 	}
@@ -658,18 +662,32 @@ function getSelectableDates() {
 
 
 $('#submitFile').on('click', function () {
-	
+
 	var inputFile = $('#inputFile');
-	
+
 	if (!$('#inputFile').val()) {
 		alert('Please Upload File');
 	}
 	else
 	{
-		alert('File Submitted');
+		var file_data = $('#inputFile').prop('files')[0];
+    var form_data = new FormData();
+    form_data.append('file', file_data);
+		form_data.append('slotKey', previous_slot);
+		form_data.append('user', myONID);
+		$.ajax({
+        url: 'upload.php', // point to server-side PHP script
+        dataType: 'text',  // what to expect back from the PHP script, if anything
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: form_data,
+        type: "POST"
+		}).done(function (response) {
+			alert(response);
+			previous_slot = null;
+		});
 	}
-	
-	
+
+
 })
-
-
