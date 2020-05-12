@@ -9,6 +9,7 @@ weekday[5]="Friday";
 weekday[6]="Saturday";
 
 
+
 // Returns week day name of a date obj
 
 function getDayName(dateObj) {
@@ -151,6 +152,8 @@ $('#myModal').on('hidden.bs.modal', function () {
 	$('#submitButton').off();
 });
 
+var previous_slot = null;
+
 function saveRegister() {
 
 	//console.log("Test");
@@ -173,6 +176,7 @@ function saveRegister() {
 	}
 	else {
 		var slotKey = selectedSlot.parent().attr('id');
+		previous_slot = slotKey;
 		$.ajax({
 			type: "POST",
 			url: "reserve_slot.php",
@@ -669,6 +673,8 @@ $('#submitFile').on('click', function () {
 		var file_data = $('#inputFile').prop('files')[0];
     var form_data = new FormData();
     form_data.append('file', file_data);
+		form_data.append('slotKey', previous_slot);
+		form_data.append('user', myONID);
 		$.ajax({
         url: 'upload.php', // point to server-side PHP script
         dataType: 'text',  // what to expect back from the PHP script, if anything
@@ -676,9 +682,10 @@ $('#submitFile').on('click', function () {
         contentType: false,
         processData: false,
         data: form_data,
-        type: "POST"	
+        type: "POST"
 		}).done(function (response) {
 			alert(response);
+			previous_slot = null;
 		});
 	}
 
