@@ -2,8 +2,8 @@ const formState = {
 	eventName: "",
 	eventLocation: "",
 	eventDescription: "",
-	eventFileOption: false,
-	eventAnonymousOption: true
+	eventAnonymousOption: true,
+	eventFileOption: false
 };
 
 $(document).ready(function () {
@@ -19,9 +19,9 @@ $(document).ready(function () {
 
 		$('#locationInput').append(locationsDropDown);
 
-	});
+		initFormState();
 
-	initFormState();
+	});
 	
 });
 
@@ -39,26 +39,33 @@ function initFormState() {
 	while (rawEntries.length > 0) rawEntries[0].remove();
 	console.log(databaseObj);
 	
-	var dbEventName = databaseObj[0]['name'];		//get the database form values for event
+	var dbEventName = databaseObj[0]['name'];
 	var dbEventLocation = databaseObj[0]['location'];
-	var dbFileOption = false; // Replace this with File option from DB
-	var dbAnonymousOption = true; // Replace this with Anonymous option from DB
+	var dbFileOption = databaseObj[0]['upload'];
+	var dbAnonymousOption = databaseObj[0]['anonymous'];
 	var dbEventDescription = databaseObj[0]['description'];
 	
-	formState.eventName = dbEventName;				//store database form values in as a cached object
+	// store database form values in as a cached object
+
+	formState.eventName = dbEventName;				
 	formState.eventLocation = dbEventLocation;
 	formState.eventDescription = dbEventDescription;
-	formState.fileOption = dbFileOption;
 	formState.anonymousOption = dbAnonymousOption;
+	formState.fileOption = dbFileOption;
 	
-	
+	// set fields in form
 	$('#eventNameInput').val(dbEventName);
 	$('#locationInput').val(dbEventLocation);
 	$('#eventDescriptTextArea').val(dbEventDescription);
-	$('#anonymousCheck').prop("checked", dbAnonymousOption);
-	$('#fileUpload').prop("checked", dbFileOption);
+
+	$('#anonymousCheck').prop("checked", false);
+	if (dbAnonymousOption == 1) $('#anonymousCheck').prop("checked", true);
+
+	$('#fileUpload').prop("checked", false);
+	if (dbFileOption == 1) $('#fileUpload').prop("checked", true);
 	
 	console.log(formState);
+
 }	
 
 $('#resetFormButton').on('click', function () {
@@ -66,23 +73,31 @@ $('#resetFormButton').on('click', function () {
 	$('#eventNameInput').val(formState.eventName);
 	$('#locationInput').val(formState.eventLocation);
 	$('#eventDescriptTextArea').val(formState.eventDescription);
-	$('#anonymousCheck').prop("checked", formState.eventAnonymousOption);
-	$('#fileUpload').prop("checked", formState.eventFileOption);
+
+	$('#anonymousCheck').prop("checked", false);
+	if (formState.anonymousOption == 1) $('#anonymousCheck').prop("checked", true);
+
+	$('#fileUpload').prop("checked", false);
+	if (formState.fileOption == 1) $('#fileUpload').prop("checked", true);
+
 });
 
 $('#fileUpload').on('click', function (e) {
+
 	e.preventDefault();
 	
 	buildModalForChangeConfirmation("Confirm Change", "Saving this field unchecked (File Upload Field) will cause files currently uploaded to this event to be deleted");
 	$('#generalConfirm').modal('toggle');
 
 	$('#generalAcceptButton').on('click', function () {
-			$('#generalConfirm').modal('toggle');
-			$('#fileUpload').prop("checked", !$('#fileUpload').prop("checked"));
+		$('#generalConfirm').modal('toggle');
+		$('#fileUpload').prop("checked", !$('#fileUpload').prop("checked"));
 	});
+
 });
 
 $('#anonymousCheck').on('click', function (e) {
+
 	e.preventDefault();
 	
 	buildModalForChangeConfirmation("Confirm Change", "Saving this field unchecked (Anonymous Field) will make registered users visible to other users upon event registration.");
@@ -113,7 +128,6 @@ function buildModalForFormSave(modalHeaderName) {
 	eventSaveVals.push(["Event Description", newEventDescript]);
 	eventSaveVals.push(["Event Anonymous Option", newEventAnonymousCheck]);
 	eventSaveVals.push(["Event File Option", newEventFileOption]);
-
 	
 	var eventDbVals = [];
 	eventDbVals.push(formState.eventName);
