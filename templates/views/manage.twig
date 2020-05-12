@@ -1,8 +1,8 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} 
+{% block page_head %}
 
-<link rel="stylesheet" href="css/manageStyle.css"> 
+<link rel="stylesheet" href="css/manageStyle.css">
 
 {% endblock %}
 
@@ -15,28 +15,28 @@
 		<h2 class="d-inline" id="eventName">{{ event_name }}</h2>
 	</div>
 
-		
 
-	
+
+
 	<div class="container entryField1">
-		
+
 		<div class="container">
 
 			{% if table_headers %}
-			
+
 			{{ include('partials/search.twig') }}
 
 			{% else %}
-			
+
 			<br><br><h3 class="text-center">No one has signed up for this event yet.</h4>
 
 			{% endif %}
-		
+
 			<table class="table table-striped">
 
 				<thead>
 					<tr class="row">
-						{% for table_header in table_headers|slice(0, -1) %}
+						{% for table_header in table_headers %}
 						<th class="col">{{ table_header }}</th>
 						{% endfor %}
 					</tr>
@@ -49,8 +49,17 @@
 						{% for column in table_row|slice(0, -1) %}
 						<td class="col">{{ column }}</td>
 						{% endfor %}
+						{% set file_path = table_row|slice(-1)|first %}
+						{% set file_name = file_path|slice(17) %}
+						<td>
+							<a href="~takushib/{{ file_path }}" download="{{file_name}}">
+								<button class="manageEvent fileDownloadButton">
+									<i class="fa fa-download"></i> Download
+								</button>
+							</a>
+						</td>
 					</tr>
-					
+
 					{% endfor %}
 				</tbody>
 			</table>
@@ -58,7 +67,7 @@
 		</div>
 
 	<div class="mx-1 goToEvent">
-	
+
 	<Button type="button" class="btn btn-dark visitEvent">
 		<a class="text-info" href="./register?key={{ event_key }}">
 			<i class="fas fa-external-link-alt"></i>
@@ -66,8 +75,8 @@
 	Go to Event
 	</Button>
 	</div>
-		
-		
+
+
 	</div>
 
 </div>
@@ -93,7 +102,7 @@
 	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- UI specific javascripts -->
 <script type="text/javascript" src="view_js/ui.js"></script>
 
