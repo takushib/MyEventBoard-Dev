@@ -31,12 +31,9 @@
 			<div class="form-group text-nowrap">
 				<label for="locationInput">Location</label>
 				<span class="requiredSign"> * </span>
-				<select name="locationSelector" class="form-control input-lg" id="locationInput">
-					<option selected value=""> Enter a Location </option>
-				
-				</select>
+				<input name="locationSelector" class="form-control input-lg" list="locationDatalist" id="locationInput"></input>
+				<datalist id="locationDatalist"></datalist>
 			</div>
-			
 
 			<div class="form-group text-nowrap">
 				<label for="eventDescriptTextArea">Event Description</label>
@@ -46,7 +43,7 @@
 			<div class="form-group text-nowrap">
 				<label for="timeslotCapInput">Capacity per Timeslot</label>
 				<span style="padding-left:10px" class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="The number of people that can sign up for each specific timeslot for this event. Defaults to 1"></span>
-				<input type="number" min="1" oninput="validity.valid||(value='');" class="form-control mb-4" id="timeslotCapInput" placeholder="Enter a capacity (default: 1)">
+				<input type="number" min="1" oninput="validity.valid||(value='');" class="form-control mb-4" id="timeslotCapInput" placeholder="1">
 			</div>
 
 			<!--  This is the input text where you can insert a file with a list of ONIDs to send emails to. Not implemented for now.

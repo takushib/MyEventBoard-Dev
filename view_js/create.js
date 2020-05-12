@@ -1,3 +1,9 @@
+$(document).ready(function(){
+	initLocationInput();	
+	$('#createNav').addClass('activeNavItem');
+	initDatePicker();
+});
+
 $(function () {
 	$('[data-toggle="tooltip"]').tooltip()
 })
@@ -24,133 +30,56 @@ function checkInput(obj) {
 	}
 }
 
-$(document).ready(function(){
+//source: https://blog.teamtreehouse.com/creating-autocomplete-dropdowns-datalist-element
+function initLocationInput() {
+	var dataList = document.getElementById('locationDatalist');
+	var input = document.getElementById('locationInput');
+	
+	
+	// Create a new XMLHttpRequest.
+	var request = new XMLHttpRequest();
 
-	var locationsDropDown;
-	
-	$.getJSON('OSU_locations.json',function(data){
-		$.each(data, function(i, locations) {
-			
-			locations.name = locations.name.replace("'", "&#39");
-	
-			locationsDropDown += "<option value='"
-			+locations.name+
-			"'>"+locations.name+"</option>"
-			});
-		$('#locationInput').append(locationsDropDown);
-	});
-					
-});
+	// Handle state changes for the request.
+	request.onreadystatechange = function(response) {
+		if (request.readyState === 4) {
+			if (request.status === 200) {
+				// Parse the JSON
+				var jsonOptions = JSON.parse(request.responseText);
 
-function checkIfRequiredElementsAreIncorrect() {
-	var eventNameObj = $('#eventNameInput');
-	var eventLocationObj = $('#locationInput');
-	var eventSlotsObj = $('#timeslotCapInput');
-	
-	var durations = ["1 Hour", "15 Minutes", "30 Minutes"];
-	
-	var eventDuration = $('#durationSelector');
-	
-	if (eventNameObj.val() === "")
-		return false;
-	if (eventLocationObj.val() === "")
-		return false;
-	
-	var checkIfCorrectInteger = eventSlotsObj.val();
-	
-	if (checkIfCorrectInteger !== "" && (isNaN(checkIfCorrectInteger) === true || checkIfCorrectInteger < 1)) //isNaN returns true if not an integer
-		return false;
-	
+				// Loop over the JSON array.
+				jsonOptions.forEach(function(item) {
+				
+				// Create a new <option> element.
+				var option = document.createElement('option');
+				
+				// Set the value using the item in the JSON array.
+				option.value = item.name;
+				
+				// Add the <option> element to the <datalist>.
+				dataList.appendChild(option);
+				});
 
-	if (!(durations.includes(eventDuration.val())))
-		return false;
-	
-	return true;
-		
-}
+				// Update the placeholder text.
+				input.placeholder = "Enter a Location";
+			} else {
+				// An error occured :(
+				input.placeholder = "Couldn't load location options :(";
+			}
+		}
+	};
 
-function checkIfElementsHaveBeenMaliciouslyChanged() {
-		var eventNameObj = $('#eventNameInput');
-		var eventLocationObj = $('#locationInput');
-		var eventDescriptObj = $('#eventDescriptTextArea');
-		var eventSlotsObj = $('#timeslotCapInput');
-		
-		var eventDuration = $('#durationSelector');
-		var eventDates = $('#Dates');
-		var timeSelect = $('#timeSelector');
-		
-		if (!(eventNameObj.is('input')))
-			return false;
+	// Update the placeholder text.
+	input.placeholder = "Loading options...";
 
-		if (!(eventLocationObj.is('select')))
-			return false;
-		
-		if (!(eventDescriptObj.is('textarea')))
-			return false;
-
-		if (!(eventSlotsObj.is('input')))
-			return false;
-		
-		
-		if (!(eventDuration.is('select')))
-			return false;
-		
-		if (!((eventDates.is('[readonly]')) && eventDates.is('input')))
-			return false;
-		
-		if (!(timeSelect.is('table')))
-			return false;
-		
-		return true;
-}
-
-function checkIfElementsHaveBeenMaliciouslyRemoved() {
-	var eventNameObj = document.getElementById("eventNameInput");
-	var eventLocationObj = document.getElementById("locationInput");
-	var eventSlotsObj = document.getElementById('timeslotCapInput');
-	var eventDescriptTextArea = document.getElementById('eventDescriptTextArea');
-	
-	var eventDatesObj = document.getElementById('Dates');
-	var eventDurationObj = document.getElementById('durationSelector');
-	var timeSelectObj = document.getElementById('timeSelector');
-	
-	if (typeof eventNameObj == undefined || eventNameObj == null)
-		return false;
-
-	if (typeof eventLocationObj == undefined || eventLocationObj == null)
-		return false;
-	
-	if (typeof eventSlotsObj == undefined || eventSlotsObj == null)
-		return false;
-	
-	if (typeof eventDescriptTextArea == undefined || eventDescriptTextArea == null)
-		return false;
-	
-
-
-	if (typeof eventsDateObj == undefined || eventDatesObj == null)
-		return false;
-	
-	if (typeof eventsDurationObj == undefined || eventDurationObj == null)
-		return false;
-
-	if (typeof timeSelectObj == undefined || timeSelectObj == null)
-		return false;
-	
-	return true;
+	// Set up and make the request.
+	request.open('GET', 'OSU_locations.json', true);
+	request.send();
 }
 
 				
 $(document).ready(function () {
 
 	document.getElementById("field1to2").addEventListener("click", function () {
-		
-		if (checkIfElementsHaveBeenMaliciouslyRemoved() == false || checkIfElementsHaveBeenMaliciouslyChanged() == false)
-		{
-			window.location = "./error?code=400";
-			return;
-		}
-		
 		
 		var eventNameObj = $('#eventNameInput');
 		var eventLocationObj = $('#locationInput');
@@ -172,16 +101,6 @@ $(document).ready(function () {
 	})
 
 	document.getElementById("field2toSubmit").addEventListener("click", function () {
-		
-		if (checkIfElementsHaveBeenMaliciouslyRemoved() == false || checkIfElementsHaveBeenMaliciouslyChanged() == false || checkIfRequiredElementsAreIncorrect() == false)
-		{
-		//	console.log(checkIfElementsHaveBeenMaliciouslyRemoved());
-		//	console.log(checkIfElementsHaveBeenMaliciouslyChanged());
-		//	console.log(checkIfRequiredElementsAreIncorrect());
-			window.location = "./error?code=400";
-			return;
-		}
-		
 		
 		var slots = submitEvent();
 		var eventDateInputObj = $('#Dates');
@@ -292,14 +211,8 @@ $("#menu-toggle").click(function (e) {
 	$("#wrapper").toggleClass("toggled");
 });
 
-
-$(document).ready(function () {
-	$('#createNav').addClass('activeNavItem');
-});
-
 // Source: https://jsfiddle.net/christianklemp_imt/b20paum2/
-
-$(document).ready(function () {
+function initDatePicker() {
 	
 	$('#datepicker').datepicker({
 
@@ -340,7 +253,7 @@ $(document).ready(function () {
 
 	});
 
-});
+}
 
 
 function removeColumn() {

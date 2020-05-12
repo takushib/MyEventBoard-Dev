@@ -154,3 +154,9 @@ label
 .editSlotHeading {
 	text-align: center !important;
 }
+
+.deleteAddedSlot {
+	border: none;
+	background-color: white;
+	color: red;
+}
