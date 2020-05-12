@@ -37,6 +37,7 @@
         INNER JOIN timeslot AS t2
             ON t0.id = t2.fk_event_id 
         WHERE t0.hash = ?
+        ORDER BY t2.start_time ASC
 
     ";
 
