@@ -50,19 +50,20 @@ function initFormState() {
 	formState.eventName = dbEventName;				
 	formState.eventLocation = dbEventLocation;
 	formState.eventDescription = dbEventDescription;
-	formState.anonymousOption = dbAnonymousOption;
-	formState.fileOption = dbFileOption;
+	
+	formState.eventAnonymousOption = false;
+	if (dbAnonymousOption == 1) formState.eventAnonymousOption = true;
+
+	formState.eventFileOption = false ;
+	if (dbFileOption == 1) formState.eventFileOption = true;
+
 	
 	// set fields in form
 	$('#eventNameInput').val(dbEventName);
 	$('#locationInput').val(dbEventLocation);
 	$('#eventDescriptTextArea').val(dbEventDescription);
-
-	$('#anonymousCheck').prop("checked", false);
-	if (dbAnonymousOption == 1) $('#anonymousCheck').prop("checked", true);
-
-	$('#fileUpload').prop("checked", false);
-	if (dbFileOption == 1) $('#fileUpload').prop("checked", true);
+	$('#anonymousCheck').prop("checked", dbAnonymousOption);
+	$('#fileUpload').prop("checked", dbFileOption);
 	
 	console.log(formState);
 
@@ -73,12 +74,8 @@ $('#resetFormButton').on('click', function () {
 	$('#eventNameInput').val(formState.eventName);
 	$('#locationInput').val(formState.eventLocation);
 	$('#eventDescriptTextArea').val(formState.eventDescription);
-
-	$('#anonymousCheck').prop("checked", false);
-	if (formState.anonymousOption == 1) $('#anonymousCheck').prop("checked", true);
-
-	$('#fileUpload').prop("checked", false);
-	if (formState.fileOption == 1) $('#fileUpload').prop("checked", true);
+	$('#anonymousCheck').prop("checked", formState.eventAnonymousOption);
+	$('#fileUpload').prop("checked", formState.eventFileOption);
 
 });
 
@@ -112,66 +109,78 @@ $('#anonymousCheck').on('click', function (e) {
 });
 
 function buildModalForFormSave(modalHeaderName) {
+
 	$('#generalHeaderLabel').text(modalHeaderName);
 
 	var newEventName = $('#eventNameInput').val();
 	var newEventLocation = $('#locationInput').val();
-	var newEventDescript = $('#eventDescriptTextArea').val();
-	var newEventAnonymousCheck = $('#anonymousCheck').prop('checked');
+	var newEventDescription = $('#eventDescriptTextArea').val();
+	var newEventAnonymousOption = $('#anonymousCheck').prop('checked');
 	var newEventFileOption = $('#fileUpload').prop('checked');
 
 	const EVENT_DESCRIPT_LIST_LABEL = "Event Description";
-	var eventSaveVals = [];
 
-	eventSaveVals.push(["Event Name", newEventName]);
-	eventSaveVals.push(["Event Location", newEventLocation]);
-	eventSaveVals.push(["Event Description", newEventDescript]);
-	eventSaveVals.push(["Event Anonymous Option", newEventAnonymousCheck]);
-	eventSaveVals.push(["Event File Option", newEventFileOption]);
+	var eventSaveVals = {
+		"Event Name": newEventName,
+		"Event Location": newEventLocation,
+		"Event Description": newEventDescription,
+		"Event Anonymous Option": newEventAnonymousOption,
+		"Event File Option": newEventFileOption
+	};
+
+	const keys = Object.keys(eventSaveVals);
 	
-	var eventDbVals = [];
-	eventDbVals.push(formState.eventName);
-	eventDbVals.push(formState.eventLocation);
-	eventDbVals.push(formState.eventDescription);
-	eventDbVals.push(formState.eventAnonymousOption);
-	eventDbVals.push(formState.eventFileOption);
-	
+	var eventDbVals = {
+		"Event Name": formState.eventName,
+		"Event Location": formState.eventLocation,
+		"Event Description": formState.eventDescription,
+		"Event Anonymous Option": formState.eventAnonymousOption,
+		"Event File Option": formState.eventFileOption
+	}
+
 	var list = $('<ul></ul>');
 	list.addClass('list-group saveItemList');
 	$('.confirmationDescriptionContainer').append(list);
 
-	for (let i = 0; i < eventSaveVals.length; i++) {
-		if (typeof eventSaveVals[i][1] === "boolean") {
+	for (var key of keys) {
+
+		if (typeof eventSaveVals[key] === "boolean") {
 
 			var changeItem;
 			
-			if (eventSaveVals[i][1] === false) {
+			if (eventSaveVals[key] === false) {
 				var offLabel = $('<text>OFF</text>');
 				offLabel.addClass('offLabel');
-				changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> </li>');
+				changeItem = $('<li><label>' + key + ':</label> </li>');
 				changeItem.append(offLabel);
 			}
-			else if (eventSaveVals[i][1] === true) {
+			else if (eventSaveVals[key] === true) {
 				var onLabel = $('<text>ON</text>');
 				onLabel.addClass('onLabel');
-				changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> </li>');
+				changeItem = $('<li><label>' + key + ':</label> </li>');
 				changeItem.append(onLabel);
 			}
 			
-			if (eventSaveVals[i][1] == eventDbVals[i])
+			// console.log(key)
+			// console.log(eventSaveVals[key], eventDbVals[key], (eventSaveVals[key] == eventDbVals[key]))
+
+			if (eventSaveVals[key] == eventDbVals[key])
 				changeItem.append(" (Unchanged)");
+				
 		}
-		else if (eventSaveVals[i][1] === "" || eventSaveVals[i][1] == eventDbVals[i]) {
-				var changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> Unchanged</li>');
+		else if (eventSaveVals[key] === "" || eventSaveVals[key] == eventDbVals[key]) {
+			var changeItem = $('<li><label>' + key + ':</label> Unchanged</li>');
 		}
 		else {
-			var itemValue = $('<text>' + eventSaveVals[i][1] + '</text>');
+			var itemValue = $('<text>' + eventSaveVals[key] + '</text>');
 			itemValue.addClass('changedLabel');
-			var changeItem = $('<li><label>' + eventSaveVals[i][0] + ':</label> </li>');
+			var changeItem = $('<li><label>' + key + ':</label> </li>');
 			changeItem.append(itemValue);
 		}
+
 		changeItem.addClass('list-group-item');
 		$('.confirmationDescriptionContainer ul').append(changeItem);
+
 	}
 }
 
