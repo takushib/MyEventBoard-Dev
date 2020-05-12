@@ -14,9 +14,6 @@
 
     // render page using twig
 
-    echo $twig -> render(
-        'views/create.twig',
-        [ 'user_ONID' => $_SESSION['user'] ]
-    );
+    echo $twig -> render('views/create.twig');
 
 ?>

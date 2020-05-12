@@ -1,5 +1,9 @@
 <?php
 
+	// set up session
+
+	require_once 'php/session.php';
+
     // set up connection to database via MySQLi
 
 	require_once 'php/database.php';
@@ -12,7 +16,8 @@
 
     require_once 'php/get_user.php';
 
-	$userKey = getUserKeyFromDB($_POST['eventCreator'], $database);
+	$userKey = getUserKeyFromDB($_SESSION['user'], $database);
+	
 	
 	// insert event data and time slot data into database
 	// if something was submitted via HTTP POST
@@ -42,7 +47,6 @@
 		$eOpenSlots = $eCapacity;
 
 		$eHash = createEventHash($eName, $eDescription, $eCreator, $eLocation);
-		echo $eHash;
 
 		$statement -> execute();
 
@@ -73,7 +77,6 @@
 			$sEventID = $newEventID;
 
 			$sHash = createTimeSlotHash($sStartDate, $sEndDate, $sEventID);
-			echo $sHash;
 
 			$statement -> execute();
 

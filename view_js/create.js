@@ -122,7 +122,6 @@ $(document).ready(function () {
 				type: "POST",
 				url: "insert_event.php",
 				data: {
-					eventCreator: myONID,
 					eventName: $('#eventNameInput').val(),
 					eventLocation: $('#locationInput').val(),
 					eventDescription: $('#eventDescriptTextArea').val(),
@@ -132,7 +131,7 @@ $(document).ready(function () {
 					sCap: slotCap
 				}
 			}).done(function(response) {
-    		alert(response);
+    			alert(response);
 			});
 
 			$('.entryField2').addClass('collapse');
