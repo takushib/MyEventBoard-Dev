@@ -159,7 +159,7 @@ function deleteEvent(eventDeleteObj) {
 	$('.containerForEventsToDelete ul').append(listItem);
 
 	var hashKey = getHash(eventDeleteObj);
-	// console.log(hashKey);
+	//console.log(hashKey);
 
 	$('#deleteSubmitButton').on('click', function () {
 
