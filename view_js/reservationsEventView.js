@@ -35,6 +35,13 @@ $(document).ready(function () {
 	
 });
 
+
+$("#submitFile").on("click", function() {
+	if ($('#inputFile').val() == "")
+		alert("Please Upload a File");
+});
+
+
 function init() {
 
 	var fileUploadCheck = true; //replace with db value for event

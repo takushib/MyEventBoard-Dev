@@ -17,8 +17,29 @@
 		<h2 class="d-inline" id="eventName">{{ event_name }}</h2>
 	</div>
 	
+	
 	<div class="container entryField1">
+	
+		<div class="buttonsContainer">
+			<div class="mx-1 goToEvent">
+				<Button type="button" class="btn btn-sm btn-dark visitEventButton">
+					<a class="text-info" href="./register?key={{ event_key }}">
+						<i class="fas fa-external-link-alt"></i>
+					</a>
+					Go to Event Registration
+				</Button>
+			</div>
+			
+			<div class="mx-1 deleteEvent">
+				<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
+						<i class="fas fa-trash"></i>
+				Delete This Reservation
+				</Button>
+			</div>	
+		</div>
 		
+		<br>
+	
 		<div class="container">
 		
 			<div class="eventInformation">
@@ -49,14 +70,6 @@
 						Description:
 					</h2>
 					
-					<br>
-					<br>
-					<Button type="button" class="btn btn-dark visitEventButton">
-						<a class="text-info" href="./register?key={{ event_key }}">
-							<i class="fas fa-external-link-alt"></i>
-						</a>
-						Go to Event Registration
-					</Button>
 				</div>
 				<br>
 				<br>
@@ -77,15 +90,6 @@
 			</div>
 		
 		</div>
-	
-	
-		<div class="mx-1 deleteEvent">
-			<Button type="button" class="btn btn-dark deleteEventButton" id="deleteEventButton">
-					<i class="fas fa-trash"></i>
-			Delete This Reservation
-			</Button>
-		</div>
-		
 	</div>
 	
 	<div id="deleteConfirm" class="modal fade" role="dialog">
