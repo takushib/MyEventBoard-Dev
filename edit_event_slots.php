@@ -1,5 +1,9 @@
 <?php
 
+    // set up session
+
+    require_once 'php/session.php';
+
     // set up connection to database via MySQLi
 
     require_once 'php/database.php';
@@ -12,11 +16,43 @@
 
     require_once 'php/notify_user.php';
 
+
     // get data from POST request
 
     $eventHash = $_POST['eventHash'];
     $added_slots = json_decode($_POST['addedSlots'], true);
     $deleted_slots = json_decode($_POST['deletedSlots'], true);
+
+
+    // get event creator's ONID using event hash
+    // if there are no results or event creator ONID does not match user ONID, abort now
+
+    $query = "
+
+        SELECT user.onid AS 'creator'
+        FROM event
+        INNER JOIN user
+            ON event.fk_event_creator = user.id
+        WHERE event.hash = ?
+
+    ";
+
+    $statement = $database -> prepare($query);
+    $statement -> bind_param("s", $eventHash);
+    $statement -> execute();
+
+    $result = $statement -> get_result();
+    $resultRow = $result -> fetch_assoc();
+
+    if ($resultRow == NULL) {
+        echo "The specified event does not exist.";
+        exit;   
+    } 
+    else if ($resultRow['creator'] != $_SESSION['user']) {
+        echo "You do not have permission to edit the specified event.";
+        exit;
+    }
+
 
     // initialize error codes
 
@@ -26,10 +62,10 @@
     // delete slots if slots exist
 
     if (count($deleted_slots) > 0) {
+
         foreach($deleted_slots as $slot) {
 
             // query for existing reservations
-
 
             $emailQuery = "
                 SELECT u.email, u.first_name, e.name as 'event_name' FROM timeslot t
@@ -84,6 +120,7 @@
             }
 
         }
+
     }
 
     // add slots if slots exist
@@ -135,7 +172,7 @@
     // response to front end
 
     if($insertSuccess && $deleteSuccess) {
-        echo "Event successfully edited!";
+        echo "The event was successfully edited!";
     }
     else {
 
@@ -151,7 +188,7 @@
             $errorCode = 3;
         }
 
-        echo "Unable to edit event\nError Code: " + $errorCode;
+        echo "The event could not be edited.\nError Code: " . $errorCode;
 
     }
 

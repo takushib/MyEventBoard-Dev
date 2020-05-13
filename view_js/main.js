@@ -145,12 +145,12 @@ function databaseDateFormatToReadable(databaseDateObj) {
 	var dateObj = new Date(datePieces[0], datePieces[1], datePieces[2]);
 	
 	return formatedDateObject = {
-									year: datePieces[0],
-									month: month,
-									day: datePieces[2],
-									startTime: timeValue,
-									endTime: endTimeInfo[1]
-								}
+		year: datePieces[0],
+		month: month,
+		day: datePieces[2],
+		startTime: timeValue,
+		endTime: endTimeInfo[1]
+	}
 }
 
 
@@ -259,8 +259,9 @@ $(document).ready(function () {
 	$.ajax({
 		url: "fill_dashboard.php",
 		type: "POST",
-		data: { userONID: myONID },
+		data: {},
 	}).done(function(response) {
+
 		events = JSON.parse(response);
 		
 		if (events.length < 1)

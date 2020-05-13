@@ -58,14 +58,14 @@
 
     // check results
     // if there are no results, show eror 404
-    // if there are results and current user is not event creator, show error 403
+    // if there are results or if current user is not event creator, show error 403
 
     $errorCode = 0;
 
     if ($resultObjects == NULL) {
         $errorCode = 404;
     }
-    else if ($resultObjects[0] -> creator != $_SESSION['user']) {
+    else if ($resultObjects[0]->creator != $_SESSION['user']) {
         $errorCode = 403;
     }
 

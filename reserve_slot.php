@@ -1,5 +1,9 @@
 <?php
 
+	// set up session
+
+	require_once 'php/session.php';
+
     // set up connection to database via MySQLi
 
     require 'php/database.php';
@@ -8,7 +12,7 @@
 
     require_once 'php/get_user.php';
 
-	$userKey = getUserKeyFromDB($_POST['userONID'], $database);
+	$userKey = getUserKeyFromDB($_SESSION['user'], $database);
 
 
 	// get slot ID using hash associated with that slot

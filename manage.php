@@ -21,28 +21,38 @@
 
     $eventKey = ($_GET["key"]);
 
-    // get event name and match user ONID with event creator's ONID
-    // if there are no results, show error page
+    // get event name and event creator's ONID using event key
+    // if there are no results, show error 404
+    // if event creator ONID does not match user ONID, show error 403
 
     $query = "
 
-        SELECT event.name
+        SELECT event.name AS 'name', user.onid AS 'creator'
         FROM event
         INNER JOIN user
             ON event.fk_event_creator = user.id
-        WHERE event.hash = ? AND user.onid = ?
+        WHERE event.hash = ?
 
     ";
 
     $statement = $database -> prepare($query);
-    $statement -> bind_param("ss", $eventKey, $_SESSION['user']);
+    $statement -> bind_param("s", $eventKey);
     $statement -> execute();
 
     $result = $statement -> get_result();
     $resultRow = $result -> fetch_assoc();
 
+    $errorCode = 0;
+
     if ($resultRow == NULL) {
         $errorCode = 404;
+        
+    }
+    else if ($resultRow['creator'] != $_SESSION['user']) {
+        $errorCode = 403;
+    }
+
+    if ($errorCode != 0) {
         render_error($twig, $errorCode, $errorMessages[$errorCode]);
         exit;
     }
@@ -50,6 +60,7 @@
     $eventName = $resultRow['name'];
 
     $result -> free();
+
 
     // get event data from database
 
@@ -89,12 +100,12 @@
     $result -> free();
     $database -> close();
 
+    
     // render page using twig
 
     echo $twig -> render(
         'views/manage.twig',
         [
-            'user_ONID' => $_SESSION['user'],
             'event_name' => $eventName,
             'event_key' => $eventKey,
             'table_headers' => $resultKeys,

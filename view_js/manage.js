@@ -7,7 +7,4 @@ $(document).ready(function () {
 	
 });
 
-
-
-
 ($(this).find('.myLink').attr('href'));

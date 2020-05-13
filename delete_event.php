@@ -1,20 +1,36 @@
 <?php
 
-    include 'php/database.php';
+    // set up session
 
-    $eventKey = $_POST["key"];
+    require_once 'php/session.php';
+    
+    // set up connection to database via MySQLi
 
-    $query = "DELETE FROM event WHERE hash = ?";
+	require_once 'php/database.php';
+	
+	// get user ID using ONID from database
+
+	require_once 'php/get_user.php';
+
+	$userKey = getUserKeyFromDB($_SESSION['user'], $database);
+	
+    // get data from POST request 
+
+	$eventKey = $_POST["key"];
+	
+	// delete event 
+
+    $query = "DELETE FROM event WHERE hash = ? AND fk_event_creator = ?";
     $statement = $database -> prepare($query);
-    $statement -> bind_param("s", $eventKey);
+    $statement -> bind_param("si", $eventKey, $userKey);
 
-    if(!$statement -> execute()) {
-      echo "ERROR: The event(s) could not be deleted.";
+    if(!$statement -> execute() || $database -> affected_rows < 1) {
+		echo "The event could not be deleted.";
     }
     else {
-      echo "Event(s) deleted successfully!";
+		echo "The event was deleted successfully!";
     }
 
-    $statement->close();
+    $statement-> close();
 
 ?>

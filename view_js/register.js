@@ -181,7 +181,6 @@ function saveRegister() {
 			type: "POST",
 			url: "reserve_slot.php",
 			data: {
-				userONID: myONID,
 				key: slotKey,
 				start_time: $('.slotSelected').prev().children().text(),
 				date: $('#dateLabel').text(),
@@ -676,13 +675,13 @@ $('#submitFile').on('click', function () {
 		form_data.append('slotKey', previous_slot);
 		form_data.append('user', myONID);
 		$.ajax({
-        url: 'upload.php', // point to server-side PHP script
-        dataType: 'text',  // what to expect back from the PHP script, if anything
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: form_data,
-        type: "POST"
+			url: 'upload.php', // point to server-side PHP script
+			dataType: 'text',  // what to expect back from the PHP script, if anything
+			cache: false,
+			contentType: false,
+			processData: false,
+			data: form_data,
+			type: "POST"
 		}).done(function (response) {
 			alert(response);
 			previous_slot = null;
