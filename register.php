@@ -80,7 +80,6 @@
     echo $twig -> render(
         'views/register.twig',
         [
-            'user_ONID' => $_SESSION['user'],
             'event_name' => $eventName,
             'table_headers' => $resultKeys,
             'table_rows' => $resultArray
