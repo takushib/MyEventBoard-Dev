@@ -59,12 +59,12 @@ function createPastEventsTable(dateRow, columnNames) {
 	var pastEvents = $('<div></div>');
 
 	var pastEventsField = $('<div></div>');
-	
+
 	pastEventsField.addClass('pastEventsField');
 	pastEvents.addClass('pastEventsContainer table-responsive');
 	pastEventsField.append('<h2> Past Events </h2>');
 	pastEventsField.append(pastEvents);
-	
+
 	var table = $('<Table></Table>');
 	table.addClass('table pastEventsTable table-striped');
 
@@ -137,7 +137,7 @@ $( document ).ready(function() {
 			dateRow.push($(this).parent());
 			$(this).parent().remove();
 		}
-		
+
 	});
 
 	createPastEventsTable(dateRow, columnNames);
@@ -159,7 +159,6 @@ function deleteEvent(eventDeleteObj) {
 	$('.containerForEventsToDelete ul').append(listItem);
 
 	var hashKey = getHash(eventDeleteObj);
-	//console.log(hashKey);
 
 	$('#deleteSubmitButton').on('click', function () {
 
@@ -176,7 +175,7 @@ function deleteEvent(eventDeleteObj) {
 
 		$('#feedBackModalDelete').modal('toggle');
 		eventDeleteObj.parent().parent().remove();
-		
+
 		displayNoEventsHeader(); // check if need to show header for no Events
 		checkHidePastEventsTable(); // hide past events table if no past events
 

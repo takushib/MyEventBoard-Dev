@@ -16,7 +16,7 @@
 
     require_once 'php/render_error.php';
 
-    
+
     // get key for event from URL
 
     $eventKey = ($_GET["key"]);
@@ -27,9 +27,9 @@
     $query = "
 
         SELECT event.name
-        FROM event 
-        INNER JOIN user 
-            ON event.fk_event_creator = user.id 
+        FROM event
+        INNER JOIN user
+            ON event.fk_event_creator = user.id
         WHERE event.hash = ? AND user.onid = ?
 
     ";
@@ -54,25 +54,28 @@
     // get event data from database
 
     $query = "
-        
+
         SELECT
             t1.start_time AS 'Time Slot Start Time',
             CONCAT(t2.first_name, ' ', t2.last_name) AS 'Attendee Name',
             t2.onid AS 'Attendee ONID',
-            t3.name AS 'Event Name'
-        FROM 
+            t3.name AS 'Event Name',
+            f.path AS 'File'
+        FROM
             booking AS t0
         INNER JOIN timeslot AS t1
             ON t0.fk_timeslot_id = t1.id
+        LEFT JOIN files as f
+            ON t0.id = f.fk_booking_id
         INNER JOIN user AS t2
             ON t0.fk_user_id = t2.id
         INNER JOIN event AS t3
             ON t1.fk_event_id = t3.id
-        WHERE 
+        WHERE
             t3.hash = ?
         ORDER BY
             t1.start_time AND t2.first_name
-    
+
     ";
 
     $statement = $database -> prepare($query);

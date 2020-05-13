@@ -4,16 +4,14 @@
     require_once 'php/session.php';
 
     $eventKey = $_POST["key"];
-    $query = "
-                DELETE b
-                FROM booking as b
-                INNER JOIN timeslot t ON t.id = b.fk_timeslot_id
-                INNER JOIN event e ON e.id = t.fk_event_id
-                INNER JOIN user u ON u.id = b.fk_user_id
-                WHERE e.hash = ? AND u.onid = ?
-    ";
+    $query = "CALL delete_slot(?, ?, @res1)";
     $statement = $database -> prepare($query);
     $statement -> bind_param("ss", $eventKey, $_SESSION['user']);
+    $query = "SELECT @res1";
+  	$result = $database -> query($query);
+  	$row = $result -> fetch_array(MYSQLI_NUM);
+  	echo $row[0];
+    exit();
     if(!$statement -> execute()) {
       echo "ERROR: The reservation(s) could not be deleted!";
     }

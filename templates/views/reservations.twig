@@ -1,8 +1,8 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} 
+{% block page_head %}
 
-<link rel="stylesheet" href="css/reservationsStyle.css"> 
+<link rel="stylesheet" href="css/reservationsStyle.css">
 
 {% endblock %}
 
@@ -16,9 +16,9 @@
 	<div class="container entryField1">
 
 		{{include('partials/search.twig') }}
-		
+
 		<div class="yourInvites table-responsive">
-		
+
 			<table class="table table-striped" id="invitesTable">
 
 				<thead>
@@ -27,7 +27,7 @@
 					<th scope="col">{{ table_header }}</th>
 					{% endfor %}
 					<th scope="col">
-						<i class="fa fa-trash selectTrash eventManageButton" aria-hidden="true"></i>	
+						<i class="fa fa-trash selectTrash eventManageButton" aria-hidden="true"></i>
 					</th>
 				</tr>
 				</thead>
@@ -48,7 +48,7 @@
 					<td>{{ column }}</td>
 
 					{% endfor %}
-					
+
 					<td>
 						<button class="deleteEvent eventManageButton">
 							<i class="fas fa-times"></i>
@@ -57,7 +57,7 @@
 					</td>
 
 				</tr>
-				
+
 				{% endfor %}
 				</tbody>
 
@@ -66,7 +66,7 @@
 		</div>
 
 	</div>
-	
+
 	<div id="deleteConfirm" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 
@@ -93,9 +93,9 @@
 		</div>
 
 	</div>
-	
-	
-	
+
+
+
 	<!-- Modal FeedBack -->
 	<div id="feedBackModalDelete" class="modal fade" role="dialog">
 		<div class="modal-dialog">
@@ -143,8 +143,8 @@
 <script type="text/javascript" src="view_js/reservations.js"></script>
 
 <!-- JavaScript specific to this page -->
-<script>$(document).ready( 
-	function(){ formatTableDateTime(1); 
+<script>$(document).ready(
+	function(){ formatTableDateTime(1);
 }); </script>
 
 {% endblock %}
