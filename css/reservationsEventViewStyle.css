@@ -55,7 +55,7 @@ h2 {
 	font-weight: bold;
 }
 
-h2 > text {
+h2 > text, h2> a {
 	font-weight: 300 !important;
 }
 
