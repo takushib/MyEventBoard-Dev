@@ -8,6 +8,9 @@ $(document).ready(function () {
 		window.location.href = $(this).children().attr('href');
 	});
 	
+	$('.returnEventButton').click(function() {
+		window.location.href = $(this).children().attr('href');
+	});
 	
 	$('#deleteEventButton').on("click", function() {
 		$('#deleteConfirm').modal('toggle');
