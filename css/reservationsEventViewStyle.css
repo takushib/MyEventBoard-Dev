@@ -7,21 +7,24 @@
 	font-weight: bold !important;
 }
 
-
-.deleteEvent {
-	width: 100%;
-	padding-top: 15px;
-}
-
-.deleteEventButton {
-	float: right;
-}
-
 .fileUploadContainer {
 	background: white;
 	padding: 10px;
 	border-radius: 10px;
 	width: 60%;
+}
+
+.buttonsContainer {
+	text-align: left;
+	border: 4px solid #d3d3d3;
+	border-radius: 10px;
+	background-color: #d3d3d3;
+	box-shadow: 3px 3px 3px 3px rgba(0, 0, 255, .2);
+	width: 30%;
+}
+
+.buttonsContainer > div {
+	display: block;
 }
 
 #uploadLabel {
@@ -52,10 +55,64 @@ h2 {
 	font-weight: bold;
 }
 
-h2 > text {
+h2 > text, h2> a {
 	font-weight: 300 !important;
 }
 
 .removedContainer {
 	text-align: center;
+}
+
+@media only screen and (max-width: 768px) {
+
+	h2 {
+		font-size: 16px;
+	}
+
+	h2 > text {
+		font-size: 16px;
+	}
+	
+	#eventName {
+		font-size: 25px;
+	}
+	
+	.buttonsContainer {
+		width: 100%;
+		text-align: center;
+	}
+	
+	.entryField1 {
+		width: 100%;
+		padding: none !important;
+		margin: none !important;
+	}
+	
+	.container {
+		padding: none !important;
+		margin: none !important;
+		width: 100%;
+	}
+	
+	.fileUploadContainer {
+		background: white;
+		border-radius: 0px;
+		padding: 5px;
+		width: 100%;
+	}
+	
+	.eventInformation {
+		border: 1px solid #d3d3d3;
+		border-radius: 10px;
+		padding: 10px;
+		background: #d3d3d3;
+	}
+
+	.eventInformationValues {
+		border: 1px solid white;
+		border-radius: 10px;
+		padding: 10px;
+		background: white;
+	}
+	
 }

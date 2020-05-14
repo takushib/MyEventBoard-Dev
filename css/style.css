@@ -35,18 +35,6 @@
   font-weight: bold;
 }
 
-
-@media screen and (max-width: 768px) {
-  .header a {
-    float: none;
-    display: block;
-    text-align: left;
-  }
-  .header-right {
-    float: none;
-  }
-}
-
 @import url(https://fonts.googleapis.com/css?family=Muli:400, 300);
 body, html {
 	background-color: grey;
@@ -89,15 +77,34 @@ body, html {
   float: right;
 }
 
-
 @media screen and (max-width: 768px) {
-    .search-form > i{
-		display: none;
-	}
+  
+  .header {
+	  font-size: 35px !important;
+  }
+  
+  .header a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+  .header-right {
+    float: none;
+  }
+  
+  .objectSpace
+  {
+	padding-top: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+  }
+  
+  .search-form > i{
+	 display: none;
+  }
 	
-	.search-form {
-		float: none;
-		padding-bottom: 15px;
-	}
-
+  .search-form {
+	float: none;
+	padding-bottom: 15px;
+  }
 }
