@@ -60,6 +60,10 @@
 	text-overflow: ellipsis;
 }
 
+.linkColumn > a {
+	display: none;
+}
+
 .capacityColumn {
 	max-width: 60px !important;
 
