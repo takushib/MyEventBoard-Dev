@@ -37,6 +37,17 @@ $(document).ready(function () {
 		
 	});
 	
+	$('#inviteEventButton').on("click", function() {
+		$('#massInvite').modal('toggle');
+		
+		$('#inviteSubmitButton').off();
+		$('#inviteSubmitButton').on("click", function() {
+			$('#inviteConfirm').modal('toggle');
+			//send emails here
+		});
+		
+	});
+	
 });
 
 
@@ -49,26 +60,24 @@ $("#submitFile").on("click", function() {
 function init() {
 
 	var fileUploadCheck = true; //replace with db value for event
-	 
-	if (fileUploadCheck == false)
-		$('.fileUploadContainer').remove();
 	
-	var startTime = "Replace me with Start Time";
+	var startTime = "Replace me with Start Time";	// Replace these with DB values 
 	var endTime = "Replace me with End Time";
 	var locationOfEvent  = "Replace me with Location";
 	var eventCreator = "Replace me with Creator";
 	var description = "Replace me with Description";
-	var uploadedFile = "ReplaceWithFileName";
+	var uploadedFile = "ReplaceWithFileName.pdf";
 	
 	var startTimeElement = $('<text>'+ startTime +'</text>');
 	var endTimeElement = $('<text>'+ endTime +'</text>');
 	var locationOfEventElement = $('<text>'+ locationOfEvent +'</text>');
 	var eventCreatorElement = $('<text>'+ eventCreator +'</text>');
 	var descriptionElement = $('<text>'+ description +'</text>');
-	var fileElement = $('<a>'+ uploadedFile +'</a>');
-	var downloadLinkToFile = "replacethiswithfile.txt";
-	fileElement.attr("href", downloadLinkToFile);
-	fileElement.attr("download", true);
+	var fileNameElement = $('<text>'+ uploadedFile +'</text>');
+	
+	var downloadLinkToFile = "replace with link to pdf";  // replace with DB pdf download link
+	
+	$('#fileElement').attr("href", downloadLinkToFile);
 	
 	$('#eventStartTimeLabel').append(startTimeElement);
 	$('#eventEndTimeLabel').append(endTimeElement);
@@ -81,9 +90,12 @@ function init() {
 		$('#eventDescriptionLabel').remove();
 	
 	if (fileUploadCheck == true)
-		$('#eventFileLabel').append(fileElement);
+		$('#eventFileLabel').append(fileNameElement);
 	else
+	{
 		$('#eventFileLabel').remove();
+		$('.fileUploadContainer').remove();
+	}
 }
 
 

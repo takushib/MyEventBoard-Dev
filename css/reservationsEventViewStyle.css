@@ -63,6 +63,21 @@ h2 > text, h2> a {
 	text-align: center;
 }
 
+.fileContainer > h2, .fileContainer > a{
+	display:inline-block;
+	vertical-align: middle;
+    margin: 10px 0;
+}
+
+.inviteInstructions {
+	font-weight: bold;
+	text-align: center;
+}
+
+.requirementsForInviteText {
+	color: red;
+}
+
 @media only screen and (max-width: 768px) {
 
 	h2 {
