@@ -24,6 +24,19 @@
 	text-align: center;
 }
 
+.inviteInstructions {
+	font-weight: bold;
+	text-align: center;
+}
+
+.requirementsForInviteText {
+	color: red;
+}
+
+#uploadLabel {
+	font-weight: bold;
+}
+
 @media only screen and (max-width: 768px) {
 
 	

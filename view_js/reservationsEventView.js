@@ -37,17 +37,6 @@ $(document).ready(function () {
 		
 	});
 	
-	$('#inviteEventButton').on("click", function() {
-		$('#massInvite').modal('toggle');
-		
-		$('#inviteSubmitButton').off();
-		$('#inviteSubmitButton').on("click", function() {
-			$('#inviteConfirm').modal('toggle');
-			//send emails here
-		});
-		
-	});
-	
 });
 
 

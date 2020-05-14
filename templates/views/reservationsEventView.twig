@@ -30,15 +30,6 @@
 				</Button>
 			</div>
 			
-			<div class="mx-1 inviteEvent">
-				<Button type="button" class="btn btn-sm btn-dark inviteEventButton" id="inviteEventButton">
-					<i class="fa fa-envelope" aria-hidden="true"></i>
-					Invite Users to This Event
-				</Button>
-			</div>
-			
-			<br>
-			
 			<div class="mx-1 deleteEvent">
 				<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
 					<i class="fas fa-trash"></i>
@@ -138,46 +129,6 @@
 					<button type="button" class="btn btn-dark" id="deleteCancelButton"
 						data-dismiss="modal">Cancel</button>
 					<button type="button" class="btn btn-dark" id="deleteSubmitButton">Delete</button>
-				</div>
-			</div>
-
-		</div>
-
-	</div>
-	
-	<div id="massInvite" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1> Invite Users Via Email </h1>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-				<div class="modal-body">
-					<div class="inviteInstructions">
-						<text>Notify a list of users about this event via email. </text>
-						<br>
-						<text class="requirementsForInviteText">*Requirements: CSV or TXT file with a list of ONIDs*</text>
-					</div>
-					
-					<br>
-					<div class="inviteFileContainer">
-					<label id="uploadLabel"> Upload a txt or csv file to send: </label>
-					
-					<div class="input-group fileInvite">
-						<div class="custom-file">
-							<input type="file" class="custom-file-input" id="inputInviteFile" accept=".txt, .csv">
-							<label class="custom-file-label" for="inputGroupFile04">Choose a File</label>
-						</div>
-					</div>
-					</div>
-				</div>
-				
-				<div class="modal-footer">
-					<button type="button" class="btn btn-dark" id="inviteCancelButton"
-						data-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-dark" id="inviteSubmitButton">Send</button>
 				</div>
 			</div>
 
