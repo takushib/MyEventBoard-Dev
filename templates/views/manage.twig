@@ -50,9 +50,9 @@
 						<td class="col">{{ column }}</td>
 						{% endfor %}
 						{% set file_path = table_row|slice(-1)|first %}
-						{% set file_name = file_path|slice(17) %}
+
 						<td>
-							<a href="~takushib/{{ file_path }}" download="{{file_name}}">
+							<a href="~takushib/{{ file_path }}" download="{{file_path}}">
 								<button class="manageEvent fileDownloadButton">
 									<i class="fa fa-download"></i> Download
 								</button>
