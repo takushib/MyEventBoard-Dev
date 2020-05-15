@@ -64,6 +64,40 @@ function setMySlot(modalTimeSlot, timeSlotObject) {
 
 }
 
+function resetSlot(timeSlot) {
+
+	timeSlot.my_slot = 0;
+	timeSlot.space = parseInt(timeSlot.space) + 1;
+	timeSlot.full = 0;
+
+	const timeSlotRow = document.getElementById(timeSlot.id);
+	timeSlotRow.classList.remove('fullSlot');
+
+	console.log(timeSlot.id)
+	console.log(timeSlotRow)
+
+}
+
+function resetMySlot(timeSlotObjects) {
+
+	$('.mySlot td').text("");
+	$('.mySlot').removeClass("mySlot");
+
+	var timeSlotKeys = Object.keys(timeSlotObjects);
+
+	for (var timeSlotKey of timeSlotKeys) {
+
+		var timeSlot = timeSlotObjects[timeSlotKey];
+
+		if (timeSlot.my_slot == 1) {
+			resetSlot(timeSlot);
+			break;
+		}
+
+	}
+
+}
+
 
 function getCurrentTime() {
 
@@ -131,22 +165,6 @@ function getTodayDate() {
 
 }
 
-function resetMySlot(timeSlotObjects) {
-
-	$('.mySlot td').text("");
-	$('.mySlot').removeClass("mySlot");
-
-	var timeSlotKeys = Object.keys(timeSlotObjects);
-
-	for (var timeSlotKey of timeSlotKeys) // store current day times into an array to loop through
-	{
-		var timeSlot = timeSlotObjects[timeSlotKey];
-		if(timeSlot.my_slot == 1) {
-			timeSlot.my_slot = 0;
-		}
-	}
-
-}
 
 $('#myModal').on('hidden.bs.modal', function () {
 	$('#submitButton').off();
@@ -207,16 +225,14 @@ function saveRegister() {
 				$('#feedBackModal').modal('toggle');
 			}
 			else {
-
 				resetMySlot(timeSlotObjects);
-
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
-				timeSlotObjects[slotKey].space = response;
+				// timeSlotObjects[slotKey].space = response;
 			}
-			monthDayAvailableSpace = getMonthDayAvailableSpace();
 
+			monthDayAvailableSpace = getMonthDayAvailableSpace();
 			selectedSlot[0].classList.remove('slotSelected');
 
 		});
