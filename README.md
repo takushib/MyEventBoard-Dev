@@ -12,9 +12,14 @@ http://web.engr.oregonstate.edu/~takushib/MyEventBoard/
 
 ## Setting Up the Repository for Development
 
-For the project to be functional, it should be cloned into the 'public_html' folder in your engineering filespace.  
-There are a few things to install. Run the Bash shell scripts to install Composer and some packages (Twig and phpCAS).  
+For the project to be functional, it should be cloned into the 'public_html' folder in your engineering filespace. MyEventBoard can only be run on the ENGR servers, as requested by the client.  
+
+There are a few things to install. Run the Bash shell commands below to install Composer and some packages (Twig and phpCAS).  
 Install Composer first, and then install the packages.
+
+`bash install_composer.sh`
+
+`bash install_packages.sh`
 
 Remember to also set permissions for everything inside the repository.  
 Run the script named 'set_permissions.sh'.
