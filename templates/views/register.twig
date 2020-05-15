@@ -1,9 +1,9 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} 
-	
-	<link rel="stylesheet" href="css/registerStyle.css"> 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% block page_head %}
+
+<link rel="stylesheet" href="css/registerStyle.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 {% endblock %}
 
@@ -11,7 +11,7 @@
 {% block page_content %}
 
 <div class="container entryFieldRegister objectSpace">
-	
+
 	<div class="descriptor container">
 		<h2 id="eventName">{{event_name}}</h2>
 		<br>
@@ -21,12 +21,12 @@
 		<p id="eventDescription"></p>
 	</div>
 	<br>
-	
+
 	<div class="calendarField container">
 		<div id="datepicker2"></div>
 	</div>
 
-<!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Select TimeSlot</button> -->
+	<!-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Select TimeSlot</button> -->
 
 	<table id="timeSlots" class="table mt-5 d-none">
 
@@ -60,10 +60,10 @@
 				</div>
 
 				<div class="modal-body">
-					
+
 					<h3 id="dayLabel"></h3>
 					<h2 id="dateLabel"></h2>
-					
+
 					<div class="container timeContainer">
 
 						<table class="table table-bordered align-top slotPicker table-sm" id="slotPicker">
@@ -90,65 +90,60 @@
 		</div>
 
 	</div>
-	
-	
+
+
 	<!-- Modal FeedBack -->
 	<div id="feedBackModal" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 
 			<!-- Modal content-->
 			<div class="modal-content">
+
 				<div class="modal-header">
 					<h4 id="feedbackMessage" class="modal-title">You have been registered!</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
-				
-				<div class="input-group fileUpload">
- 
-					<div class="custom-file">
-						<input type="file" class="custom-file-input" id="inputFile" accept="application/pdf">
-						<label class="custom-file-label" for="inputGroupFile04">Upload a file</label>
-					</div>
-					<div class="input-group-append">
-						<button id="submitFile" type="button">Submit</button>
-					</div>
-				</div>
-				
+
+				{% if event_upload == 1 %} {% include "partials/upload.twig" %} {% endif %}
+
 			</div>
 
 		</div>
 
 	</div>
-	
-	
-	
 
-	<!-- jQuery -->
-	<script type="text/javascript" src="js/jquery.min.js"></script>
+</div>
 
-	<!-- Bootstrap tooltips -->
-	<script type="text/javascript" src="js/popper.min.js"></script>
+<!-- jQuery -->
+<script type="text/javascript" src="js/jquery.min.js"></script>
 
-	<!-- Bootstrap core JavaScript -->
-	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="js/popper.min.js"></script>
 
-	<!-- MDB core JavaScript -->
-	<script type="text/javascript" src="js/mdb.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 
-	<!-- Your custom scripts (optional) -->
-	<script type="text/javascript"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="js/mdb.min.js"></script>
 
-	<!-- Date Range Picker -->
+<!-- Your custom scripts (optional) -->
+<script type="text/javascript"></script>
 
-	<script type="text/javascript"
-		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-	<link rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+<!-- Date Range Picker -->
 
-	<!-- UI specific javascripts -->
-	<script type="text/javascript" src="view_js/ui.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 
-	<!-- JavaScript specific to this page -->
-	<script type="text/javascript" src="view_js/register.js"></script>
+<!-- UI specific javascripts -->
+<script type="text/javascript" src="view_js/ui.js"></script>
 
-	{% endblock %}
+<!-- JavaScript specific to this page -->
+<script type="text/javascript" src="view_js/register.js"></script>
+
+<!-- JavaScript for file upload -->
+<script type="text/javascript" src="view_js/upload.js"></script>
+
+
+{% endblock %}

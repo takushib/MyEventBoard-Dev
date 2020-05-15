@@ -64,6 +64,40 @@ function setMySlot(modalTimeSlot, timeSlotObject) {
 
 }
 
+function resetSlot(timeSlot) {
+
+	timeSlot.my_slot = 0;
+	timeSlot.space = parseInt(timeSlot.space) + 1;
+	timeSlot.full = 0;
+
+	const timeSlotRow = document.getElementById(timeSlot.id);
+	timeSlotRow.classList.remove('fullSlot');
+
+	console.log(timeSlot.id)
+	console.log(timeSlotRow)
+
+}
+
+function resetMySlot(timeSlotObjects) {
+
+	$('.mySlot td').text("");
+	$('.mySlot').removeClass("mySlot");
+
+	var timeSlotKeys = Object.keys(timeSlotObjects);
+
+	for (var timeSlotKey of timeSlotKeys) {
+
+		var timeSlot = timeSlotObjects[timeSlotKey];
+
+		if (timeSlot.my_slot == 1) {
+			resetSlot(timeSlot);
+			break;
+		}
+
+	}
+
+}
+
 
 function getCurrentTime() {
 
@@ -131,22 +165,6 @@ function getTodayDate() {
 
 }
 
-function resetMySlot(timeSlotObjects) {
-
-	$('.mySlot td').text("");
-	$('.mySlot').removeClass("mySlot");
-
-	var timeSlotKeys = Object.keys(timeSlotObjects);
-
-	for (var timeSlotKey of timeSlotKeys) // store current day times into an array to loop through
-	{
-		var timeSlot = timeSlotObjects[timeSlotKey];
-		if(timeSlot.my_slot == 1) {
-			timeSlot.my_slot = 0;
-		}
-	}
-
-}
 
 $('#myModal').on('hidden.bs.modal', function () {
 	$('#submitButton').off();
@@ -207,16 +225,14 @@ function saveRegister() {
 				$('#feedBackModal').modal('toggle');
 			}
 			else {
-
 				resetMySlot(timeSlotObjects);
-
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
-				timeSlotObjects[slotKey].space = response;
+				// timeSlotObjects[slotKey].space = response;
 			}
-			monthDayAvailableSpace = getMonthDayAvailableSpace();
 
+			monthDayAvailableSpace = getMonthDayAvailableSpace();
 			selectedSlot[0].classList.remove('slotSelected');
 
 		});
@@ -642,53 +658,41 @@ function highlightCalendar() {
 
 
 function getSelectableDates() {
+
 	var enableDays = [];
 	var tempDateHolder;   // checks for the selected Date
 
-	for (var timeSlotKey of Object.keys(timeSlotObjects)) // store current day times into an array to loop through
-	{
+	for (var timeSlotKey of Object.keys(timeSlotObjects)) {
+
 		var timeSlot = timeSlotObjects[timeSlotKey];
 
 		tempDateHolder = timeSlot.start_time.month + "/" + timeSlot.start_time.day + "/" + timeSlot.start_time.year;
 
-		if (enableDays.includes(tempDateHolder) === true)
-			continue;
+		if (enableDays.includes(tempDateHolder) === true) continue;
 		enableDays.push(tempDateHolder);
+		
 	}
+
 	return enableDays;
+
 }
-
-
 
 $('#submitFile').on('click', function () {
 
-	var inputFile = $('#inputFile');
+    var inputFile = $('#inputFile');
 
-	if (!$('#inputFile').val()) {
-		alert('Please Upload File');
-	}
-	else
-	{
-		var eventName = document.getElementById('eventName').textContent;
-		var file_data = $('#inputFile').prop('files')[0];
-    var form_data = new FormData();
-    form_data.append('file', file_data);
-		form_data.append('slotKey', previous_slot);
-		//form_data.append('user', myONID);
-		form_data.append('eventName', eventName);
-		$.ajax({
-			url: 'upload.php', // point to server-side PHP script
-			dataType: 'text',  // what to expect back from the PHP script, if anything
-			cache: false,
-			contentType: false,
-			processData: false,
-			data: form_data,
-			type: "POST"
-		}).done(function (response) {
-			alert(response);
-			previous_slot = null;
-		});
-	}
+    if (!inputFile.val()) {
+        alert('Please upload a file first!');
+    }
+    else {
 
+		var fileData = inputFile.prop('files')[0];
+		var slotKey = previous_slot;
+
+		uploadFile(fileData, slotKey);
+
+		previous_slot = null;
+
+    }
 
 })

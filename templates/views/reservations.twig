@@ -37,10 +37,8 @@
 
 				<tr id="{{ table_row|last }}"scope="row">
 
-					{% set event_key = table_row|slice(-2, -1)|first %}
-
 					<td>
-						<a class="text-info" href="./reservationsEventView?key={{ event_key }}">{{ table_row|first }}</a>
+						<a class="text-info" href="./reservation_details?key={{ table_row|last }}">{{ table_row|first }}</a>
 					</td>
 
 					{% for column in table_row|slice(1, -2) %}
