@@ -20,7 +20,7 @@ This folder contains all the files responsible for the front end functionality (
 - register.js
 
 ## Edit Page:
-- edit.js (this is for the second page (time fields section) of the edit page. This should be renamed to "editTimeSection.js" ideally
+- edit.js (this is for the second page (time fields section) of the edit page. This should be renamed to "editTimeSection.js" ideally)
 - editFormSection.js (this is for the first page (form fields section) of the edit page
 - editGeneralFunctions.js (general functions that are used in both edit pages (form and time)
 
