@@ -104,7 +104,7 @@
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				{% include "partials/upload.twig" %}
+				{% if event_upload == 1 %} {% include "partials/upload.twig" %} {% endif %}
 
 			</div>
 
