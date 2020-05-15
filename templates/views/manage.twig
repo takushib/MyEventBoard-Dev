@@ -14,7 +14,7 @@
 	<div class="eventNameOnViewer">
 		<h2  id="eventName">{{ event_name }}</h2>
 	</div>
-	
+
 	<div class="container entryField1">
 
 		<div class="buttonsContainer">
@@ -27,23 +27,23 @@
 				Go To Event Registration
 				</Button>
 			</div>
-			
+
 			<div class="mx-1 editEvent">
-				<button type="button" class="btn btn-sm btn-dark editEventButton"> 
+				<button type="button" class="btn btn-sm btn-dark editEventButton">
 					<a class="text-info" href="./edit?key={{ event_key }}">
 						<i class="fas fa-edit"></i>
 					</a>
 					Edit This Event
 				</button>
 			</div>
-			
+
 			<div class="mx-1 deleteEvent">
 				<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
 					<i class="fas fa-trash"></i>
 					Delete This Event
 				</Button>
 			</div>
-			
+
 			<br>
 			<div class="mx-1 returnEvent">
 				<Button type="button" class="btn btn-sm btn-black returnEventButton">
@@ -54,9 +54,9 @@
 				</Button>
 			</div>
 		</div>
-	
+
 		<br>
-	
+
 		<div class="container">
 
 			{% if table_headers %}
@@ -87,8 +87,9 @@
 						<td class="col">{{ column }}</td>
 						{% endfor %}
 						{% set file_path = table_row|slice(-1)|first %}
+						{% set file_name = file_path|slice(34) %}
 						<td>
-							<a href="~takushib/{{ file_path }}" download="{{file_path}}">
+							<a href="~takushib/{{ file_path }}" download="{{file_name}}">
 								<button class="manageEvent fileDownloadButton">
 									<i class="fa fa-download"></i> Download
 								</button>
@@ -101,10 +102,10 @@
 			</table>
 
 		</div>
-	
+
 	</div>
-	
-	
+
+
 	<div id="deleteConfirm" class="modal fade" role="dialog">
 			<div class="modal-dialog">
 
