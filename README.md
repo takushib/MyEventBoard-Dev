@@ -15,7 +15,7 @@ http://web.engr.oregonstate.edu/~takushib/MyEventBoard/
 For the project to be functional, it should be cloned into the 'public_html' folder in your engineering filespace. 
 MyEventBoard in its current state is supposed to run only on the engineering servers, as requested by the client.  
 
-There are a few things to install. Run the Bash shell commands below to install Composer and some packages.
+There are a few things to install. Run the Bash shell commands below to install Composer and some packages.  
 MyEventBoard uses Twig, Mimey, and phpCAS. Install Composer first, and then install the packages.
 
 `bash install_composer.sh`
@@ -34,7 +34,7 @@ phpCAS is an official client for CAS, the single sign-on system used by Oregon S
 Go to https://github.com/apereo/phpCAS/tree/master/docs/examples for example code.  
 For documentation on the source code, it can be found at https://apereo.github.io/phpCAS/api/
 
-Mimey is a package that MyEventBoard uses for its file upload functionality.
+Mimey is a package that MyEventBoard uses for its file upload functionality.  
 Read more about it at https://github.com/ralouphie/mimey
 
 
