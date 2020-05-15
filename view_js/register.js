@@ -673,3 +673,24 @@ function getSelectableDates() {
 	}
 	return enableDays;
 }
+
+$('#submitFile').on('click', function () {
+
+    var inputFile = $('#inputFile');
+
+    if (!inputFile.val()) {
+        alert('Please Upload File');
+    }
+    else {
+
+		var fileData = inputFile.prop('files')[0];
+		var eventName = document.getElementById('eventName').textContent;
+		var slotKey = previous_slot ;
+
+		uploadFile(fileData, eventName, slotKey);
+
+		previous_slot = null;
+
+    }
+
+})
