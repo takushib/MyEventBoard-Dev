@@ -55,7 +55,6 @@
     echo $twig -> render(
         'views/reservations.twig',
         [
-            'user_ONID' => $_SESSION['user'],
             'table_headers' => $resultKeys,
             'table_rows' => $resultArray
         ]
