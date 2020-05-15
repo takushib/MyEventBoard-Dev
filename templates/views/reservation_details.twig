@@ -55,8 +55,14 @@
 			
 				<div class="eventInformationValues container">
 
-					<h3 id="eventStartTimeLabel">Start Time: {{ slot_start }}</h3><br>
-					<h3 id="eventEndTimeLabel">End Time: {{ slot_end }}</h3><br><br>
+					<h3 id="eventStartTimeLabel">
+						Start Time: <span>{{ slot_start }}</span>
+					</h3><br>
+
+					<h3 id="eventEndTimeLabel">
+						End Time: <span>{{ slot_end }}</span>
+					</h3><br><br>
+
 					<h3 id="eventLocationLabel">Location: {{ event_location }}</h3><br>
 					<h3 id="eventCreatorLabel">Event Creator: {{ event_creator }}</h3><br>
 					<h3 id="eventDescriptionLabel">Description: {{ event_description }}</h3>

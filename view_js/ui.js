@@ -80,26 +80,29 @@ function formatDate(date) {
 
 }
 
+function formatDateTime(targetString) {
+
+    var formattedDate = formatDate(targetString); 
+    var formattedTime = formatTime(targetString); 
+    return formattedTime + ' on ' +  formattedDate;
+
+}
+
 function formatTableDateTime(columnIndex) {
 
 	var tableBody = document.getElementsByTagName('tbody')[0];
 
     for (row of tableBody.children) {
-        var timeSlotString = row.children[columnIndex].innerText;
-        var formattedDate = formatDate(timeSlotString); 
-        var formattedTime = formatTime(timeSlotString); 
-        row.children[columnIndex].innerText = formattedTime + ' on ' +  formattedDate;
+        const timeSlotString = row.children[columnIndex].innerText;
+        row.children[columnIndex].innerText = formatDateTime(timeSlotString);
 	}
-	
-	
+		
 	var tableBody = document.getElementsByTagName('tbody')[1];
 
 	if (tableBody != undefined) {
 		for (row of tableBody.children) {
 			var timeSlotString = row.children[columnIndex].innerText;
-			var formattedDate = formatDate(timeSlotString); 
-			var formattedTime = formatTime(timeSlotString); 
-			row.children[columnIndex].innerText = formattedTime + ' on ' +  formattedDate;
+			row.children[columnIndex].innerText = formatDateTime(timeSlotString);
 		}
 	}	
 	

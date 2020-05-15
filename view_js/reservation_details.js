@@ -13,6 +13,7 @@ $(document).ready(function () {
 		
 		$('#deleteSubmitButton').off();
 		$('#deleteSubmitButton').on("click", function() {
+
 			$('#deleteConfirm').modal('toggle');
 			$('.entryField1').empty();
 			
@@ -31,9 +32,16 @@ $(document).ready(function () {
 			
 			$('.entryField1').append('<br><br>');
 			$('.entryField1').append(removedContainer);
+			
 		});
 		
 	});
+
+	const startTime = document.getElementById('eventStartTimeLabel').children[0];
+	startTime.innerText = formatDateTime(startTime.innerText);
+
+	const endTime = document.getElementById('eventEndTimeLabel').children[0];
+	endTime.innerText = formatDateTime(endTime.innerText);
 	
 });
 
