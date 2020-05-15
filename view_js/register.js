@@ -658,20 +658,23 @@ function highlightCalendar() {
 
 
 function getSelectableDates() {
+
 	var enableDays = [];
 	var tempDateHolder;   // checks for the selected Date
 
-	for (var timeSlotKey of Object.keys(timeSlotObjects)) // store current day times into an array to loop through
-	{
+	for (var timeSlotKey of Object.keys(timeSlotObjects)) {
+
 		var timeSlot = timeSlotObjects[timeSlotKey];
 
 		tempDateHolder = timeSlot.start_time.month + "/" + timeSlot.start_time.day + "/" + timeSlot.start_time.year;
 
-		if (enableDays.includes(tempDateHolder) === true)
-			continue;
+		if (enableDays.includes(tempDateHolder) === true) continue;
 		enableDays.push(tempDateHolder);
+		
 	}
+
 	return enableDays;
+
 }
 
 $('#submitFile').on('click', function () {
@@ -679,15 +682,14 @@ $('#submitFile').on('click', function () {
     var inputFile = $('#inputFile');
 
     if (!inputFile.val()) {
-        alert('Please Upload File');
+        alert('Please upload a file first!');
     }
     else {
 
 		var fileData = inputFile.prop('files')[0];
-		var eventName = document.getElementById('eventName').textContent;
-		var slotKey = previous_slot ;
+		var slotKey = previous_slot;
 
-		uploadFile(fileData, eventName, slotKey);
+		uploadFile(fileData, slotKey);
 
 		previous_slot = null;
 
