@@ -18,7 +18,7 @@ MyEventBoard in its current state is supposed to run only on the engineering ser
 There are a few things to install. Run the Bash shell commands below to install Composer and some packages.  
 MyEventBoard uses Twig, Mimey, and phpCAS. Install Composer first, and then install the packages.
 
-`bash install_composer.sh`
+`bash install_composer.sh`  
 `bash install_packages.sh`
 
 Remember to also set permissions for everything inside the repository.  
