@@ -1,10 +1,16 @@
 .eventNameOnViewer {
-	text-align: center;
+	background: #333;
 	padding: 10px;
+	border-radius: 10px;
+	text-align: center;
+	margin-top: 5px;
+	margin-bottom: 15px;
 }
 
 #eventName {
 	font-weight: bold !important;
+	padding: 10px;
+	color: orange;
 }
 
 .fileUploadContainer {
@@ -14,13 +20,44 @@
 	width: 60%;
 }
 
-.buttonsContainer {
-	text-align: left;
-	border: 4px solid #d3d3d3;
+.toolbarContainer > h4 {
+	font-weight: bold;
+	padding: 10px;
+	color: orange;
+}
+
+.toolbarContainer {
+	border: 4px solid #333;
 	border-radius: 10px;
 	background-color: #d3d3d3;
 	box-shadow: 3px 3px 3px 3px rgba(0, 0, 255, .2);
 	width: 30%;
+	display: inline-block;
+	margin: 5px;
+	text-align: center;
+	background-color: #333;
+}
+
+.reservationContainer{
+	border: 4px solid #333;
+	border-radius: 10px;
+	background-color: #d3d3d3;
+	box-shadow: 3px 3px 3px 3px rgba(0, 0, 255, .2);
+	margin: 5px;
+	text-align: center;
+	background-color: #333;
+}
+
+.reservationContainer > h4 {
+	font-weight: bold;
+	padding: 10px;
+	color: orange;
+}
+
+.buttonsContainer {
+	background: #d3d3d3;
+	border-radius: 10px;
+	padding: 10px;
 }
 
 .buttonsContainer > div {
@@ -84,7 +121,7 @@ h2 > text, h2> a {
 		font-size: 25px;
 	}
 	
-	.buttonsContainer {
+	.toolbarContainer {
 		width: 100%;
 		text-align: center;
 	}
@@ -95,7 +132,7 @@ h2 > text, h2> a {
 		margin: none !important;
 	}
 	
-	.container {
+	.reservationContainer {
 		padding: none !important;
 		margin: none !important;
 		width: 100%;
@@ -106,6 +143,10 @@ h2 > text, h2> a {
 		border-radius: 0px;
 		padding: 5px;
 		width: 100%;
+	}
+	
+	.fileDownloadButton > text {
+		display: none;
 	}
 	
 	.eventInformation {
@@ -120,6 +161,21 @@ h2 > text, h2> a {
 		border-radius: 10px;
 		padding: 10px;
 		background: white;
+	}
+	
+	.fileUpload {
+		font-size: 10px;
+		text-align: left;
+	}
+	
+	.uploadPlaceholder {
+		display:inline-block;
+		vertical-align: middle;
+	}
+	
+	#submitFile {
+		display:inline-block;
+		vertical-align: middle;
 	}
 	
 }

@@ -99,18 +99,26 @@
 .eventBlockCreator {
 	display: block;
 	font-weight: bolder;
-	font-size: 18px;
+	font-size: 16px;
 	font-style: italic;
-	padding-left: 3%;
-	text-align: left;
+	padding-right: 3%;
+	text-align: right;
+}
+
+.eventBlockSpace {
+	overflow: hidden;
+	padding-left: none;
+	margin-left: none;
+	text-overflow: ellipsis;
 }
 
 .infoHolder {
 	display: block;
-	font-size: 20px;
-	text-align: right;
-	padding-right: 3%;
-	padding-bottom: 5%;
+	font-size: 16px;
+	text-align: left;
+	margin: 0;
+	padding: 0;
+	padding-left: 5px !important;
 	color: red;
 }
 

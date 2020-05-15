@@ -17,69 +17,88 @@
 	
 	<div class="container entryField1">
 
-		<div class="buttonsContainer">
-			<div class="mx-1 goToEvent">
+		<div class="containerForActionsAndInformation">
 
-				<Button type="button" class="btn btn-sm btn-dark visitEvent">
-					<a class="text-info" href="./register?key={{ event_key }}">
-						<i class="fas fa-external-link-alt"></i>
-					</a>
-				Go To Event Registration
-				</Button>
+			<div class="toolbarContainer">
+				<h4> Toolbar </h4>
+				<div class="buttonsContainer">
+					<div class="mx-1 goToEvent">
+
+						<Button type="button" class="btn btn-sm btn-dark visitEvent">
+							<a class="text-info" href="./register?key={{ event_key }}">
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						Go To Event Registration
+						</Button>
+					</div>
+					
+					<div class="mx-1 inviteEvent">
+						<Button type="button" class="btn btn-sm btn-dark inviteEventButton" id="inviteEventButton">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+							Invite Users to This Event
+						</Button>
+					</div>
+					
+					<br>
+					
+					<div class="mx-1 editEvent">
+						<button type="button" class="btn btn-sm btn-dark editEventButton"> 
+							<a class="text-info" href="./edit?key={{ event_key }}">
+								<i class="fas fa-edit"></i>
+							</a>
+							Edit This Event
+						</button>
+					</div>
+					
+					<div class="mx-1 deleteEvent">
+						<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
+							<i class="fas fa-trash"></i>
+							Delete This Event
+						</Button>
+					</div>
+					
+					<br>
+					
+					<div class="mx-1 returnEvent">
+						<Button type="button" class="btn btn-sm btn-black returnEventButton">
+							<a class="text-info" href="./events">
+								<i class="fas fa-arrow-left"></i>
+							</a>
+							Go Back
+						</Button>
+					</div>
+				</div>
 			</div>
 			
-			<div class="mx-1 inviteEvent">
-				<Button type="button" class="btn btn-sm btn-dark inviteEventButton" id="inviteEventButton">
-					<i class="fa fa-envelope" aria-hidden="true"></i>
-					Invite Users to This Event
-				</Button>
-			</div>
-			
-			<br>
-			
-			<div class="mx-1 editEvent">
-				<button type="button" class="btn btn-sm btn-dark editEventButton"> 
-					<a class="text-info" href="./edit?key={{ event_key }}">
-						<i class="fas fa-edit"></i>
-					</a>
-					Edit This Event
-				</button>
-			</div>
-			
-			<div class="mx-1 deleteEvent">
-				<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
-					<i class="fas fa-trash"></i>
-					Delete This Event
-				</Button>
-			</div>
-			
-			<br>
-			
-			<div class="mx-1 returnEvent">
-				<Button type="button" class="btn btn-sm btn-black returnEventButton">
-					<a class="text-info" href="./events">
-						<i class="fas fa-arrow-left"></i>
-					</a>
-					Go Back
-				</Button>
+			<div class="logisticsContainer">
+				<h4> Event Information </h4>
+				<div class="informationContainer">
+					<label> Event Capacity:  </label>
+					<br>
+					<label> Available Slots: </label>
+					<br>
+					<label> Duration Per Timeslot: </label>
+					<br>
+					<br>
+					<label> Event Location: </label>
+					<br>
+					<label> Event Description: </label>
+					<br>
+					<br>
+					<label> Anonymous Event Option: </label>
+					<br>
+					<label> File Upload Option: </label>
+					<br>
+					<br>
+					<label> Link to Event Registration: </label>
+				</div>
 			</div>
 		</div>
 	
 		<br>
-		
-		<div class="logisticsContainer">
-			<h4> Event Logistics </h4>
-			<label> Available Slots: </label>
-			<br>
-			<label> Event Capacity:  </label>
-			<br>
-			<label> Link to Event Registration: </label>
-		</div>
-	
-	
 		<br>
-		
-		<div class="container">
+		<br>
+		<div class="slotsContainer">
 
 			{% if table_headers %}
 
@@ -113,7 +132,7 @@
 						<td class="col">
 							<a href="~takushib/{{ file_path }}" download="{{file_name}}">
 								<button class="btn btn-sm btn-dark manageEvent fileDownloadButton">
-									<i class="fa fa-download"></i> Download
+									<i class="fa fa-download"></i> <text>Download</text>
 								</button>
 							</a>
 						</td>

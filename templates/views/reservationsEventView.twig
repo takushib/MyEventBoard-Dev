@@ -20,38 +20,40 @@
 	
 	<div class="container entryField1">
 	
-		<div class="buttonsContainer">
-			<div class="mx-1 goToEvent">
-				<Button type="button" class="btn btn-sm btn-dark visitEventButton">
-					<a class="text-info" href="./register?key={{ event_key }}">
-						<i class="fas fa-external-link-alt"></i>
-					</a>
-					Go to Event Registration
-				</Button>
-			</div>
-			
-			<div class="mx-1 deleteEvent">
-				<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
-					<i class="fas fa-trash"></i>
-					Delete This Reservation
-				</Button>
-			</div>
+		<div class="toolbarContainer">
+			<h4> Toolbar </h4>
+			<div class="buttonsContainer">
+				<div class="mx-1 goToEvent">
+					<Button type="button" class="btn btn-sm btn-dark visitEventButton">
+						<a class="text-info" href="./register?key={{ event_key }}">
+							<i class="fas fa-external-link-alt"></i>
+						</a>
+						Go to Event Registration
+					</Button>
+				</div>
+				
+				<div class="mx-1 deleteEvent">
+					<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
+						<i class="fas fa-trash"></i>
+						Delete This Reservation
+					</Button>
+				</div>
 
-			<br>
-			<div class="mx-1 returnEvent">
-				<Button type="button" class="btn btn-sm btn-black returnEventButton">
-					<a class="text-info" href="./reservations">
-						<i class="fas fa-arrow-left"></i>
-					</a>
-					Go Back
-				</Button>
-			</div>			
+				<br>
+				<div class="mx-1 returnEvent">
+					<Button type="button" class="btn btn-sm btn-black returnEventButton">
+						<a class="text-info" href="./reservations">
+							<i class="fas fa-arrow-left"></i>
+						</a>
+						Go Back
+					</Button>
+				</div>			
+			</div>
 		</div>
-		
 		<br>
-	
-		<div class="container">
-		
+		<br>
+		<div class="reservationContainer">
+			<h4> Reservation Information </h4>
 			<div class="eventInformation">
 			
 				<div class="eventInformationValues container">
@@ -88,7 +90,7 @@
 						</h2>
 						<a id="fileElement" href="~takushib/{{ file_path }}" download="{{file_name}}">
 								<button class="btn btn-sm btn-dark manageEvent fileDownloadButton">
-									<i class="fa fa-download"></i> Download
+									<i class="fa fa-download"></i> <text> Download </text>
 								</button>
 						</a>
 					</div>
@@ -102,7 +104,7 @@
 					<div class="input-group fileUpload">
 							<div class="custom-file">
 								<input type="file" class="custom-file-input" id="inputFile" accept="application/pdf">
-								<label class="custom-file-label" for="inputGroupFile04">Choose a File</label>
+								<label class="custom-file-label uploadPlaceholder" for="inputGroupFile04">Choose a File</label>
 							</div>
 							<div class="input-group-append">
 								<button id="submitFile" type="button">Submit</button>
