@@ -21,7 +21,7 @@
 
     $eventKey = ($_GET["key"]);
 
-    // get event name and match user ONID with event creator's ONID
+    // get event name
     // if there are no results, show error page
 
     $query = "
@@ -30,12 +30,12 @@
         FROM event 
         INNER JOIN user 
             ON event.fk_event_creator = user.id 
-        WHERE event.hash = ? AND user.onid = ?
+        WHERE event.hash = ?
 
     ";
 
     $statement = $database -> prepare($query);
-    $statement -> bind_param("ss", $eventKey, $_SESSION['user']);
+    $statement -> bind_param("s", $eventKey);
     $statement -> execute();
 
     $result = $statement -> get_result();
@@ -89,9 +89,8 @@
     // render page using twig
 
     echo $twig -> render(
-        'views/reservationsEventView.twig',
+        'views/reservation_details.twig',
         [
-            'user_ONID' => $_SESSION['user'],
             'event_name' => $eventName,
             'event_key' => $eventKey,
             'table_headers' => $resultKeys,
