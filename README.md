@@ -12,7 +12,7 @@ http://web.engr.oregonstate.edu/~takushib/MyEventBoard/
 
 ## Setting Up the Repository for Development
 
-For the project to be functional, it should be cloned into the 'public_html' folder in your engineering filespace. 
+For the project to be functional, it should be cloned into the 'public_html' folder in your engineering filespace.  
 MyEventBoard in its current state is supposed to run only on the engineering servers, as requested by the client.  
 
 There are a few things to install. Run the Bash shell commands below to install Composer and some packages.  
