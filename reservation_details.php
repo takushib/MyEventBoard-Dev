@@ -28,7 +28,7 @@
     $query = "
 
         SELECT 
-            t3.hash, t3.name, t3.location, t3.description, 
+            t3.hash, t3.name, t3.location, t3.description, t3.enable_upload AS 'upload',
             CONCAT(t4.first_name, ' ', t4.last_name) AS 'creator',
             t1.start_time, t1.end_time, t5.path AS 'file'
         FROM 
@@ -75,6 +75,7 @@
             'event_location' => $reservationData['location'],
             'event_description' => $reservationData['description'], 
             'event_creator' => $reservationData['creator'],
+            'event_upload' => $reservationData['upload'],
             'slot_start' => $reservationData['start_time'],
             'slot_end' => $reservationData['end_time'],
             'user_file' => $reservationData['file']

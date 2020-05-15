@@ -32,7 +32,7 @@ $(document).ready(function () {
 			
 			$('.entryField1').append('<br><br>');
 			$('.entryField1').append(removedContainer);
-			
+
 		});
 		
 	});
@@ -46,9 +46,24 @@ $(document).ready(function () {
 });
 
 
-$("#submitFile").on("click", function() {
-	if ($('#inputFile').val() == "")
-		alert("Please Upload a File");
-});
+$('#submitFile').on('click', function () {
+
+    var inputFile = $('#inputFile');
+
+    if (!inputFile.val()) {
+        alert('Please upload a file first!');
+    }
+    else {
+
+		var fileData = inputFile.prop('files')[0];
+		var slotKey = window.location.search.split('?key=')[1];
+
+		uploadFile(fileData, slotKey);
+
+    }
+
+})
+
 
 ($(this).find('.myLink').attr('href'));
+
