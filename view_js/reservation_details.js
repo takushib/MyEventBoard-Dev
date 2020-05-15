@@ -8,8 +8,6 @@ $(document).ready(function () {
 		window.location.href = $(this).children().attr('href');
 	});
 	
-	init();
-	
 	$('#deleteEventButton').on("click", function() {
 		$('#deleteConfirm').modal('toggle');
 		
@@ -44,15 +42,5 @@ $("#submitFile").on("click", function() {
 	if ($('#inputFile').val() == "")
 		alert("Please Upload a File");
 });
-
-
-function init() {
-
-	var fileUploadCheck = true; //replace with db value for event
-	 
-	if (fileUploadCheck == false)
-		$('.fileUploadContainer').remove();
-}
-
 
 ($(this).find('.myLink').attr('href'));
