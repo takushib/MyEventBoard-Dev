@@ -23,7 +23,13 @@
 
     // get event data from database
 
-    $query = 'SELECT name FROM event WHERE hash = ?';
+    $query = "
+        
+        SELECT name, is_anon AS 'anonymous', enable_upload AS 'upload'
+        FROM event 
+        WHERE hash = ?
+        
+    ";
 
     $statement = $database -> prepare($query);
     $statement -> bind_param("s", $eventKey);
@@ -41,6 +47,8 @@
     }
 
     $eventName = $resultRow['name'];
+    $eventAnoymous = $resultRow['anonymous'];
+    $eventUpload = $resultRow['upload'];
 
     $result -> free();
 
@@ -81,6 +89,8 @@
         'views/register.twig',
         [
             'event_name' => $eventName,
+            'event_anonymous' => $eventAnoymous,
+            'event_upload' => $eventUpload,
             'table_headers' => $resultKeys,
             'table_rows' => $resultArray
         ]

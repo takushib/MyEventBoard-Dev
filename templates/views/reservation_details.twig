@@ -1,8 +1,8 @@
 {% extends "layout/layout.twig" %}
 
-{% block page_head %} 
+{% block page_head %}
 
-<link rel="stylesheet" href="css/reservationsEventViewStyle.css"> 
+<link rel="stylesheet" href="css/reservationDetailsStyle.css">
 
 {% endblock %}
 
@@ -11,13 +11,10 @@
 
 <div class="container objectSpace">
 
-
-		
 	<div class="eventNameOnViewer container">
 		<h2 class="d-inline" id="eventName">{{ event_name }}</h2>
 	</div>
-	
-	
+
 	<div class="container entryField1">
 	
 		<div class="toolbarContainer">
@@ -52,76 +49,70 @@
 		</div>
 		<br>
 		<br>
+		
+		
 		<div class="reservationContainer">
 			<h4> Reservation Information </h4>
-			<div class="eventInformation">
-			
-				<div class="eventInformationValues container">
-					<h2 id="eventStartTimeLabel">
-						Start Time:
-					</h2>
-					
-					<br>
-					<h2 id="eventEndTimeLabel">
-						End Time:
-					</h2>
-					
-					<br>
-					<br>
-					<h2 id="eventLocationLabel">	
-						Location:
-					</h2>
 
-					<br>
-					<h2 id="eventCreatorLabel">
-						Event Creator:
-					</h2>
+			<div class="eventInformation">
+
+				<div class="eventInformationValues container">
+
+					<h3 id="eventStartTimeLabel">
+						Start Time: <span>{{ slot_start }}</span>
+					</h3><br>
+
+					<h3 id="eventEndTimeLabel">
+						End Time: <span>{{ slot_end }}</span>
+					</h3><br><br>
+
+					<h3 id="eventLocationLabel">Location: {{ event_location }}</h3><br>
+					<h3 id="eventCreatorLabel">Event Creator: {{ event_creator }}</h3><br>
+					<h3 id="eventDescriptionLabel">Description: {{ event_description }}</h3>
+
+					<br><br>
+					<h3 id="eventFileLabel">
+
+					{% if user_file %}
 					
-					<br>
-					<h2 id="eventDescriptionLabel">
-						Description:
-					</h2>
-					
-					<br>
-					<br>
-					<div class="fileContainer">
-						<h2 id="eventFileLabel">
-							File:
-						</h2>
-						<a id="fileElement" href="~takushib/{{ file_path }}" download="{{file_name}}">
-								<button class="btn btn-sm btn-dark manageEvent fileDownloadButton">
-									<i class="fa fa-download"></i> <text> Download </text>
-								</button>
+						File: <a href="../{{ user_file|slice(6) }}" download>
+							{{ user_file|slice(34) }}
 						</a>
-					</div>
-					
-				</div>
-				<br>
-				<br>
 				
+					{% else %}
+
+						File: None
+
+					{% endif %}
+
+					</h3>
+
+				</div>
+
+				{% if event_upload == 1 %}
+
+				<br>
+				<br>
 				<div class="fileUploadContainer">
-					<label id="uploadLabel"> Upload a File to Your Registration: </label>
-					<div class="input-group fileUpload">
-							<div class="custom-file">
-								<input type="file" class="custom-file-input" id="inputFile" accept="application/pdf">
-								<label class="custom-file-label uploadPlaceholder" for="inputGroupFile04">Choose a File</label>
-							</div>
-							<div class="input-group-append">
-								<button id="submitFile" type="button">Submit</button>
-							</div>
-					</div>
+					<label id="uploadLabel"> Upload a File for the Event Creator:</label>
+					{% include "partials/upload.twig" %}
 				</div>
-				
+
+				{% endif %}
+
 			</div>
-		
+
 		</div>
+
 	</div>
-	
+
 	<div id="deleteConfirm" class="modal fade" role="dialog">
+
 		<div class="modal-dialog">
 
 			<!-- Modal content-->
 			<div class="modal-content">
+
 				<div class="modal-header">
 					<h1> Confirm Delete </h1>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -132,12 +123,13 @@
 						data-dismiss="modal">Cancel</button>
 					<button type="button" class="btn btn-dark" id="deleteSubmitButton">Delete</button>
 				</div>
+
 			</div>
 
 		</div>
 
 	</div>
-	
+
 </div>
 
 
@@ -167,6 +159,9 @@
 <script type="text/javascript" src="view_js/ui.js"></script>
 
 <!-- JavaScript specific to this page -->
-<script type="text/javascript" src="view_js/reservationsEventView.js"></script>
+<script type="text/javascript" src="view_js/reservation_details.js"></script>
+
+<!-- JavaScript for file upload -->
+<script type="text/javascript" src="view_js/upload.js"></script>
 
 {% endblock %}

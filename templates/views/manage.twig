@@ -14,9 +14,8 @@
 	<div class="eventNameOnViewer">
 		<h2  id="eventName">{{ event_name }}</h2>
 	</div>
-	
-	<div class="container entryField1">
 
+	<div class="container entryField1">
 		<div class="containerForActionsAndInformation">
 
 			<div class="toolbarContainer">
@@ -93,12 +92,12 @@
 					<label> Link to Event Registration: </label>
 				</div>
 			</div>
-		</div>
-	
-		<br>
+
 		<br>
 		<br>
 		<div class="slotsContainer">
+		<div class="container">
+
 
 			{% if table_headers %}
 
@@ -127,9 +126,11 @@
 						{% for column in table_row|slice(0, -1) %}
 						<td class="col">{{ column }}</td>
 						{% endfor %}
-						{% set file_path = table_row|slice(-1)|first %}
-						<td class="col">
-							<a href="~takushib/{{ file_path }}" download="{{file_path}}">
+
+						{% set file_path = table_row|last|slice(6) %}
+						{% set file_name = file_path|slice(34) %}
+						<td>
+							<a href="../{{ file_path }}" download="{{file_name}}">
 								<button class="manageEvent fileDownloadButton">
 									<i class="fa fa-download"></i> Download
 								</button>
@@ -142,10 +143,10 @@
 			</table>
 
 		</div>
-	
+
 	</div>
-	
-	
+
+
 	<div id="deleteConfirm" class="modal fade" role="dialog">
 			<div class="modal-dialog">
 
