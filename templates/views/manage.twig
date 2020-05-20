@@ -92,60 +92,56 @@
 					<label> Link to Event Registration: </label>
 				</div>
 			</div>
-
+		</div>
+		
 		<br>
 		<br>
 		<div class="slotsContainer">
-		<div class="container">
 
+				{% if table_headers %}
 
-			{% if table_headers %}
+				{{ include('partials/search.twig') }}
 
-			{{ include('partials/search.twig') }}
+				{% else %}
 
-			{% else %}
+				<br><br><h3 class="text-center">No one has signed up for this event yet.</h4>
 
-			<br><br><h3 class="text-center">No one has signed up for this event yet.</h4>
+				{% endif %}
 
-			{% endif %}
+				<table class="table table-striped">
 
-			<table class="table table-striped">
+					<thead>
+						<tr class="row">
+							{% for table_header in table_headers %}
+							<th class="col">{{ table_header }}</th>
+							{% endfor %}
+						</tr>
+					</thead>
 
-				<thead>
-					<tr class="row">
-						{% for table_header in table_headers %}
-						<th class="col">{{ table_header }}</th>
+					<tbody class="tableBody">
+						{% for table_row in table_rows %}
+
+						<tr class="row">
+							{% for column in table_row|slice(0, -1) %}
+							<td class="col">{{ column }}</td>
+							{% endfor %}
+
+							{% set file_path = table_row|last|slice(6) %}
+							{% set file_name = file_path|slice(34) %}
+							<td class="col">
+								<a href="../{{ file_path }}" download="{{file_name}}">
+									<button class="manageEvent fileDownloadButton">
+										<i class="fa fa-download"></i> Download
+									</button>
+								</a>
+							</td>
+						</tr>
+
 						{% endfor %}
-					</tr>
-				</thead>
-
-				<tbody class="tableBody">
-					{% for table_row in table_rows %}
-
-					<tr class="row">
-						{% for column in table_row|slice(0, -1) %}
-						<td class="col">{{ column }}</td>
-						{% endfor %}
-
-						{% set file_path = table_row|last|slice(6) %}
-						{% set file_name = file_path|slice(34) %}
-						<td>
-							<a href="../{{ file_path }}" download="{{file_name}}">
-								<button class="manageEvent fileDownloadButton">
-									<i class="fa fa-download"></i> Download
-								</button>
-							</a>
-						</td>
-					</tr>
-
-					{% endfor %}
-				</tbody>
-			</table>
-
+					</tbody>
+				</table>
 		</div>
-
 	</div>
-
 
 	<div id="deleteConfirm" class="modal fade" role="dialog">
 			<div class="modal-dialog">
