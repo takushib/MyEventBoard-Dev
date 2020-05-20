@@ -14,7 +14,7 @@ This folder contains all the files responsible for the front end functionality (
 
 ## Reservations Page:
 - reservations.js (this is for the landing page of the reservations page)
-- reservationsEventView.js (this is for viewing an individual reservation)
+- reservations_details.js (this is for viewing an individual reservation)
 
 ## Register Page:
 - register.js
