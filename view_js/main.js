@@ -71,8 +71,8 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	var newEventCreator = $('<div><text></text></div>');
 	var creatorText = creatorName;
 
-	var timeOfEvent = $('<div><text></text></div>');
-	var locationOfEvent = $('<div><text></text></div>');
+	var timeOfEvent = $('<text></text>');
+	var locationOfEvent = $('<text></text>');
 
 	var newEventAvailSlot = $('<div><text></text></div>');
 	var slotsText = "Slots: ";
@@ -99,6 +99,7 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 
 	var eventInfo = $('<div></div>');
 	eventInfo.append(locationOfEvent);
+	eventInfo.append('<br>');
 	eventInfo.append(timeOfEvent);
 	eventInfo.addClass("container infoHolder");
 	

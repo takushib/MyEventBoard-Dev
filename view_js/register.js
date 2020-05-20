@@ -258,8 +258,13 @@ const monthEnum = {
 
 $(document).ready(function () {
 	timeSlotObjects = createTimeSlotObjects();
+	
 	monthDayAvailableSpace = getMonthDayAvailableSpace();
 	document.getElementById('timeSlots').remove();
+	
+	var fileOption = true;	// replace this with DB value
+	if (fileOption == false) 
+		$('.fileUploadContainer').remove();
 
 });
 

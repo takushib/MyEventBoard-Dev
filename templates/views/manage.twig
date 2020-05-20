@@ -16,48 +16,88 @@
 	</div>
 
 	<div class="container entryField1">
+		<div class="containerForActionsAndInformation">
 
-		<div class="buttonsContainer">
-			<div class="mx-1 goToEvent">
+			<div class="toolbarContainer">
+				<h4> Toolbar </h4>
+				<div class="buttonsContainer">
+					<div class="mx-1 goToEvent">
 
-				<Button type="button" class="btn btn-sm btn-dark visitEvent">
-					<a class="text-info" href="./register?key={{ event_key }}">
-						<i class="fas fa-external-link-alt"></i>
-					</a>
-				Go To Event Registration
-				</Button>
+						<Button type="button" class="btn btn-sm btn-dark visitEvent">
+							<a class="text-info" href="./register?key={{ event_key }}">
+								<i class="fas fa-external-link-alt"></i>
+							</a>
+						Go To Event Registration
+						</Button>
+					</div>
+					
+					<div class="mx-1 inviteEvent">
+						<Button type="button" class="btn btn-sm btn-dark inviteEventButton" id="inviteEventButton">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+							Invite Users to This Event
+						</Button>
+					</div>
+					
+					<br>
+					
+					<div class="mx-1 editEvent">
+						<button type="button" class="btn btn-sm btn-dark editEventButton"> 
+							<a class="text-info" href="./edit?key={{ event_key }}">
+								<i class="fas fa-edit"></i>
+							</a>
+							Edit This Event
+						</button>
+					</div>
+					
+					<div class="mx-1 deleteEvent">
+						<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
+							<i class="fas fa-trash"></i>
+							Delete This Event
+						</Button>
+					</div>
+					
+					<br>
+					
+					<div class="mx-1 returnEvent">
+						<Button type="button" class="btn btn-sm btn-black returnEventButton">
+							<a class="text-info" href="./events">
+								<i class="fas fa-arrow-left"></i>
+							</a>
+							Go Back
+						</Button>
+					</div>
+				</div>
 			</div>
-
-			<div class="mx-1 editEvent">
-				<button type="button" class="btn btn-sm btn-dark editEventButton">
-					<a class="text-info" href="./edit?key={{ event_key }}">
-						<i class="fas fa-edit"></i>
-					</a>
-					Edit This Event
-				</button>
+			
+			<div class="logisticsContainer">
+				<h4> Event Information </h4>
+				<div class="informationContainer">
+					<label> Event Capacity:  </label>
+					<br>
+					<label> Available Slots: </label>
+					<br>
+					<label> Duration Per Timeslot: </label>
+					<br>
+					<br>
+					<label> Event Location: </label>
+					<br>
+					<label> Event Description: </label>
+					<br>
+					<br>
+					<label> Anonymous Event Option: </label>
+					<br>
+					<label> File Upload Option: </label>
+					<br>
+					<br>
+					<label> Link to Event Registration: </label>
+				</div>
 			</div>
-
-			<div class="mx-1 deleteEvent">
-				<Button type="button" class="btn btn-sm btn-danger deleteEventButton" id="deleteEventButton">
-					<i class="fas fa-trash"></i>
-					Delete This Event
-				</Button>
-			</div>
-
-			<br>
-			<div class="mx-1 returnEvent">
-				<Button type="button" class="btn btn-sm btn-black returnEventButton">
-					<a class="text-info" href="./events">
-						<i class="fas fa-arrow-left"></i>
-					</a>
-					Go Back
-				</Button>
-			</div>
-		</div>
 
 		<br>
-
+		<br>
+		<div class="slotsContainer">
 		<div class="container">
+
 
 			{% if table_headers %}
 
@@ -86,6 +126,7 @@
 						{% for column in table_row|slice(0, -1) %}
 						<td class="col">{{ column }}</td>
 						{% endfor %}
+
 						{% set file_path = table_row|last|slice(6) %}
 						{% set file_name = file_path|slice(34) %}
 						<td>
@@ -127,6 +168,46 @@
 
 	</div>
 
+	<div id="massInvite" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1> Invite Users Via Email </h1>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="inviteInstructions">
+						<text>Notify a list of users about this event via email. </text>
+						<br>
+						<text class="requirementsForInviteText">*Requirements: CSV or TXT file with a list of ONIDs*</text>
+					</div>
+					
+					<br>
+					<div class="inviteFileContainer">
+					<label id="uploadLabel"> Upload a txt or csv file to send: </label>
+					
+					<div class="input-group fileInvite">
+						<div class="custom-file">
+							<input type="file" class="custom-file-input" id="inputInviteFile" accept=".txt, .csv">
+							<label class="custom-file-label" for="inputGroupFile04">Choose a File</label>
+						</div>
+					</div>
+					</div>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-dark" id="inviteCancelButton"
+						data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-dark" id="inviteSubmitButton">Send</button>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	
 </div>
 
 <!-- jQuery -->

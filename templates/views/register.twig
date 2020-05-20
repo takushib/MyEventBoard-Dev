@@ -104,8 +104,26 @@
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				{% if event_upload == 1 %} {% include "partials/upload.twig" %} {% endif %}
-
+				{% if event_upload == 1 %}
+					<div class="modal-body">
+						<br>
+						<text id="confirmationText"> A confirmation email has been sent to your Oregon State Email! </text>
+						
+						<div class="fileUploadContainer">
+							<label id="noticeLabel"> *Registration Notice* </label>
+							<br>
+							<div class="fileUploadContent">
+								<label id="uploadLabel"> This event has file uploading enabled. You may optionally upload a file to your registration now or you can upload a file at a later time in the reservations page. </label>
+									{% include "partials/upload.twig" %}
+							</div>
+						</div>
+					</div>
+				{% endif %}
+				 
+				<div class="modal-footer">
+					<button type="button" class="btn btn-dark" data-dismiss="modal">Finish</button>
+				</div>
+				
 			</div>
 
 		</div>
