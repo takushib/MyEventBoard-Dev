@@ -3,7 +3,7 @@
     // set up connection to database via MySQLi
 
 	require 'php/database.php';
-	
+
 	// get time slot data for event from database
 
 	if (!empty($_POST))
@@ -12,16 +12,16 @@
 
 		$query = "
 
-			SELECT * FROM timeslot 
-			INNER JOIN event 
-				ON timeslot.fk_event_id = event.id 
-			WHERE event.hash = ?
-		
+			SELECT * FROM meb_timeslot
+			INNER JOIN meb_event
+				ON meb_timeslot.fk_event_id = meb_event.id 
+			WHERE meb_event.hash = ?
+
 		";
 
 		$statement = $database -> prepare($query);
 		$statement -> bind_param("s", $eventKey);
-		
+
 		if ($result = $database->query($statement)) {
 			$slot_array = [];
 			$i = 0;
