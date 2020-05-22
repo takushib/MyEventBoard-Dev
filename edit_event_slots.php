@@ -29,11 +29,11 @@
 
     $query = "
 
-        SELECT user.onid AS 'creator'
-        FROM event
-        INNER JOIN user
-            ON event.fk_event_creator = user.id
-        WHERE event.hash = ?
+        SELECT meb_user.onid AS 'creator'
+        FROM meb_event
+        INNER JOIN meb_user
+            ON meb_event.fk_event_creator = meb_user.id
+        WHERE meb_event.hash = ?
 
     ";
 
@@ -46,8 +46,8 @@
 
     if ($resultRow == NULL) {
         echo "The specified event does not exist.";
-        exit;   
-    } 
+        exit;
+    }
     else if ($resultRow['creator'] != $_SESSION['user']) {
         echo "You do not have permission to edit the specified event.";
         exit;
@@ -68,12 +68,12 @@
             // query for existing reservations
 
             $emailQuery = "
-                SELECT u.email, u.first_name, e.name as 'event_name' FROM timeslot t
-                INNER JOIN booking b
+                SELECT u.email, u.first_name, e.name as 'event_name' FROM meb_timeslot t
+                INNER JOIN meb_booking b
                 ON t.id = b.fk_timeslot_id
-                INNER JOIN user u
+                INNER JOIN meb_user u
                 ON b.fk_user_id = u.id
-                INNER JOIN event e
+                INNER JOIN meb_event e
                 ON t.fk_event_id = e.id
                 WHERE t.hash = ?
             ";
@@ -129,7 +129,7 @@
 
         foreach($added_slots as $slot) {
 
-            $dateQuery = "SELECT mod_date, id FROM event WHERE hash = ?";
+            $dateQuery = "SELECT mod_date, id FROM meb_event WHERE hash = ?";
             $statement = $database->prepare($dateQuery);
             $statement->bind_param('s', $eventHash);
             $statement->execute();

@@ -16,7 +16,7 @@
 
     require_once 'php/render_error.php';
 
-    
+
     // get key for event from URL
 
     $eventKey = ($_GET["key"]);
@@ -25,17 +25,17 @@
 
     $query = "
 
-        SELECT 
-            t0.hash AS 'eventHash', t0.name, t0.description, 
-            t0.location, t1.onid AS 'creator', t2.hash AS 'slotHash', 
-            t2.start_time AS 'startTime', t2.end_time AS 'endTime', 
-            t2.duration, t2.slot_capacity AS 'capacity', 
-            t0.is_anon AS 'anonymous', t0.enable_upload as 'upload' 
-        FROM event AS t0
-        INNER JOIN user AS t1
+        SELECT
+            t0.hash AS 'eventHash', t0.name, t0.description,
+            t0.location, t1.onid AS 'creator', t2.hash AS 'slotHash',
+            t2.start_time AS 'startTime', t2.end_time AS 'endTime',
+            t2.duration, t2.slot_capacity AS 'capacity',
+            t0.is_anon AS 'anonymous', t0.enable_upload as 'upload'
+        FROM meb_event AS t0
+        INNER JOIN meb_user AS t1
             ON t0.fk_event_creator = t1.id
-        INNER JOIN timeslot AS t2
-            ON t0.id = t2.fk_event_id 
+        INNER JOIN meb_timeslot AS t2
+            ON t0.id = t2.fk_event_id
         WHERE t0.hash = ?
         ORDER BY t2.start_time ASC
 

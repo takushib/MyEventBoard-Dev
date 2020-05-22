@@ -3,24 +3,24 @@
     // set up session
 
     require_once 'php/session.php';
-    
+
     // set up connection to database via MySQLi
 
 	require_once 'php/database.php';
-	
+
 	// get user ID using ONID from database
 
 	require_once 'php/get_user.php';
 
 	$userKey = getUserKeyFromDB($_SESSION['user'], $database);
-	
-    // get data from POST request 
+
+    // get data from POST request
 
 	$eventKey = $_POST["key"];
-	
-	// delete event 
 
-    $query = "DELETE FROM event WHERE hash = ? AND fk_event_creator = ?";
+	// delete event
+
+    $query = "DELETE FROM meb_event WHERE hash = ? AND fk_event_creator = ?";
     $statement = $database -> prepare($query);
     $statement -> bind_param("si", $eventKey, $userKey);
 

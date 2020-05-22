@@ -24,15 +24,15 @@
             T.spaces_available as 'slots_remaining',
             U1.first_name as 'ec_first_name',
             U1.last_name as 'ec_last_name'
-        FROM booking
-        INNER JOIN 
-            user U on booking.fk_user_id = U.id
-        INNER JOIN 
-            timeslot T on booking.fk_timeslot_id = T.id
-        INNER JOIN 
-            event E on T.fk_event_id = E.id
-        INNER JOIN 
-            user U1 on E.fk_event_creator = U1.id
+        FROM meb_booking
+        INNER JOIN
+            meb_user U on meb_booking.fk_user_id = U.id
+        INNER JOIN
+            meb_timeslot T on meb_booking.fk_timeslot_id = T.id
+        INNER JOIN
+            meb_event E on T.fk_event_id = E.id
+        INNER JOIN
+            meb_user U1 on E.fk_event_creator = U1.id
         WHERE U.onid = ? ORDER BY T.start_time
 
     ";
@@ -40,7 +40,7 @@
     $statement = $database->prepare($q);
     $statement->bind_param("s", $_SESSION['user']);
     $statement->execute();
-    
+
     $result = $statement->get_result();
     $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
 
