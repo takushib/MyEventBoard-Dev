@@ -24,14 +24,15 @@
     
         SELECT
             event.hash AS 'Event Key',
-            event.name AS 'Event Name',
-            event.capacity AS 'Capacity',
-            event.open_slots AS 'Available Slots'
+            event.name AS 'Event',
+			event.open_slots AS 'Available Slots',
+            event.capacity AS 'Capacity'
         FROM 
             event, user
         WHERE
             user.id = ? AND event.fk_event_creator = user.id
-        
+        ORDER BY
+			event.name
     ";
         
     $statement = $database -> prepare($query);

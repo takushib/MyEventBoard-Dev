@@ -32,6 +32,10 @@ label
 .submitField
 {
 	padding: 10px;
+	text-align: center;
+	font-size: 20px;
+	font-weight: bold;
+	vertical-align: middle;
 }
 
 .nextBackField

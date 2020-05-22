@@ -58,7 +58,7 @@
 
         SELECT 
             T.hash, T.start_time, T.duration, 
-            T.slot_capacity, T.spaces_available, T.is_full, 
+            T.slot_capacity, T.spaces_available, T.is_full,
             E.description, E.location, 
             IF(U.onid = ?, TRUE, FALSE)
         FROM timeslot T
