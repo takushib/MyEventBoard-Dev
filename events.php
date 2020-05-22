@@ -25,8 +25,7 @@
         SELECT
             event.hash AS 'Event Key',
             event.name AS 'Event',
-			event.open_slots AS 'Available Slots',
-            event.capacity AS 'Capacity'
+			CONCAT(CAST(event.open_slots as CHAR), '/', CAST(event.capacity as CHAR)) AS 'Slots'
         FROM 
             event, user
         WHERE
