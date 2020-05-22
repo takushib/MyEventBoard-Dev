@@ -17,23 +17,24 @@
     require_once 'php/get_user.php';
 
     $userKey = getUserKeyFromDB($_SESSION['user'], $database);
- 
+
     // get event data from database
 
     $query = "
-    
+
         SELECT
-            event.hash AS 'Event Key',
-            event.name AS 'Event',
-			CONCAT(CAST(event.open_slots as CHAR), '/', CAST(event.capacity as CHAR)) AS 'Slots'
-        FROM 
-            event, user
+            meb_event.hash AS 'Event Key',
+            meb_event.name AS 'Event Name',
+            meb_event.capacity AS 'Capacity',
+            meb_event.open_slots AS 'Available Slots'
+        FROM
+            meb_event, meb_user
         WHERE
-            user.id = ? AND event.fk_event_creator = user.id
+            meb_user.id = ? AND meb_event.fk_event_creator = meb_user.id
         ORDER BY
-			event.name
+            meb_event.name
     ";
-        
+
     $statement = $database -> prepare($query);
     $statement -> bind_param('i', $userKey);
     $statement -> execute();
@@ -48,12 +49,12 @@
     // render page using twig
 
     echo $twig -> render(
-        'views/events.twig', 
+        'views/events.twig',
         [
             'user_ONID' => $_SESSION['user'],
             'table_headers' => $resultKeys, 
             'table_rows' => $resultArray
         ]
-    ); 
+    );
 
 ?>

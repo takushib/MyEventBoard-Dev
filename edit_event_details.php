@@ -3,7 +3,7 @@
     // set up session
 
     require_once 'php/session.php';
-    
+
     // set up connection to database via MySQLi
 
     require_once 'php/database.php';
@@ -14,7 +14,7 @@
 
     $userKey = getUserKeyFromDB($_SESSION['user'], $database);
 
-    
+
     // get data from POST request
 
     $eventKey = $_POST['eventHash'];
@@ -35,19 +35,19 @@
 
     $enableUpload = 0;
     if ($_POST['enableUpload'] == "true") $enableUpload = 1;
-    
+
 
     // update database entry using given data
 
     $query = "
 
-        UPDATE event 
-        SET 
+        UPDATE meb_event
+        SET
             name = ?,
             description = ?,
             location = ?,
             is_anon = ?,
-            enable_upload = ? 
+            enable_upload = ?
         WHERE hash = ? AND fk_event_creator = ?
 
     ";
@@ -55,7 +55,7 @@
     $statement = $database -> prepare($query);
 
     $statement -> bind_param(
-        "sssiisi", $eventName, $eventDescription, $eventLocation, 
+        "sssiisi", $eventName, $eventDescription, $eventLocation,
         $isAnonymous, $enableUpload, $eventKey, $userKey
     );
 
