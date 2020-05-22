@@ -2,6 +2,14 @@
 	text-align: center;
 }
 
+.yourInvites > .table > tbody > tr > td {
+     vertical-align: middle;
+}
+
+.pastEventsContainer > .table > tbody > tr > td {
+     vertical-align: middle;
+}
+
 .pastEventsTable {
 	text-align: center;
 }
