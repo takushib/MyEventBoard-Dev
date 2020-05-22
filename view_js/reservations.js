@@ -86,7 +86,7 @@ function createPastEventsTable(dateRow, columnNames) {
 
 	pastEventsField.addClass('pastEventsField');
 	pastEvents.addClass('pastEventsContainer table-responsive');
-	pastEventsField.append('<h2> Past Events </h2>');
+	pastEventsField.append('<h2> Past Reservations </h2>');
 	pastEventsField.append(pastEvents);
 
 	var table = $('<Table></Table>');

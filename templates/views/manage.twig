@@ -102,12 +102,6 @@
 
 				{{ include('partials/search.twig') }}
 
-				{% else %}
-
-				<br><br><h3 class="text-center">No one has signed up for this event yet.</h4>
-
-				{% endif %}
-
 				<table class="table table-striped">
 
 					<thead>
@@ -115,7 +109,10 @@
 							{% for table_header in table_headers %}
 							<th scope="col">{{ table_header }}</th>
 							{% endfor %}
-							<th scope="col"> </th>
+							<th scope="col">
+								<i class="fas fa-trash"></i>
+							</th>
+
 						</tr>
 					</thead>
 
@@ -146,6 +143,12 @@
 						{% endfor %}
 					</tbody>
 				</table>
+				
+				{% else %}
+
+				<br><br><h3 class="text-center">No one has signed up for this event yet.</h3>
+
+				{% endif %}
 		</div>
 	</div>
 
