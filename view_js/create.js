@@ -116,9 +116,17 @@ $(document).ready(function () {
 			alert("Please select slots");
 		}
 		else {
+			
 			var totalCap = timeslotCapInput.value * slots.length;
 			var slotCap = timeslotCapInput.value;
 			var newArr = JSON.stringify(slots);
+
+			var anonymous = 1;
+			if ($('#anonymousCheck').prop("checked") == false) anonymous = 0;
+
+			var upload = 0;
+			if ($('#fileUpload').prop("checked") == true) upload = 1;
+
 			$.ajax({
 				type: "POST",
 				url: "insert_event.php",
@@ -129,7 +137,9 @@ $(document).ready(function () {
 					eventDuration: getDuration(),
 					slotArray: newArr,
 					eventCap: totalCap,
-					sCap: slotCap
+					sCap: slotCap,
+					anonymous: anonymous,
+					upload: upload
 				}
 			}).done(function(response) {
     			alert(response);
