@@ -91,6 +91,9 @@ function formatDateTime(targetString) {
 function formatTableDateTime(columnIndex) {
 
 	var tableBody = document.getElementsByTagName('tbody')[0];
+	
+	if (tableBody == undefined)
+		return;
 
     for (row of tableBody.children) {
         const timeSlotString = row.children[columnIndex].innerText;

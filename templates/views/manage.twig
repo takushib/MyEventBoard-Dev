@@ -72,7 +72,7 @@
 			<div class="logisticsContainer">
 				<h4> Event Information </h4>
 				<div class="informationContainer">
-					<label> Event Capacity:  </label>
+					<label> Event Capacity: {{ event_capacity }}  </label>
 					<br>
 					<label> Available Slots: </label>
 					<br>
@@ -96,50 +96,59 @@
 		
 		<br>
 		<br>
-		<div class="slotsContainer">
+		<div class="slotsContainer table-responsive">
 
 				{% if table_headers %}
 
 				{{ include('partials/search.twig') }}
 
-				{% else %}
-
-				<br><br><h3 class="text-center">No one has signed up for this event yet.</h4>
-
-				{% endif %}
-
 				<table class="table table-striped">
 
 					<thead>
-						<tr class="row">
+						<tr scope="row">
 							{% for table_header in table_headers %}
-							<th class="col">{{ table_header }}</th>
+							<th scope="col">{{ table_header }}</th>
 							{% endfor %}
+							<th scope="col">
+								<i class="fas fa-trash"></i>
+							</th>
+
 						</tr>
 					</thead>
 
 					<tbody class="tableBody">
 						{% for table_row in table_rows %}
 
-						<tr class="row">
+						<tr scope="row">
 							{% for column in table_row|slice(0, -1) %}
-							<td class="col">{{ column }}</td>
+							<td scope="col">{{ column }}</td>
 							{% endfor %}
 
 							{% set file_path = table_row|last|slice(6) %}
 							{% set file_name = file_path|slice(34) %}
-							<td class="col">
+							<td scope="col">
 								<a href="../{{ file_path }}" download="{{file_name}}">
-									<button class="manageEvent fileDownloadButton">
-										<i class="fa fa-download"></i> Download
+									<button class="manageEvent fileDownloadButton btn btn-dark btn-sm">
+										<i class="fa fa-download"></i> <text>Download </text>
 									</button>
 								</a>
+							</td>
+							<td scope="col">
+								<button class="deleteUserSlot">
+									<i class="fa fa-times"></i>
+								</button>
 							</td>
 						</tr>
 
 						{% endfor %}
 					</tbody>
 				</table>
+				
+				{% else %}
+
+				<br><br><h3 class="text-center">No one has signed up for this event yet.</h3>
+
+				{% endif %}
 		</div>
 	</div>
 
@@ -151,6 +160,10 @@
 					<div class="modal-header">
 						<h1> Confirm Delete </h1>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					
+					<div class="modal-body warningUndoneContainer">
+						*This change cannot be undone*
 					</div>
 
 					<div class="modal-footer">

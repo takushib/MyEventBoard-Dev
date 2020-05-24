@@ -26,9 +26,6 @@
 					{% for table_header in table_headers|slice(0, -2) %}
 					<th scope="col">{{ table_header }}</th>
 					{% endfor %}
-					<th scope="col">
-						<i class="fa fa-trash selectTrash eventManageButton" aria-hidden="true"></i>
-					</th>
 				</tr>
 				</thead>
 
@@ -47,64 +44,12 @@
 
 					{% endfor %}
 
-					<td>
-						<button class="deleteEvent eventManageButton">
-							<i class="fas fa-times"></i>
-							<text> Delete </text>
-						</button>
-					</td>
-
 				</tr>
 
 				{% endfor %}
 				</tbody>
 
 			</table>
-
-		</div>
-
-	</div>
-
-	<div id="deleteConfirm" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1> Confirm Delete </h1>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<div class="containerForEventsToDelete">
-					<h4 id="deleteEventsHeader"> Reservation to be Removed: </h4>
-
-					<ul class="list-group"></ul>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-dark" id="deleteCancelButton"
-						data-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-dark" id="deleteSubmitButton">Delete</button>
-				</div>
-			</div>
-
-		</div>
-
-	</div>
-
-
-
-	<!-- Modal FeedBack -->
-	<div id="feedBackModalDelete" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 id="feedbackDelete" class="modal-title">Reservation Deleted!</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-			</div>
 
 		</div>
 

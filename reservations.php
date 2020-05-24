@@ -17,10 +17,9 @@
     $query = "
 
         SELECT
-            t2.name AS 'Event Name',
+            t2.name AS 'Event',
             t1.start_time AS 'Start Time',
             t2.location AS 'Location',
-			CONCAT(t4.first_name, ' ', t4.last_name) AS 'Event Host',
             t2.hash AS 'Event Key',
             t1.hash AS 'Time Slot Key'
         FROM

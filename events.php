@@ -31,7 +31,8 @@
             meb_event, meb_user
         WHERE
             meb_user.id = ? AND meb_event.fk_event_creator = meb_user.id
-
+        ORDER BY
+            meb_event.name
     ";
 
     $statement = $database -> prepare($query);

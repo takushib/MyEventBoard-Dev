@@ -2,6 +2,7 @@ $(document).ready(function(){
 	initLocationInput();	
 	$('#createNav').addClass('activeNavItem');
 	initDatePicker();
+	
 });
 
 $(function () {
@@ -447,3 +448,7 @@ function dragTable() {
 	});
 
 }
+
+$("#goToManageButton").on('click', function() {
+	window.location = "./events";
+})

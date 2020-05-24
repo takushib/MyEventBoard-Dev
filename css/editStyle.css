@@ -157,6 +157,6 @@ label
 
 .deleteAddedSlot {
 	border: none;
-	background-color: white;
+	background-color: none;
 	color: red;
 }

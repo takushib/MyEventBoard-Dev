@@ -88,6 +88,26 @@
 	font-weight: bold;
 }
 
+.warningUndoneContainer {
+	text-align: center;
+	color: red;
+	font-weight: bold;
+}
+
+.deleteUserSlot {
+	border: none;
+	background-color: none;
+	color: red;
+}
+
+.slotsContainer {
+	text-align: center;
+}
+
+.slotsContainer > .table > tbody > tr > td {
+     vertical-align: middle;
+}
+
 @media only screen and (max-width: 768px) {
 
 	

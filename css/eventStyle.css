@@ -1,3 +1,11 @@
+.yourEvents > .table > tbody > tr > td {
+     vertical-align: middle;
+}
+
+.yourEvents {
+	text-align: center;
+}
+
 .eventManageButton {
 	border: none;
 	background: none;
@@ -14,11 +22,6 @@
 	border: 1px solid grey;
 
 	border-radius: 2px;
-}
-
-#deleteSelectedConfirmBox {
-	float: none !important;
-	text-align: right !important;
 }
 
 .containerForEventsToDelete {
@@ -48,11 +51,6 @@
 	color: #18acc9 !important;
 }
 
-.copy {
-	padding: 2px !important;
-	font-size: 10px !important;
-}
-
 .linkColumn {
 	max-width: 150px;
 	white-space: nowrap;
@@ -76,4 +74,13 @@
 
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+@media only screen and (max-width: 768px) {
+
+	.copy {
+		padding: 2px !important;
+		font-size: 10px !important;
+	}
+
 }

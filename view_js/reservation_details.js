@@ -1,5 +1,7 @@
 $(document).ready(function () {
 	
+	($(this).find('.myLink').attr('href'));
+	
 	$('.visitEventButton').click(function() {
 		window.location.href = $(this).children().attr('href');
 	});
@@ -8,6 +10,10 @@ $(document).ready(function () {
 		window.location.href = $(this).children().attr('href');
 	});
 	
+	var hashForEventFromURL = window.location.href;
+	var hashKey = hashForEventFromURL.split("?key=");
+	
+	
 	$('#deleteEventButton').on("click", function() {
 		$('#deleteConfirm').modal('toggle');
 		
@@ -15,6 +21,9 @@ $(document).ready(function () {
 		$('#deleteSubmitButton').on("click", function() {
 
 			$('#deleteConfirm').modal('toggle');
+			
+			deleteThisEvent(hashKey[1]);
+			
 			$('.entryField1').empty();
 			
 			var removedContainer = $('<div></div>');
@@ -64,6 +73,16 @@ $('#submitFile').on('click', function () {
 
 })
 
+function deleteThisEvent(hashKey) {
+	
+	$.ajax({
+		url: "delete_reservation.php",
+		type: "POST",
+		data: { key: hashKey }
+	}).done(function (response) {
+		console.log(response);
+	});
 
-($(this).find('.myLink').attr('href'));
+}
+
 

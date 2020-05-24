@@ -68,9 +68,7 @@
 
         SELECT
             t1.start_time AS 'Time Slot Start Time',
-            CONCAT(t2.first_name, ' ', t2.last_name) AS 'Attendee Name',
-            t2.onid AS 'Attendee ONID',
-            t3.name AS 'Event Name',
+            CONCAT(t2.first_name, ' ', t2.last_name, ' - ', t2.onid) AS 'Attendee Name - ONID',
             f.path AS 'File'
         FROM
             booking AS t0
