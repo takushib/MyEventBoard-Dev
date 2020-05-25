@@ -66,12 +66,17 @@ function setMySlot(modalTimeSlot, timeSlotObject) {
 
 function resetSlot(timeSlot) {
 
+	console.log(timeSlot);
+	console.log(timeSlot.id);
+	console.log(document.getElementById(timeSlot.id));
+
+
 	timeSlot.my_slot = 0;
 	timeSlot.space = parseInt(timeSlot.space) + 1;
 	timeSlot.full = 0;
 
 	const timeSlotRow = document.getElementById(timeSlot.id);
-	timeSlotRow.classList.remove('fullSlot');
+	if (timeSlotRow) timeSlotRow.classList.remove('fullSlot');
 
 	console.log(timeSlot.id)
 	console.log(timeSlotRow)
