@@ -19,53 +19,22 @@
 
     // get key for event from URL
 
-    $eventKey = ($_GET["key"]);
+    $eventKey = $_GET["key"];
 
     // get event and time slot data
 
-    $query = "
-
-        SELECT
-            t0.hash AS 'eventHash', t0.name, t0.description,
-            t0.location, t1.onid AS 'creator', t2.hash AS 'slotHash',
-            t2.start_time AS 'startTime', t2.end_time AS 'endTime',
-            t2.duration, t2.slot_capacity AS 'capacity',
-            t0.is_anon AS 'anonymous', t0.enable_upload as 'upload'
-        FROM meb_event AS t0
-        INNER JOIN meb_user AS t1
-            ON t0.fk_event_creator = t1.id
-        INNER JOIN meb_timeslot AS t2
-            ON t0.id = t2.fk_event_id
-        WHERE t0.hash = ?
-        ORDER BY t2.start_time ASC
-
-    ";
-
-    $statement = $database -> prepare($query);
-    $statement -> bind_param("s", $eventKey);
-    $statement -> execute();
-
-    $result = $statement -> get_result();
-
-    $resultObjects = [];
-
-    while (1) {
-        $resultObject = $result -> fetch_object();
-        if ($resultObject == NULL) break;
-        $resultObjects[] = $resultObject;
-    }
-
+    $resultObjects = $database -> getEventData($eventKey);
 
     // check results
-    // if there are no results, show eror 404
+    // if there are no results, show error 404
     // if there are results or if current user is not event creator, show error 403
 
     $errorCode = 0;
 
-    if ($resultObjects == NULL) {
+    if ($resultObjects == null) {
         $errorCode = 404;
     }
-    else if ($resultObjects[0]->creator != $_SESSION['user']) {
+    else if ($resultObjects[0] -> creator != $_SESSION['user']) {
         $errorCode = 403;
     }
 

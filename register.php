@@ -19,69 +19,37 @@
 
     // get key for event from URL
 
-    $eventKey = ($_GET["key"]);
+    $eventKey = $_GET["key"];
+
 
     // get event data from database
 
-    $query = "
-        
-        SELECT name, is_anon AS 'anonymous', enable_upload AS 'upload'
-        FROM event 
-        WHERE hash = ?
-        
-    ";
-
-    $statement = $database -> prepare($query);
-    $statement -> bind_param("s", $eventKey);
-    $statement -> execute();
-
-    $result = $statement -> get_result();
-    $resultRow = $result -> fetch_assoc();
+    $eventData = $database -> getEvent($eventKey);
 
     // if event data could not be found, show error page
 
-    if ($resultRow == NULL) {
+    if ($eventData == NULL) {
         $errorCode = 404;
         render_error($twig, $errorCode, $errorMessages[$errorCode]);
         exit;
     }
 
-    $eventName = $resultRow['name'];
-    $eventAnoymous = $resultRow['anonymous'];
-    $eventUpload = $resultRow['upload'];
+    $eventName = $eventData['name'];
+    $eventAnoymous = $eventData['anonymous'];
+    $eventUpload = $eventData['upload'];
 
-    $result -> free();
 
     // get time slot data for event from database
 
-    $query = "
+    $slotData = $database -> getRegistrationData($eventKey, $_SESSION["user"]);
+    $columnNames = array_keys($slotData[0]);
 
-        SELECT 
-            T.hash, T.start_time, T.duration, 
-            T.slot_capacity, T.spaces_available, T.is_full,
-            E.description, E.location, 
-            IF(U.onid = ?, TRUE, FALSE)
-        FROM timeslot T
-        INNER JOIN event E 
-            ON T.fk_event_id = E.id
-        LEFT JOIN booking B
-            ON T.id = B.fk_timeslot_id
-        LEFT JOIN user U 
-            ON B.fk_user_id = U.id
-        WHERE E.hash = ?
+    // if ($slotData == NULL) {
+    //     $errorCode = 404;
+    //     render_error($twig, $errorCode, $errorMessages[$errorCode]);
+    //     exit;
+    // }
 
-    ";
-
-    $statement = $database -> prepare($query);
-    $statement -> bind_param("ss", $_SESSION['user'], $eventKey);
-    $statement -> execute();
-
-    $result = $statement -> get_result();
-    $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
-    $resultKeys = array_keys($resultArray[0]);
-
-    $result -> free();
-    $database -> close();
 
     // render page using twig
 
@@ -91,8 +59,8 @@
             'event_name' => $eventName,
             'event_anonymous' => $eventAnoymous,
             'event_upload' => $eventUpload,
-            'table_headers' => $resultKeys,
-            'table_rows' => $resultArray
+            'table_headers' => $columnNames,
+            'table_rows' => $slotData
         ]
     );
 
