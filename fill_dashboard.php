@@ -11,7 +11,7 @@
     // get data for dashboard, including
     // user data, event data, time slot data
 
-    $reservationData = $database -> getUserReservationData($_SESSION["user"]);
+    $reservationData = $database -> getDashboardData($_SESSION["user"]);
 
     echo json_encode($reservationData);
 

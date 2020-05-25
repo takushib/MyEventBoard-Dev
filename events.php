@@ -12,10 +12,19 @@
 
     require_once 'php/twig.php';
 
+
     // get event data from database
 
     $eventData = $database -> getUserEvents($_SESSION["user"]);
-    $columnNames = array_keys($eventData[0]);
+
+    if ($eventData) {
+        $columnNames = array_keys($eventData[0]);
+    }
+    else {
+        $eventData = [];
+        $columnNames = [];
+    }
+    
 
     // render page using twig
 

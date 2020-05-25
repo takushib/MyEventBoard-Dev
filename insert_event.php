@@ -29,7 +29,14 @@
 		$slotData["duration"] = $_POST['eventDuration'];
 		$slotData["capacity"] = $_POST['sCap'];
 
-		$database -> addEvent($eventData, $slotData);
+		$result = $database -> addEvent($eventData, $slotData);
+		
+		if ($result == 1) {
+			echo "Your event was successfully created.";
+		}
+		else {
+			echo "Your event could not be created.";
+		}
 
     }
 

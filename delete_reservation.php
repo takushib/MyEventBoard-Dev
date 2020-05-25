@@ -14,21 +14,13 @@
 
 	// delete reservation
 
-	$query = "CALL delete_reservation(?, ?, @res1)";
-	$statement = $database -> prepare($query);
-	$statement -> bind_param("ss", $slotKey, $_SESSION['user']);
-	$query = "SELECT @res1";
-	$result = $database -> query($query);
-	$row = $result -> fetch_array(MYSQLI_NUM);
+	$errorCode = $database -> deleteReservation($slotKey, $_SESSION["user"]);
 
-
-	if(!$statement -> execute() || $row[0] != 0) {
-		echo "The reservation could not be deleted!";
-	}
-	else {
+	if ($errorCode == 0) {
 		echo "The reservation was deleted successfully!";
 	}
-
-	$statement -> close();
+	else {
+		echo "The reservation could not be deleted!";
+	}
 
 ?>

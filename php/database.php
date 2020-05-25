@@ -333,7 +333,7 @@ class DatabaseInterface {
     }
 
 
-    public function getUserReservationData($userONID) {
+    public function getDashboardData($userONID) {
 
         $query = "
 
@@ -427,6 +427,141 @@ class DatabaseInterface {
 
     }
 
+
+    public function getReservationData($userONID) {
+
+        $query = "
+
+            SELECT
+            t2.name AS 'Event',
+            t1.start_time AS 'Start Time',
+            t2.location AS 'Location',
+            t2.hash AS 'Event Key',
+            t1.hash AS 'Time Slot Key'
+
+            FROM meb_booking AS t0
+            INNER JOIN meb_timeslot AS t1
+                ON t0.fk_timeslot_id = t1.id
+            INNER JOIN meb_event AS t2
+                ON t1.fk_event_id = t2.id
+            INNER JOIN meb_user AS t3
+                ON t0.fk_user_id = t3.id
+            INNER JOIN meb_user AS t4
+                ON t2.fk_event_creator = t4.id
+                
+            WHERE t3.onid = ?
+            ORDER BY t1.start_time
+
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("s", $userONID);
+        $statement -> execute();
+
+        $result = $statement -> get_result();
+       
+        if ($result -> num_rows > 0) {
+            $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+        }
+        else {
+            $resultArray = null;
+        }
+
+        $statement -> close();
+        $result -> free();
+
+        return $resultArray;
+
+    }
+
+    public function getReservationDetails($slotKey, $userONID) {
+
+        $query = "
+
+            SELECT
+            t3.hash, t3.name, t3.location, t3.description, t3.enable_upload AS 'upload',
+            CONCAT(t4.first_name, ' ', t4.last_name) AS 'creator',
+            t1.start_time, t1.end_time, t5.path AS 'file'
+
+            FROM meb_booking AS t0
+            INNER JOIN meb_timeslot AS t1
+                ON t0.fk_timeslot_id = t1.id
+            INNER JOIN meb_user AS t2
+                ON t0.fk_user_id = t2.id
+            INNER JOIN meb_event AS t3
+                ON t1.fk_event_id = t3.id
+            INNER JOIN meb_user AS t4
+                ON t3.fk_event_creator = t4.id 
+            LEFT JOIN meb_files AS t5
+                ON t0.id = t5.fk_booking_id
+
+            WHERE t1.hash = ? AND t2.onid = ?
+
+        ";
+        
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("ss", $slotKey, $userONID);
+        $statement -> execute();
+
+        $result = $statement -> get_result();
+       
+        if ($result -> num_rows > 0) {
+            $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+            $reservationDetails = $resultArray[0];
+        }
+        else {
+            $reservationDetails = null;
+        }
+
+        $statement -> close();
+        $result -> free();
+
+        return $reservationDetails;
+
+    }
+
+    public function getUserBooking($slotKey, $userONID) {
+
+        $query = "
+
+            SELECT 
+            b.id, fk_timeslot_id AS 'slotID', fk_user_id AS 'userID'
+            
+            FROM meb_booking AS b
+            INNER JOIN meb_timeslot AS t
+            ON t.id = b.fk_timeslot_id
+            INNER JOIN meb_user AS u
+            ON u.id = b.fk_user_id
+
+            WHERE t.hash = ? AND u.onid = ?
+
+        ";
+
+        $statement = $this -> database -> prepare($query);
+        
+        $statement -> bind_param("ss", $slotKey, $userONID);
+        $statement -> execute();
+
+        $result = $statement -> get_result();
+        
+        if ($result -> num_rows > 0) {
+            $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+            $bookingData = $resultArray[0];
+        }
+        else {
+            $bookingData = null;
+        }
+
+        $statement -> close();    
+        $result -> free();
+
+        return $bookingData;
+        
+    }
+
+
     public function reserveTimeSlot($slotID, $userID) {
 
         $query = "CALL meb_reserve_slot(?, ?, @res1)";
@@ -439,13 +574,138 @@ class DatabaseInterface {
 
 
         $query = "SELECT @res1";
-
         $result = $this -> database -> query($query);
-        $results = $result -> fetch_all(MYSQLI_NUM);
+        
+        if ($result) {
+            $resultArray = $result -> fetch_all(MYSQLI_NUM);
+            $errorCode = $resultArray[0];
+        }
+        else {
+            $errorCode = -1;
+        }
 
-        $errorCode = $returnResults[0];
+        $statement -> close();
+        $result -> free();
 
         return $errorCode;
+
+    }
+
+    public function deleteReservation($slotKey, $userONID) {
+
+        $query = "CALL meb_delete_reservation(?, ?, @res1)";
+    
+        $statement = $this -> database -> prepare($query);
+        
+        $statement -> bind_param("ss", $slotKey, $userONID);
+        $statement -> execute();
+    
+        
+        $query = "SELECT @res1";
+        $result = $this -> database -> query($query);
+    
+        if ($result) {
+            $resultArray = $result -> fetch_all(MYSQLI_NUM);
+            $errorCode = $resultArray[0];
+        }
+        else {
+            $errorCode = -1;
+        }
+    
+
+        $statement -> close();
+        $result -> free();
+    
+        return $errorCode;
+    
+    }
+
+
+    public function replaceFilePath($filePath, $fileID) {
+
+        $query = "
+        
+            UPDATE meb_files 
+            SET path = ? WHERE id = ? 
+        
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("si", $filePath, $fileID);
+        $statement -> execute();
+
+        $result = $statement -> affected_rows;
+
+        $statement -> close();
+
+        return $result;
+
+    }
+
+    public function getFile($bookingID) {
+
+        $query = "
+        
+            SELECT id, path, fk_booking_id AS 'bookingID' 
+            FROM meb_files 
+            WHERE fk_booking_id = ?
+            
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("i", $bookingID);
+        $statement -> execute();
+
+        $result = $statement -> get_result();
+        
+        if ($result -> num_rows > 0) {
+            $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+            $fileData = $resultArray[0];
+        }
+        else {
+            $fileData = null;
+        }
+
+        $statement -> close();    
+        $result -> free();
+
+        return $fileData;
+
+    }
+
+    public function addFile($filePath, $bookingID) {
+
+        // if there exists file associated with booking
+        // replace path for that file
+
+        $fileData = $this -> getFile($bookingID);
+
+        if ($fileData) {
+            $result = $this -> replaceFilePath($filePath, $fileData["id"]);
+            return 1;
+        }
+
+        // add file path associated with booking
+
+        $query = "
+
+            INSERT INTO meb_files(path, fk_booking_id)
+            VALUES (?, ?)
+        
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("si", $filePath, $bookingID);
+        $statement -> execute();
+
+        $result = $statement -> affected_rows;
+
+        $statement -> close();
+
+        return $result;
 
     }
 
