@@ -33,7 +33,8 @@
 
     // determine path
 
-    $newPath = './uploads/' . $eventKey;
+    $uploadsDirectory = './uploads/';
+    $newPath = $uploadsDirectory . $eventKey;
     $newFileName = $_SESSION["user"] . '_upload';
 
     $oldFileName = $_FILES['file']['name'];
@@ -43,9 +44,7 @@
 
     // if directory for event's files does not exist, create it
 
-    if (!file_exists($newPath)) {
-        mkdir($newPath, 0700, true);
-    }
+    if (!file_exists($newPath)) mkdir($newPath, 0700, true);
 
     // if there is error with file upload
     // do not try to add path to database

@@ -215,17 +215,57 @@ class DatabaseInterface {
 
     }
 
+    public function getEventSlotDetails($eventKey) {
+
+        $query = "
+            
+            SELECT 
+            meb_timeslot.duration, 
+            meb_timeslot.slot_capacity AS 'capacity'
+
+            FROM meb_timeslot
+            INNER JOIN meb_event 
+            ON meb_event.id = meb_timeslot.fk_event_id
+
+            WHERE meb_event.hash = ?
+            LIMIT 1
+
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("s", $eventKey);
+        $statement -> execute();
+
+        $result = $statement -> get_result();
+
+        if ($result -> num_rows > 0) {
+            $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+            $slotDetails = $resultArray[0];
+        }
+        else {
+            $slotDetails = null;
+        }
+
+        $statement -> close();
+        $result -> free();
+
+        return $slotDetails;
+
+    }
+
     public function getEventBySlotKey($slotKey) {
 
         $query = "
             
             SELECT 
-            meb_event.id, meb_event.hash, name, description, location, onid AS 'creator',
-            capacity, open_slots, is_anon AS 'anonymous', enable_upload AS 'upload'
+            meb_event.id, meb_event.hash, name, description, location, 
+            onid AS 'creator', capacity, open_slots, meb_event.mod_date,
+            is_anon AS 'anonymous', enable_upload AS 'upload'
 
             FROM meb_event
             INNER JOIN meb_user 
-                ON meb_event.fk_event_creator = meb_user.id 
+                ON meb_event.fk_event_creator = meb_user.id
             INNER JOIN meb_timeslot
                 ON meb_event.id = meb_timeslot.fk_event_id
             WHERE meb_timeslot.hash = ?
@@ -260,7 +300,7 @@ class DatabaseInterface {
             
             SELECT 
             meb_event.id, hash, name, description, location, onid AS 'creator',
-            capacity, open_slots, is_anon AS 'anonymous', enable_upload AS 'upload'
+            capacity, open_slots, is_anon AS 'anonymous', enable_upload AS 'upload', mod_date
 
             FROM meb_event
             INNER JOIN meb_user ON meb_event.fk_event_creator = meb_user.id 
@@ -287,6 +327,57 @@ class DatabaseInterface {
         $result -> free();
 
         return $eventData;
+
+    }
+
+    public function changeEventDetails($eventKey, $eventData) {
+
+        $name = $eventData["name"];
+        $description = $eventData["description"];
+        $location = $eventData["location"];
+        $isAnonymous = $eventData["anonymous"];
+        $enableUpload = $eventData["upload"];
+
+        $query = "
+
+            UPDATE meb_event
+            SET name = ?, description = ?, location = ?, is_anon = ?, enable_upload = ?
+            WHERE hash = ?
+
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param(
+            "sssiis", 
+            $name, $description, $location,
+            $isAnonymous, $enableUpload, $eventKey
+        );
+
+        $statement -> execute();
+
+        $result = $statement -> affected_rows;
+
+        $statement -> close();
+
+        return $result;
+
+    }
+
+    public function deleteEvent($eventKey) {
+
+        $query = "DELETE FROM meb_event WHERE hash = ?";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("s", $eventKey);
+        $statement -> execute();
+    
+        $result = $statement -> affected_rows;
+
+        $statement -> close();
+
+        return $result;
 
     }
 
@@ -332,6 +423,92 @@ class DatabaseInterface {
 
     }
 
+
+    public function getRegistrationData($eventKey, $userONID) {
+
+        $query = "
+
+            SELECT 
+            T.hash, T.start_time, T.duration, 
+            T.slot_capacity, T.spaces_available, T.is_full,
+            E.description, E.location, 
+            IF(U.onid = ?, TRUE, FALSE)
+            
+            FROM meb_timeslot T
+            INNER JOIN meb_event E 
+                ON T.fk_event_id = E.id
+            LEFT JOIN meb_booking B
+                ON T.id = B.fk_timeslot_id
+            LEFT JOIN meb_user U 
+                ON B.fk_user_id = U.id
+            WHERE E.hash = ?
+
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("ss", $userONID, $eventKey);
+        $statement -> execute();
+
+        $result = $statement -> get_result();
+       
+        if ($result -> num_rows > 0) {
+            $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+        }
+        else {
+            $resultArray = null;
+        }
+
+        $statement -> close();
+        $result -> free();
+
+        return $resultArray;
+
+    }
+
+    public function getEditingData($eventKey) {
+
+        $query = "
+
+            SELECT
+            t0.hash AS 'eventHash', t0.name, t0.description,
+            t0.location, t1.onid AS 'creator', t2.hash AS 'slotHash',
+            t2.start_time AS 'startTime', t2.end_time AS 'endTime',
+            t2.duration, t2.slot_capacity AS 'capacity',
+            t0.is_anon AS 'anonymous', t0.enable_upload as 'upload'
+
+            FROM meb_event AS t0
+            INNER JOIN meb_user AS t1
+                ON t0.fk_event_creator = t1.id
+            INNER JOIN meb_timeslot AS t2
+                ON t0.id = t2.fk_event_id
+
+            WHERE t0.hash = ?
+            ORDER BY t2.start_time ASC
+
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("s", $eventKey);
+        $statement -> execute();
+    
+        $result = $statement -> get_result();
+
+        $resultObjects = [];
+
+        while (1) {
+            $resultObject = $result -> fetch_object();
+            if ($resultObject == null) break;
+            $resultObjects[] = $resultObject;
+        }
+
+        $statement -> close();
+        $result -> free();
+
+        return $resultObjects;
+
+    }
 
     public function getDashboardData($userONID) {
 
@@ -385,34 +562,37 @@ class DatabaseInterface {
 
     }
 
-    public function getRegistrationData($eventKey, $userONID) {
+    public function getAttendeeData($eventKey) {
 
         $query = "
 
-            SELECT 
-            T.hash, T.start_time, T.duration, 
-            T.slot_capacity, T.spaces_available, T.is_full,
-            E.description, E.location, 
-            IF(U.onid = ?, TRUE, FALSE)
-            
-            FROM meb_timeslot T
-            INNER JOIN meb_event E 
-                ON T.fk_event_id = E.id
-            LEFT JOIN meb_booking B
-                ON T.id = B.fk_timeslot_id
-            LEFT JOIN meb_user U 
-                ON B.fk_user_id = U.id
-            WHERE E.hash = ?
+            SELECT
+            t1.start_time AS 'Time Slot Start Time',
+            CONCAT(t2.first_name, ' ', t2.last_name, ' — ', t2.onid) AS 'Attendee Name — ONID',
+            f.path AS 'File'
+
+            FROM meb_booking AS t0
+            INNER JOIN meb_timeslot AS t1
+                ON t0.fk_timeslot_id = t1.id
+            LEFT JOIN meb_files as f
+                ON t0.id = f.fk_booking_id
+            INNER JOIN meb_user AS t2
+                ON t0.fk_user_id = t2.id
+            INNER JOIN meb_event AS t3
+                ON t1.fk_event_id = t3.id
+
+            WHERE t3.hash = ?
+            ORDER BY t1.start_time AND t2.first_name
 
         ";
 
         $statement = $this -> database -> prepare($query);
 
-        $statement -> bind_param("ss", $userONID, $eventKey);
+        $statement -> bind_param("s", $eventKey);
         $statement -> execute();
 
         $result = $statement -> get_result();
-       
+
         if ($result -> num_rows > 0) {
             $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
         }
@@ -519,6 +699,48 @@ class DatabaseInterface {
         $result -> free();
 
         return $reservationDetails;
+
+    }
+
+    public function getUsersOfSlot($slotKey) {
+
+        $query = "
+
+            SELECT 
+            u.email, u.first_name AS 'firstName', u.last_name AS 'lastName'
+
+            FROM meb_timeslot t
+            INNER JOIN meb_booking b
+                ON t.id = b.fk_timeslot_id
+            INNER JOIN meb_user u
+                ON b.fk_user_id = u.id
+            INNER JOIN meb_event e
+                ON t.fk_event_id = e.id
+
+            WHERE t.hash = ?
+
+        ";
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("s", $slotKey);
+        $statement -> execute();
+
+        $result = $statement -> get_result();
+    
+
+        if ($result -> num_rows > 0) {
+            $resultArray = $result -> fetch_all(MYSQLI_ASSOC);
+        }
+        else {
+            $resultArray = null;
+        }
+
+
+        $statement -> close();
+        $result -> free();
+
+        return $resultArray;
 
     }
 
@@ -706,6 +928,95 @@ class DatabaseInterface {
         $statement -> close();
 
         return $result;
+
+    }
+
+
+    public function editEvent_deleteSlot($eventKey, $slotKey) {
+
+        // get event mod date and and event key
+
+        $eventData = $this -> getEvent($eventKey);
+        $oldModDate = $eventData["mod_date"];
+
+
+        // use stored procedure to delete slot
+
+        $query = 'CALL meb_delete_slot(?, ?, ?, @res3)';
+
+        $statement = $this -> database -> prepare($query);
+
+        $statement -> bind_param("sss", $oldModDate, $eventKey, $slotKey);
+        $statement -> execute();
+
+
+        $query = "SELECT @res3";
+        $result = $this -> database -> query($query);
+
+        if ($result) {
+            $resultArray = $result -> fetch_all(MYSQLI_NUM);
+            $errorCode = $resultArray[0][0];
+        }
+        else {
+            $errorCode = -1;
+        }
+
+
+        $statement -> close();
+        $result -> free();
+
+        return $errorCode;
+
+    }
+
+    public function editEvent_addSlot($eventKey, $slotData) {
+
+        // get event mod date and and event key
+
+        $eventData = $this -> getEvent($eventKey);
+        $oldModDate = $eventData["mod_date"];
+
+
+        // use stored procedure to add slot
+
+        $query = 'CALL meb_add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
+
+        $statement = $this -> database -> prepare($query);
+
+
+        $startTime = $slotData["startTime"];
+        $endTime = $slotData["endTime"];
+        $duration = $slotData["duration"];
+        $capacity = $slotData["capacity"];
+
+        $slotKey = createTimeSlotHash($startTime, $endTime, $eventKey);
+
+
+        $statement -> bind_param(
+            'sssssii',
+            $oldModDate, $eventKey, $slotKey, 
+            $startTime, $endTime, $duration, $capacity
+        );
+
+        $statement -> execute();
+
+
+        $query = "SELECT @res2";
+        $result = $this -> database -> query($query);
+
+        if ($result) {
+            $resultArray = $result -> fetch_all(MYSQLI_NUM);
+            $errorCode = $resultArray[0][0];
+        }
+        else {
+            $errorCode = -1;
+        }
+
+
+        $statement -> close();
+        $result -> free();
+    
+        return $errorCode;
 
     }
 

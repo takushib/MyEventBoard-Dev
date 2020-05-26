@@ -8,19 +8,31 @@
 
     require_once 'php/database.php';
 
-    // get user ID using ONID from database
 
-    require_once 'php/get_user.php';
-
-    $userKey = getUserKeyFromDB($_SESSION['user'], $database);
-
-
-    // get data from POST request
+    // check if user is creator
 
     $eventKey = $_POST['eventHash'];
-    $eventName = $_POST['eventName'];
-    $eventLocation = $_POST['eventLocation'];
-    $eventDescription = $_POST['eventDescription'];
+
+    $eventData = $database -> getEvent($eventKey);
+
+    if ($eventData == null) {
+        echo "Something went wrong...";
+        exit;
+    }
+ 
+    if ($eventData["creator"] != $_SESSION["user"]) {
+        echo "You are not authorized to change event details.";
+        exit;
+    }
+
+
+    // get event details from POST requestt
+
+    $eventData = array();
+
+    $eventData["name"] = $_POST['eventName'];
+    $eventData["location"] = $_POST['eventLocation'];
+    $eventData["description"] = $_POST['eventDescription'];
 
     // events sign-up is anonymous by default
     // unless it is explicitly set to not be anonymous
@@ -29,6 +41,8 @@
     $isAnonymous = 1;
     if ($_POST['isAnonymous'] == "false") $isAnonymous = 0;
 
+    $eventData["anonymous"] = $isAnonymous;
+
     // file upload is disabled by default
     // unless it is explicitly set to be enabled
     // assume it should be disabled
@@ -36,38 +50,18 @@
     $enableUpload = 0;
     if ($_POST['enableUpload'] == "true") $enableUpload = 1;
 
+    $eventData["upload"] = $enableUpload;
+
 
     // update database entry using given data
 
-    $query = "
+    $result = $database -> changeEventDetails($eventKey, $eventData);
 
-        UPDATE meb_event
-        SET
-            name = ?,
-            description = ?,
-            location = ?,
-            is_anon = ?,
-            enable_upload = ?
-        WHERE hash = ? AND fk_event_creator = ?
-
-    ";
-
-    $statement = $database -> prepare($query);
-
-    $statement -> bind_param(
-        "sssiisi", $eventName, $eventDescription, $eventLocation,
-        $isAnonymous, $enableUpload, $eventKey, $userKey
-    );
-
-    $statement -> execute();
-
-    $result = $statement -> get_result();
-
-    if ($database -> affected_rows == 1) {
+    if ($result > 0) {
         echo "The event details were successfully edited!";
     }
     else {
-        echo "Something went wrong!";
+        echo "No changes to the event details were made.";
     }
 
 ?>

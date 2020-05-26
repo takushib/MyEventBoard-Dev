@@ -1,4 +1,5 @@
 .DS_Store
 /vendor/
+/uploads/
 composer.phar
 text_file

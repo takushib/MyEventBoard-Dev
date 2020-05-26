@@ -23,7 +23,7 @@
 
     // get event and time slot data
 
-    $resultObjects = $database -> getEventData($eventKey);
+    $resultObjects = $database -> getEditingData($eventKey);
 
     // check results
     // if there are no results, show error 404
@@ -42,7 +42,6 @@
         render_error($twig, $errorCode, $errorMessages[$errorCode]);
         exit;
     }
-
 
     // encode array of PHP objects as JSON
 
