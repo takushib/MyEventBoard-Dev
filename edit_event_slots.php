@@ -8,47 +8,28 @@
 
     require_once 'php/database.php';
 
-    // include functions for generating hashes
-
-	require_once 'php/hash.php';
-
-    // get email function
+    // include email function
 
     require_once 'php/notify_user.php';
 
 
     // get data from POST request
 
-    $eventHash = $_POST['eventHash'];
-    $added_slots = json_decode($_POST['addedSlots'], true);
-    $deleted_slots = json_decode($_POST['deletedSlots'], true);
+    $eventKey = $_POST['eventHash'];
+    $addedSlots = json_decode($_POST['addedSlots'], true);
+    $deletedSlots = json_decode($_POST['deletedSlots'], true);
 
 
-    // get event creator's ONID using event hash
+    // get event data
     // if there are no results or event creator ONID does not match user ONID, abort now
 
-    $query = "
+    $eventData = $database -> getEvent($eventKey);
 
-        SELECT meb_user.onid AS 'creator'
-        FROM meb_event
-        INNER JOIN meb_user
-            ON meb_event.fk_event_creator = meb_user.id
-        WHERE meb_event.hash = ?
-
-    ";
-
-    $statement = $database -> prepare($query);
-    $statement -> bind_param("s", $eventHash);
-    $statement -> execute();
-
-    $result = $statement -> get_result();
-    $resultRow = $result -> fetch_assoc();
-
-    if ($resultRow == NULL) {
+    if ($eventData == null) {
         echo "The specified event does not exist.";
         exit;
     }
-    else if ($resultRow['creator'] != $_SESSION['user']) {
+    else if ($eventData['creator'] != $_SESSION['user']) {
         echo "You do not have permission to edit the specified event.";
         exit;
     }
@@ -61,62 +42,32 @@
 
     // delete slots if slots exist
 
-    if (count($deleted_slots) > 0) {
+    if (count($deletedSlots) > 0) {
 
-        foreach($deleted_slots as $slot) {
+        foreach ($deletedSlots as $slot) {
 
-            // query for existing reservations
+            // get list of users who will lose their time slots
 
-            $emailQuery = "
-                SELECT u.email, u.first_name, e.name as 'event_name' FROM meb_timeslot t
-                INNER JOIN meb_booking b
-                ON t.id = b.fk_timeslot_id
-                INNER JOIN meb_user u
-                ON b.fk_user_id = u.id
-                INNER JOIN meb_event e
-                ON t.fk_event_id = e.id
-                WHERE t.hash = ?
-            ";
+            $removedUsers = $database -> getUsersOfSlot($slot["slotHash"]);
 
-            $statement = $database->prepare($emailQuery);
-            $statement->bind_param("s", $slot['slotHash']);
-            $statement->execute();
-            $emailResult = $statement->get_result();
+            // delete time slot
+            
+            $errorCode = $database -> editEvent_deleteSlot($eventKey, $slot["slotHash"]);
 
-            // date query
-
-            $dateQuery = "SELECT mod_date FROM event WHERE hash = ?";
-            $statement = $database->prepare($dateQuery);
-            $statement->bind_param('s', $eventHash);
-            $statement->execute();
-            $dateResult = $statement->get_result();
-            $result_array = $dateResult->fetch_all(MYSQLI_ASSOC);
-            $oldModDate = $result_array[0]['mod_date'];
-
-            // call procedure
-
-            $deleteQuery = 'CALL delete_slot(?, ?, ?, @res3)';
-            $delete_statement = $database->prepare($deleteQuery);
-            $delete_statement->bind_param("sss", $oldModDate, $eventHash, $slot['slotHash']);
-            $delete_statement->execute();
-
-            $resultQuery = "SELECT @res3";
-            $deleteResult = $database->query($resultQuery);
-            $row = $deleteResult -> fetch_array(MYSQLI_NUM);
-
-            if($row[0] != 0) {
-                $deleteSuccess = FALSE;
-            }
+            if ($errorCode != 0) $deleteSuccess = FALSE;
 
             // build URL that leads to sign-up page for event
+
             $developerONID = substr(getcwd(), strlen('/nfs/stak/users/'), -1 * strlen('/public_html/MyEventBoard'));
             $siteURL = 'http://web.engr.oregonstate.edu/~' . $developerONID . '/MyEventBoard/';
-            $siteURL = $siteURL . 'register?key=' . $eventHash;
+            $siteURL = $siteURL . 'register?key=' . $eventKey;
 
-            // email users who were kicked off after slot was successfully deleted
-            if ($emailResult && ($deleteSuccess == TRUE)) {
-                $removed_users = $emailResult->fetch_all(MYSQLI_ASSOC);
-                emailUsers($removed_users, $siteURL);
+            // email users who were kicked off after successful delete
+
+            if ($removedUsers == null || !$deleteSuccess) continue;
+
+            foreach ($removedUsers as $user) {
+                emailUserAboutDeletedSlot($user, $eventData["name"], $siteURL);
             }
 
         }
@@ -125,53 +76,30 @@
 
     // add slots if slots exist
 
-    if (count($added_slots) > 0) {
+    if (count($addedSlots) > 0) {
 
-        foreach($added_slots as $slot) {
+        $slotData = array();
 
-            $dateQuery = "SELECT mod_date, id FROM meb_event WHERE hash = ?";
-            $statement = $database->prepare($dateQuery);
-            $statement->bind_param('s', $eventHash);
-            $statement->execute();
-            $result = $statement->get_result();
-            $result_array = $result->fetch_all(MYSQLI_ASSOC);
-            $oldModDate = $result_array[0]['mod_date'];
-            $eventKey = $result_array[0]['id'];
+        $slotData["duration"] = intval($_POST['slot_duration']);
+        $slotData["capacity"] = intval($_POST['slot_capacity']);
 
-            $insert_query = 'CALL add_slot(?, ?, ?, ?, ?, ?, ?, @res2)';
-            $insert_statement = $database->prepare($insert_query);
+        foreach($addedSlots as $slot) {
 
-            $newSD = $slot['startTime'] . ':00';
-            $newED = $slot['endTime'] . ':00';
+            $slotData["startTime"] = $slot['startTime'] . ':00';
+            $slotData["endTime"] = $slot['endTime'] . ':00';
 
-            $slotDuration = $_POST['slot_duration'];
-            $slotCapacity = $_POST['slot_capacity'];
+            $errorCode = $database -> editEvent_addSlot($eventKey, $slotData);
 
-            $slotHash = createTimeSlotHash($newSD, $newED, $eventHash);
-
-            $insert_statement->bind_param(
-                'sssssii',
-                $oldModDate, $eventHash, $slotHash, $newSD, $newED,
-                $slotDuration, $slotCapacity
-            );
-
-            $insert_statement->execute();
-
-            $resultQuery = "SELECT @res2";
-            $addResult = $database->query($resultQuery);
-            $row = $result -> fetch_array(MYSQLI_NUM);
-
-            if($row[0] != 0) {
-                $insertSuccess = FALSE;
-            }
+            if ($errorCode != 0) $insertSuccess = FALSE;
 
         }
+
     }
 
 
     // response to front end
 
-    if($insertSuccess && $deleteSuccess) {
+    if ($insertSuccess && $deleteSuccess) {
         echo "The event was successfully edited!";
     }
     else {

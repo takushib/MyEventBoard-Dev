@@ -8,77 +8,71 @@
     
     require_once 'php/database.php';
 
-    // include code for getting event key and ID of booking
     
-    require_once 'php/get_booking_id.php';
-    require_once 'php/get_event_key.php';
-
     // get time slot key from POST request
 
     $slotKey = $_POST['slotKey'];
 
-    // save user ONID to new variable for convenience
-
-    $user = $_SESSION['user'];
-
     // get ID of user's booking for time slot
     // if there is no booking, show user error message and abort now
 
-    $booking_id = getBookingID($user, $slotKey, $database);
-
-    if ($booking_id == -1) {
+    $bookingData = $database -> getUserBooking($slotKey, $_SESSION["user"]);
+    
+    if ($bookingData == null) {
         echo "You have not reserved a time slot." . '\n';
         echo "File upload is not possible." . '\n';
         exit;
     }
 
+    $bookingID = $bookingData["id"];
+
     // get event key using time slot key
 
-    $eventKey  = getEventKey($slotKey, $database);
+    $eventData = $database -> getEventBySlotKey($slotKey);
+    $eventKey = $eventData["hash"];
 
-    // continue with file upload
+    // determine path
 
-    $new_path = '../MEBuploads/' . $eventKey;
-    $new_file_name = $user . '_upload';
+    $uploadsDirectory = './uploads/';
+    $newPath = $uploadsDirectory . $eventKey;
+    $newFileName = $_SESSION["user"] . '_upload';
 
-    $old_file_name = $_FILES['file']['name'];
-    $ext = pathinfo($old_file_name, PATHINFO_EXTENSION);
-    $path = $new_path . '/' . $new_file_name . '.' . $ext;
+    $oldFileName = $_FILES['file']['name'];
+    $ext = pathinfo($oldFileName, PATHINFO_EXTENSION);
+    $path = $newPath . '/' . $newFileName . '.' . $ext;
 
-    if (file_exists($new_path)) {
-      // folder for event exists
-      if ( 0 < $_FILES['file']['error'] ) {
-          echo 'Error: ' . $_FILES['file']['error'] . '<br>';
-      }
-      else {
+
+    // if directory for event's files does not exist, create it
+
+    if (!file_exists($newPath)) mkdir($newPath, 0700, true);
+
+    // if there is error with file upload
+    // do not try to add path to database
+
+    $fileError = false;
+
+    if (0 < $_FILES['file']['error']) {
+        echo 'Error: ' . $_FILES['file']['error'] . '<br>';
+        $fileError = true;
+    }
+
+    // if there is no error with file upload, add path to database
+    // otherwise, report that file upload was not successful
+
+    if ($fileError == false) {
+        
         move_uploaded_file($_FILES['file']['tmp_name'], $path);
-        $statement = $database->prepare("
-            INSERT INTO files(path, fk_booking_id)
-            VALUES (?, ?)"
-        );
-        $path_to_store = '../' . $path;
-        $statement->bind_param("si", $path_to_store, $booking_id);
-        $statement->execute();
-        echo $database->insert_id;
-      }
-    }
-    else {
-        // folder has not been made, create new one
-        mkdir($new_path);
-        if ( 0 < $_FILES['file']['error'] ) {
-            echo 'Error: ' . $_FILES['file']['error'] . '<br>';
+        chmod($path, 0755);
+
+        $result = $database -> addFile($path, $bookingID);
+
+        if ($result > 0) {
+            echo "Your file has been uploaded.";
+            exit;
         }
-        else {
-            move_uploaded_file($_FILES['file']['tmp_name'], $path);
-            $statement = $database->prepare("
-                INSERT INTO files(path, fk_booking_id)
-                VALUES (?,?)"
-            );
-            $path_to_store = '../' . $path;
-            $statement->bind_param("si", $path_to_store, $booking_id);
-            $statement->execute();
-            echo $database->insert_id;
-        }
+
     }
+    
+    echo "Your file could not be uploaded.";
 
 ?>

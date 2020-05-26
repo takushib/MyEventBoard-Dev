@@ -30,9 +30,13 @@ if (!isset($_SESSION['user'])) {
 
 }
 
-// check if user is in database
-// if not, add user to database
+// add user to database if user does not exist
 
-require_once 'php/add_user.php';
+require_once 'php/database.php';
+
+$database -> addUser(
+    $_SESSION['user'], $_SESSION['email'], 
+    $_SESSION['firstName'], $_SESSION['lastName']
+);
 
 ?>
