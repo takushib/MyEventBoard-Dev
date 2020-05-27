@@ -1,7 +1,26 @@
+/******************************************************************
+* main.js (should rename this to mainpage.js or homepage.js)
+*
+* This JavaScript file is for the main/home page.
+* This page displays the current event weeks reservations for the user. Current day is highlighted. Each event reservation is shown in a block
+* item.
+*
+* A block item has the Event name, Location, Event Creator, and start Time.
+* 
+* FUTURE TASKS:
+*
+* - Refactoring: There are a lot of reusable code that could be moved over to this file from the other JS files. Particularly the date functions 
+*   throughout the JS files. Though it might be better to make a specific date formatter JS files and move it into that to keep this more organized.
+* 
+* - Block on Click Feature: We haven't decided on what click a reservation block will do. It's up to you to decide what it will do. Link to the 
+*	registration page could be an option.
+*
+*********************************************************************/
+
 const daysOfWeek = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 
-// Uses 12 hour format. AM and PM captialized.
+// Uses 12 hour format. AM and PM captialized. If time is less than today's current time. Return false.
 function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
 	
 	if (!((timeToBeChecked.includes("AM") || timeToBeChecked.includes("PM") || todayTimeStamp.includes("PM") || todayTimeStamp.includes("AM"))))
@@ -41,7 +60,7 @@ function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
 	
 }
 
-
+// Get the current time
 function getCurrentTime() {
    
 		var date = new Date();
@@ -54,6 +73,7 @@ function getCurrentTime() {
         return time;
 };
 
+// Create an event block.
 function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eventTime, eventLocation)
 {
 	//console.log(eventDate);
@@ -123,7 +143,7 @@ function createEventBlock(eventName, eventDate, creatorName, slotsRemaining, eve
 	var todayTimeStamp = getCurrentTime();
 	
 	if (checkTimeIfLessThanToday(eventTime, todayTimeStamp) == true && getDate(date) === eventDate) {
-		newEvent.addClass("finishedEvent");
+		newEvent.addClass("finishedEvent"); // Make reservations that are past transparent.
 	}
 	
 	return newEvent;
@@ -154,7 +174,7 @@ function databaseDateFormatToReadable(databaseDateObj) {
 	}
 }
 
-
+// Build this week Monday - Sunday Containers with event reservations in them
 function buildContainer(events)
 {
 	//console.log(events);
@@ -215,6 +235,7 @@ function getDate(dateObj) {
 
 }
 
+// Get the Monday of this week
 function getMonday(d) {
   d = new Date(d);
   var day = d.getDay(),
@@ -222,12 +243,13 @@ function getMonday(d) {
   return new Date(d.setDate(diff));
 }
 
+// Get the Sunday of this week
 function getSunday(mondayObj) {
     mondayObj.setDate(mondayObj.getDate() + 6);
 	return mondayObj;
 }
 
-function isInBetween(currDate, minDate, maxDate)
+function isInBetween(currDate, minDate, maxDate)  // Check if the date is between two dates. Used for checking if event is in this week.
 {
 		var curr = new Date(currDate);
 		var min = new Date(minDate);
@@ -240,12 +262,15 @@ function isInBetween(currDate, minDate, maxDate)
 			return false;
 }
 
-function noEvents()
+function noEvents() // Add no events label if no reservations exist
 {
 	$('.weeksEvent').append(('<div><h2> No Upcoming Events for this Week </h2></div>'));
 }
 
 $(document).ready(function () {
+	
+	$('#homeNav').addClass('activeNavItem');
+	
 	var fullDate = new Date();
 	var tempDayHolder = [];
 	var curDay = "";
@@ -314,13 +339,9 @@ $(document).ready(function () {
 
 		
 	});
-})
-
-$(document).ready(function () {
 	
-	$('#homeNav').addClass('activeNavItem');
-	
+	// Reservation Block item on click.
 	$('.eventBlock').click(function () {
-		console.log("Redirect to respective Event Page Here");
+		// Implement block click feature here
 	});
-});
+})

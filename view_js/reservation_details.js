@@ -1,3 +1,18 @@
+/******************************************************************
+* reservations_details.js (rename this to reservationsDetails.js to keep consistency with JS files in camel case)
+*
+* This JavaScript file is for the reservations details page. This page is the page that when clicking on anchor
+* individual reservation under the reservations page. This page will allow the user to view all the details of a specific
+* reservation and upload a file to that reservation if the event has file uploading enabled.
+* 
+* 
+* FUTURE TASKS:
+*
+* - Refactoring
+*
+*********************************************************************/
+
+
 $(document).ready(function () {
 	
 	($(this).find('.myLink').attr('href'));
@@ -14,6 +29,7 @@ $(document).ready(function () {
 	var hashKey = hashForEventFromURL.split("?key=");
 	
 	
+	// Delete the reservation. Requires the slot hash to work.
 	$('#deleteEventButton').on("click", function() {
 		$('#deleteConfirm').modal('toggle');
 		
@@ -46,6 +62,7 @@ $(document).ready(function () {
 		
 	});
 
+	// Format the start and end time of the date pulled from the Database to be viewable.
 	const startTime = document.getElementById('eventStartTimeLabel').children[0];
 	startTime.innerText = formatDateTime(startTime.innerText);
 
@@ -54,7 +71,7 @@ $(document).ready(function () {
 	
 });
 
-
+// Upload a file feature
 $('#submitFile').on('click', function () {
 
     var inputFile = $('#inputFile');
@@ -73,6 +90,7 @@ $('#submitFile').on('click', function () {
 
 })
 
+// Delete this reservation. Requires event slot hash.
 function deleteThisEvent(hashKey) {
 	
 	$.ajax({

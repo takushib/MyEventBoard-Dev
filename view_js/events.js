@@ -1,11 +1,28 @@
-const eventNameIndex = 1; // Index of event name on table. If table structure changes, this needs to be changed accordingly.
-const currPosition = 0;
-const eventLinkIndex = 1;
+/******************************************************************
+* events.js
+*
+* This JavaScript file is for the events page (when you click manage on the navbar). This page allows you to view all the events you have
+* created in a table. Values are shown in
+* 	
+*	Event Name
+* 	Slots
+* 	And a button that allows you to copy the link to the registration page for the respective event.
+*
+* Clicking on a event name in the table will redirect to a page with more details for that event.
+*
+* 
+* FUTURE TASKS:
+*
+* - Refactoring: There are a lot of reusable code that could be moved over to this file from the other JS files. Particularly the date functions 
+*   throughout the JS files. Though it might be better to make a specific date formatter JS files and move it into that to keep this more organized.
+* 
+*********************************************************************/
+
 
 $( document ).ready(function() {
 
 	$('#manageNav').addClass('activeNavItem');
-	displayNoEventsHeader();
+	displayNoEventsHeader(); // check if there are existing events created. Otherwise display no events.
 	
 	$(".linkColumn").each(function () {
 
@@ -24,7 +41,7 @@ $( document ).ready(function() {
 
 });
 
-
+// Copy the link to event
 $('.copy').on('click', function () {
 
 	var temp_text = $('<input></input>');
@@ -44,6 +61,7 @@ $('.copy').on('click', function () {
 
 })
 
+// Check if are events existing for this user. Otherwise display no events.
 function displayNoEventsHeader() {
 	if ($('.tableBody').children().length == 0) {
 		$('#eventsTable').addClass('doNotDisplay');

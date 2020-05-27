@@ -1,9 +1,24 @@
+/******************************************************************
+* ui.js
+*
+* This JavaScript file is intended to be a general functions file. This should hold all functions that are used throughout the page.
+* Likewise, this file should be included in every page of the application.
+* 
+* FUTURE TASKS:
+*
+* - Refactoring: There are a lot of reusable code that could be moved over to this file from the other JS files. Particularly the date functions 
+*   throughout the JS files. Though it might be better to make a specific date formatter JS files and move it into that to keep this more organized.
+* 
+*********************************************************************/
+
+// Sidebar feature (mobile)
 $(document).ready(function () {
     $('#sidebarCollapse, #sidebarCollapseIcon').on('click', function () {
         $('#sidebar').toggleClass('hidden');
     });
 });
 
+// Search bar feature
 $(document).ready(function(){
 	$('#tableSearch').on('keyup', function() {
 	  var value = $(this).val().toLowerCase();
@@ -12,6 +27,7 @@ $(document).ready(function(){
 	  });
 	});
   });
+
 
 function minutesToFormat(totalMinutes) {
 	totalMinutes = totalMinutes + "";
