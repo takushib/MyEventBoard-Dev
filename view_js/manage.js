@@ -12,6 +12,9 @@ $(document).ready(function () {
 		window.location.href = $(this).children().attr('href');
 	});
 	
+	initializeEmptyDownloadItems();
+	
+	
 	var hashForEventFromURL = window.location.href;
 	var hashKey = hashForEventFromURL.split("?key=");
 	
@@ -55,6 +58,20 @@ $(document).ready(function () {
 		
 	});
 	
+	$('.deleteUserSlot').on("click", function() {
+		
+		var userTimeSlot = $(this).parent().parent().children().eq(0).text();
+		var userName = $(this).parent().parent().children().eq(1).text();
+		$('#deleteUserHeader').text('Deleting Slot:   [ '+userName+'   at   '+userTimeSlot+' ]');
+		$('#deleteUser').modal('toggle');
+		
+		$('#deleteUserSubmitButton').off();
+		$('#deleteUserSubmitButton').on("click", function() {
+			$('#deleteUser').modal('toggle');
+			//Delete user from slot here
+		});
+		
+	});
 });
 
 function deleteThisEvent(hashKey) {
@@ -67,5 +84,14 @@ function deleteThisEvent(hashKey) {
 		console.log(response);
 	});
 }
+
+function initializeEmptyDownloadItems() {
+	$(".fileDownloadFile").each(function() {
+		//console.log($(this).attr("href"));
+		if ($(this).attr("href") == "../")
+			$(this).replaceWith( "<text>None</text>");
+	});
+}
+
 
 ($(this).find('.myLink').attr('href'));

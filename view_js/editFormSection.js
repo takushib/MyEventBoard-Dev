@@ -218,6 +218,48 @@ function buildModalForFormSave(modalHeaderName) {
 
 $('#saveForm').on('click', function () {
 
+	var hasChangedValue = false;
+	
+	var newEventName = $('#eventNameInput').val();
+	var newEventLocation = $('#locationInput').val();
+	var newEventDescription = $('#eventDescriptTextArea').val();
+	var newEventAnonymousOption = $('#anonymousCheck').prop('checked');
+	var newEventFileOption = $('#fileUpload').prop('checked');
+	
+	var eventSaveVals = {
+		"Event Name": newEventName,
+		"Event Location": newEventLocation,
+		"Event Description": newEventDescription,
+		"Event Anonymous Option": newEventAnonymousOption,
+		"Event File Option": newEventFileOption
+	};
+
+	const keys = Object.keys(eventSaveVals);
+	
+	var eventDbVals = {
+		"Event Name": formState.eventName,
+		"Event Location": formState.eventLocation,
+		"Event Description": formState.eventDescription,
+		"Event Anonymous Option": formState.eventAnonymousOption,
+		"Event File Option": formState.eventFileOption
+	}
+	
+	for (var key of keys) {
+		if (eventSaveVals[key] == eventDbVals[key])
+			continue;
+		else
+		{
+			hasChangedValue = true;
+			break;
+		}
+	}
+	
+	if (hasChangedValue == false)
+	{
+		alert("No Changes have been Made");
+		return;
+	}
+
 	buildModalForFormSave("Confirm Save");
 	$('#generalConfirm').modal('toggle');
 
@@ -263,7 +305,9 @@ function saveFormChanges() {
 			enableUpload: eventSaveVals[4]
 		}
 	}).done(function(response) {
-		alert(response);
+		$('#refreshChangeHeader').text(response);
+		$('#refreshConfirm').modal('toggle');
+		$('#saveForm').prop('disabled', true);
 	});
 
 	// Reinitialize cached data needs to be done after ajax call

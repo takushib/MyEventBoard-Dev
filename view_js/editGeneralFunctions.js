@@ -69,3 +69,7 @@ $("#menu-toggle").click(function (e) {
 	e.preventDefault();
 	$("#wrapper").toggleClass("toggled");
 });
+
+$('#refreshButton').on('click', function() {
+	location.reload(true);
+});

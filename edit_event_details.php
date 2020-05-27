@@ -58,7 +58,7 @@
     $result = $database -> changeEventDetails($eventKey, $eventData);
 
     if ($result > 0) {
-        echo "The event details were successfully edited!";
+        echo "The event details changes were successfully saved!";
     }
     else {
         echo "No changes to the event details were made.";

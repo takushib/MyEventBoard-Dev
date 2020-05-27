@@ -880,9 +880,6 @@ function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
 
 function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, eventNewCapacity) {
 
-	console.log(eventNewDuration);
-	console.log(eventNewCapacity);
-
 	var newAddArray = JSON.stringify(eventAddArray);
 	var newDeleteArray = JSON.stringify(eventDeleteArray);
 	$.ajax({
@@ -896,13 +893,11 @@ function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, even
 			slot_capacity: eventNewCapacity
 		}
 	}).done(function(response) {
-		alert(response);
+		$('#refreshChangeHeader').text(response);
+		$('#refreshConfirm').modal('toggle');
+		$('#saveSlots').prop('disabled', true);
 	});
 	
-	console.log("ADDED SLOTS:")
-	console.log(eventAddArray);
-	console.log("DELETED SLOTS:")
-	console.log(eventDeleteArray);
 
 }
 
