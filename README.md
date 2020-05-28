@@ -39,5 +39,7 @@ Read more about it at https://github.com/ralouphie/mimey
 
 ## License & Copyright
 
+Copyright (c) 2020 Tommy Liao, Blaise Takushi, Simon Louie
+
 Licensed under the [MIT License](LICENSE).
 
