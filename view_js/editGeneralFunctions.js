@@ -1,3 +1,19 @@
+/******************************************************************
+* editGeneralFunctions.js
+*
+* This JavaScript file refers to edit page. These functions are used throughout both the edit time and edit form page. 
+* 
+*
+* FUTURE TASKS:
+*
+* - Refactoring
+*
+*
+*********************************************************************/
+
+
+
+
 $(document).ready(function () {
 
 	disableEnterInputOnFields();
@@ -14,6 +30,7 @@ $(document).ready(function () {
 
 });
 
+// Make it so hitting the enter key on an input field doesn't redirect the user
 function disableEnterInputOnFields() {
 
 	$('form input').keydown(function (e) {
@@ -24,6 +41,7 @@ function disableEnterInputOnFields() {
 	});
 }
 
+// Modal used for confirmation changes (duration changes, capacity changes, anonymous event option toggle, file upload toggle)
 function buildModalForChangeConfirmation(modalHeaderName, description) {
 
 	$('#generalHeaderLabel').text(modalHeaderName);
@@ -43,13 +61,14 @@ function buildModalForChangeConfirmation(modalHeaderName, description) {
 
 }
 
+// Clear the general modal upon hiding (finished using)
 $('#generalConfirm').on('hidden.bs.modal', function () {
 
 	resetCanceledInput();
 	clearModal();
 });
 
-
+// Clear the general modal
 function clearModal() {
 
 	$('.confirmationDescriptionContainer').empty();
@@ -68,4 +87,10 @@ $(function () {
 $("#menu-toggle").click(function (e) {
 	e.preventDefault();
 	$("#wrapper").toggleClass("toggled");
+});
+
+
+// Refresh button
+$('#refreshButton').on('click', function() {
+	location.reload(true);
 });

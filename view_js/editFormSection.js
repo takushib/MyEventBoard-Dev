@@ -1,4 +1,24 @@
-const formState = {
+/******************************************************************
+* editFormSection.js 
+*
+* This JavaScript file refers to the form field section of the edit event page. A user can
+* edit the name, location, file upload option, anonymous option, and description of the event here.
+* Basically anything that isn't time or event slot editing related is managed in this file. 
+* 
+* All changes made are only applied to the database when the "SAVE BUTTON" is submitted.
+* We implemented this such that there is only one transaction to the database per edit such that a user
+* cannot make too many calls to the database unnecessarily.
+*
+* FUTURE TASKS:
+*
+* - Refactoring: Could be split from the edit time page.
+*
+* - Issue: The state object for this page is managed by a global
+*	const object. Maybe this is a security issue. This should probably be replaced with something else.
+*
+*********************************************************************/
+
+const formState = {	// This is the "state" object that manages the form page of the edit form section. Replace with a class maybe?
 	eventName: "",
 	eventLocation: "",
 	eventDescription: "",
@@ -57,6 +77,7 @@ function initLocationInput() {
 	request.send();
 }
 
+// initialize the state object (formState)
 function initFormState() {
 
 	var databaseObj = [];
@@ -101,6 +122,7 @@ function initFormState() {
 
 }	
 
+// reset values to the origin values in the DB upon load
 $('#resetFormButton').on('click', function () {
 	
 	$('#eventNameInput').val(formState.eventName);
@@ -111,6 +133,7 @@ $('#resetFormButton').on('click', function () {
 
 });
 
+// Upload file option. Has a warning message if changed.
 $('#fileUpload').on('click', function (e) {
 
 	e.preventDefault();
@@ -125,6 +148,7 @@ $('#fileUpload').on('click', function (e) {
 
 });
 
+// Anonymous option. Has a warning message if changed.
 $('#anonymousCheck').on('click', function (e) {
 
 	e.preventDefault();
@@ -140,6 +164,7 @@ $('#anonymousCheck').on('click', function (e) {
 
 });
 
+// Save modal. Build the necessary information to display here.
 function buildModalForFormSave(modalHeaderName) {
 
 	$('#generalHeaderLabel').text(modalHeaderName);
@@ -216,7 +241,50 @@ function buildModalForFormSave(modalHeaderName) {
 	}
 }
 
+// Save button upon click. Proceed the save transaction to Database.
 $('#saveForm').on('click', function () {
+
+	var hasChangedValue = false;
+	
+	var newEventName = $('#eventNameInput').val();
+	var newEventLocation = $('#locationInput').val();
+	var newEventDescription = $('#eventDescriptTextArea').val();
+	var newEventAnonymousOption = $('#anonymousCheck').prop('checked');
+	var newEventFileOption = $('#fileUpload').prop('checked');
+	
+	var eventSaveVals = {
+		"Event Name": newEventName,
+		"Event Location": newEventLocation,
+		"Event Description": newEventDescription,
+		"Event Anonymous Option": newEventAnonymousOption,
+		"Event File Option": newEventFileOption
+	};
+
+	const keys = Object.keys(eventSaveVals);
+	
+	var eventDbVals = {
+		"Event Name": formState.eventName,
+		"Event Location": formState.eventLocation,
+		"Event Description": formState.eventDescription,
+		"Event Anonymous Option": formState.eventAnonymousOption,
+		"Event File Option": formState.eventFileOption
+	}
+	
+	for (var key of keys) {
+		if (eventSaveVals[key] == eventDbVals[key])
+			continue;
+		else
+		{
+			hasChangedValue = true;
+			break;
+		}
+	}
+	
+	if (hasChangedValue == false)
+	{
+		alert("No changes have been made");
+		return;
+	}
 
 	buildModalForFormSave("Confirm Save");
 	$('#generalConfirm').modal('toggle');
@@ -232,7 +300,7 @@ $('#saveForm').on('click', function () {
 
 });
 
-
+// Save the new form values to DB
 function saveFormChanges() {
 
 	var newEventName = $('#eventNameInput').val();
@@ -263,7 +331,9 @@ function saveFormChanges() {
 			enableUpload: eventSaveVals[4]
 		}
 	}).done(function(response) {
-		alert(response);
+		$('#refreshChangeHeader').text(response);	// Right here because we don't have data binding. We require a refresh for the data to reflect on the page.
+		$('#refreshConfirm').modal('toggle');
+		$('#saveForm').prop('disabled', true);
 	});
 
 	// Reinitialize cached data needs to be done after ajax call

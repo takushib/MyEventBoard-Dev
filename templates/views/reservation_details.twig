@@ -70,8 +70,13 @@
 
 						<h3 id="eventLocationLabel">Location: <span> {{ event_location }} </span></h3><br>
 						<h3 id="eventCreatorLabel">Event Creator: <span> {{ event_creator }} </span></h3><br>
-						<h3 id="eventDescriptionLabel">Description: <span> {{ event_description }} </span></h3>
-
+						
+						{% if event_description == "" %}
+							<h3 id="eventDescriptionLabel">Description: <span> None </span></h3>
+						{% else %}
+							<h3 id="eventDescriptionLabel">Description: <span> {{ event_description }} </span></h3>
+						{% endif %}
+						
 						<br><br>
 						<h3 id="eventFileLabel">
 							{% if user_file %}

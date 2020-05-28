@@ -1,3 +1,14 @@
+/******************************************************************
+* Upload.js
+*
+* This JavaScript file has refers to the file upload elements in the reservations_details page and register page. 
+* This it's own page to help organize reusable code.
+* 
+* A file can only be uploaded if an event has the file upload option enabled.
+* 
+*********************************************************************/
+
+// Upload a file to the DB from register or reservations_details page.
 function uploadFile(fileData, slotKey) {
 
     var form_data = new FormData();

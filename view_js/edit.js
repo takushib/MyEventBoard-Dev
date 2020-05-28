@@ -1,11 +1,72 @@
-const EDITTAG = "EDIT";
-const CHANGEDDURATIONTAG = "CHANGED DURATION";
+/******************************************************************
+* edit.js (should be renamed to editTimeSlots.js or something that refers to the slots)
+*
+* This JavaScript file refers to the time field section of the edit event page. A user can edit the duration of a slot, the capacity of the event per slot
+* and the time slots of the event.
+* 
+* A change to the duration will wipe out all event slots in the event.
+* A change to the capacity will retain already registered slots if the capacity is reduced to a value where a slot has more users registered to it
+* than the capacity.
+*
+* All changes made are only applied to the database when the "SAVE BUTTON" is submitted.
+* We implemented this such that there is only one transaction to the database per edit such that a user
+* cannot make too many calls to the database unnecessarily.
+*
+*
+* *IMPORTANT*: This page is managed by 3 "state" objects. In this case they are the global constant objects existingEventsArray, stateOfEvent, and disabledStack.
+*
+* - stateOfEvent: 
+*    The stateOfEvent manages the state of each variable in the time selection page besides the existing slots. 
+*    Added slots are tracked in this object.
+* 
+*
+* - existingEventsArray
+* 	 The existingEventsArray manages the state of the existing events slots. This should only be modified by an event slot edit.
+*
+*
+* - DisabledStack: 
+*    The disabled Stack keeps track of an event slot that has been disabled via a DURATION CHANGE or a EVENT SLOT EDIT.
+*
+*	 Disabled Stack transaction object contains:
+*	  TAG: (edit or duration change). This isn't actually used, but may be useful for the undo feature.
+*     Added Slots: Any slots added in this transaction. (used mostly for edit slots)
+*	  Disabled Slots: Any slots disabled in this transaction. (duration change or edit slots). A disabled slot is treated as not a duplicate.
+*
+*    Duplicate time slots are not allowed. If it exists in the addedSlots or existingEventsArray, that slot cannot be added. The disabled stack allows slots to be
+*    moved from the existingEventsArray to it such that slots that are disabled are not treated as duplicates and can be added. 
+* 
+*    The disabledStack emulates a stack. Each edit or duration change transaction has it's object placed in the disabledStack. This will allow for a future 
+*	 undo option to be implemented.
+*
+* FUTURE TASKS:
+*
+* - Change Name of file to editTime.js or something more explicit and reflective of what the file is doing.
+*
+* - Refactoring: Could be split from the edit form page. A lot of duplicate could be moved to a different file.
+*
+* - Issue: The state object for this page is managed by a global
+*	const object. Maybe this is a security issue. This should probably be replaced with something else.
+*
+* - Undo feature: Allows the user to undo an action (edit/duration change). Maybe add as well.
+*
+* - Reset Feature: Allows the user to reset to the original state of the time slots upon load.
+*
+* - Data Binding: The page currently makes user have to refresh the page to see any database changes. This is because a pull from the database is only called
+*   once upon page load. Without data binding, the only way to pull data as of now is to reload the page. Implement data binding will remove the requirement
+*   to refresh the page to view saved changes.
+*********************************************************************/
+
+const EDITTAG = "EDIT";							// While this isn't necessarily used. There is a tag set for an edit event or a duration change for a disabledStack transaction.
+const CHANGEDDURATIONTAG = "CHANGED DURATION";	// This is meant to help make it easier to track the disabled stack's items.
+
+
 const EVENT_DESCRIPT_LIST_LABEL = "EVENT_DESCRIPTION";
-const eventDeleteIndex = 1;
-const ADD_TIME_TABLE_ELEMENT = '#timeSelector tr';
-const EDIT_TIME_TABLE_ELEMENT = '#editTimeSelector tr';
-const existingEventsArray = []; // this will be changed to existing events from Database. Initially this will be empty and it will be loaded from the init function
-const dbSlots = [];
+const eventDeleteIndex = 1; // The delete index of the existing events table
+const ADD_TIME_TABLE_ELEMENT = '#timeSelector tr';		 // add Time slider. Used to initialize the slider for adding slots.
+const EDIT_TIME_TABLE_ELEMENT = '#editTimeSelector tr';  // edit Time Slider. Used to initialize the slider for editing slots.
+
+const existingEventsArray = []; // this will hold existing events slots from Database. Initially this will be empty and it will be loaded from the init function
+const dbSlots = []; // snapshot of database slots upon initial load. This is used to refer to the original values of the existing slots.
 
 const stateOfEvent = {
 	name: "",
@@ -17,7 +78,7 @@ const stateOfEvent = {
 	dbSlots: [] // save the snapshot of the DB's existing slot. Only changes on init/save
 };
 
-const disabledStack = [];  // This will hold arrays of objects with a snapshot of what changes were made at that instance of an edit
+const disabledStack = [];  // This will hold arrays of objects with a snapshot of what changes were made at that instance of an edit or duration change
 
 const weekday = new Array(7);
 
@@ -36,6 +97,7 @@ function getDayName(dateObj) {
 	return dayOfWeek;
 }
 
+// Reset the state objects
 function resetTheState() {
 
 	$('#addEventsTable tbody').empty();
@@ -55,15 +117,16 @@ function resetTheState() {
 
 $(document).ready(function () {
 
-	getDataFromDB();
+	getDataFromDB();	//initialization
 	initTimeState();
 	changedDuration(ADD_TIME_TABLE_ELEMENT); // update the time selection cells when adding a time slot
 	changedDuration(EDIT_TIME_TABLE_ELEMENT); // update the time selection cells when editing a time slot
 	
-	updateEditSlotTimeTable();
+	updateEditSlotTimeTable(); // update the edit slot slider
 
 });
 
+// initialize the database objects
 function getDataFromDB() {
 	var timeSlotObjects = [];
 
@@ -92,6 +155,7 @@ function getDataFromDB() {
 	console.log(dbSlots);
 }
 
+// initialize the state objects
 function initTimeState() {
 
 	var dbExistingSlots = dbSlots;
@@ -127,6 +191,8 @@ function initTimeState() {
 
 }
 
+
+// Edit slots modal
 function buildModalForMoveSlots(editRow) {
 
 	var slotInfo = getEventInFormatFromTableCells(editRow)
@@ -154,6 +220,7 @@ function buildModalForMoveSlots(editRow) {
 
 }
 
+// Create a disabled transaction to be pushed onto the disabled Stack.
 function createDisabledInstance(arrayToMoveFrom, toBeRemovedSlots, newSlots, tag) {
 
 	var temp_existing = arrayToMoveFrom;
@@ -183,6 +250,7 @@ function createDisabledInstance(arrayToMoveFrom, toBeRemovedSlots, newSlots, tag
 
 }
 
+// edit slot function.
 function editSlot(datesToBeMoved, toBeMovedRow) {
 		var newSlotDate = $('#editDates').val();
 		var hasSelected = false;
@@ -247,6 +315,7 @@ function editSlot(datesToBeMoved, toBeMovedRow) {
 		}
 }
 
+// edit slot on click listener. Opens the modal for editing slots.
 $('#editExistingSlots').on('click', function () {
 
 	$('#editSlotsConfirmButton').off();
@@ -291,6 +360,7 @@ $('#editExistingSlots').on('click', function () {
 
 });
 
+// Append the existing slots to the existing slots table
 function appendToExistingEventTable(date, nameOfDay, startTime, endTime) {
 	var newRow = $('<tr></tr>');
 	newRow.addClass('editableField');
@@ -398,7 +468,7 @@ $(document).ready(function () {
 
 });
 
-
+// Used in adding a slot. (removing a date removes a slider column).
 function removeColumn() {
 
 	var removedDate;
@@ -434,7 +504,7 @@ function removeColumn() {
 
 }
 
-
+// Used in adding a slot. (adding a date adds a column slider).
 function addNewCol(e) {
 
 	var dateName = e.format();
@@ -511,6 +581,7 @@ function formatEndTime(temp) {
 	return formatTime(newTime);
 }
 
+// Slider function for adding slots and editing slots.
 function dragTable() {
 
 	// Source: http://jsfiddle.net/few5E/
@@ -539,6 +610,7 @@ function dragTable() {
 
 }
 
+// Takes a row from event slots tables and converts it into an object that is used for the save transaction.
 function getEventInFormatFromTableCells(tableRow) {
 	var formattedEventString = [];
 
@@ -554,10 +626,16 @@ function getEventInFormatFromTableCells(tableRow) {
 		endTime: yyyy_mm_dd_format + " " + convertAMPMToMilitary(formattedEventString[3])
 	}
 
+	// Object returned from row:
+	/*
+		displayValue = primarily for displaying (time stamp of event).
+		startTime = start time of event slot in the database format
+		endTime = end time of event slot in the database format
+	*/
 	return formatStringObj;
 }
 
-
+//Update the addedSlots array upon a removal of an added slot. Looks for the slot based on start time.
 function updateStateFromDelete(startTimeValToBeRemoved) {
 
 	console.log(startTimeValToBeRemoved);
@@ -595,7 +673,7 @@ function removeAddSlotFromTable(deleteButton) {
 }
 
 
-
+// Reset to origin values upon a cancel of a confirmation
 function resetCanceledInput() {
 
 	var findSelectedDuration = $('#durationSelector').find(":selected");
@@ -607,7 +685,7 @@ function resetCanceledInput() {
 		$('#timeslotCapInput').val(stateOfEvent.dbCapacity);
 }
 
-
+// Capacity change 
 $('#timeslotCapInput').on('change', function (e) {
 	
 	if (stateOfEvent.dbCapacity < $('#timeslotCapInput').val())
@@ -627,6 +705,7 @@ $('#timeslotCapInput').on('change', function (e) {
 	}
 });
 
+// Duration change. Creates a disabled transaction and pushes it to the disabledStack.
 $('#durationSelector').on('change', function (e) {
 	buildModalForChangeConfirmation("Confirm Change", "Saving a change to the event duration will remove ALL EXISTING EVENT SLOTS and USERS tied to this event.");
 
@@ -634,7 +713,7 @@ $('#durationSelector').on('change', function (e) {
 
 				$('#generalAcceptButton').on('click', function () {
 
-					resetTheState();
+					resetTheState(); // Empty the disabledStack. A duration change transaction is always on the first item of the disabledStack.
 
 					if (parseInt($("#durationSelector option:selected").val(), 10) === parseInt((stateOfEvent.dbDuration), 10)) {
 						$('.disabledRow').each(function () {
@@ -683,7 +762,7 @@ $('#durationSelector').on('change', function (e) {
 				});
 });
 
-
+// If the duration has changed, update the edit time slot slider to reflect it.
 function updateEditSlotTimeTable() {
 
 	$('.removeEditOnClear').remove(); // Clear all edit cells
@@ -763,7 +842,7 @@ function changedDuration(timeTablePickerSelectorID) {
 
 }
 
-
+// The modal for time slot save
 function buildModalForTimeSave(modalHeaderName, addArray, deleteArray, newDuration, newCapacity) {
 	$('#generalHeaderLabel').text(modalHeaderName);
 
@@ -859,7 +938,7 @@ function buildModalForTimeSave(modalHeaderName, addArray, deleteArray, newDurati
 
 }
 
-
+// get existing slots from snapped shotted existing slots.
 function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
 
 	var eventSlotsFromCacheToBeDeleted = [];
@@ -878,10 +957,9 @@ function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
 	return eventSlotsFromCacheToBeDeleted;
 }
 
-function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, eventNewCapacity) {
 
-	console.log(eventNewDuration);
-	console.log(eventNewCapacity);
+// Save the time changes here
+function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, eventNewCapacity) {
 
 	var newAddArray = JSON.stringify(eventAddArray);
 	var newDeleteArray = JSON.stringify(eventDeleteArray);
@@ -896,16 +974,15 @@ function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, even
 			slot_capacity: eventNewCapacity
 		}
 	}).done(function(response) {
-		alert(response);
+		$('#refreshChangeHeader').text(response);
+		$('#refreshConfirm').modal('toggle');
+		$('#saveSlots').prop('disabled', true);
 	});
 	
-	console.log("ADDED SLOTS:")
-	console.log(eventAddArray);
-	console.log("DELETED SLOTS:")
-	console.log(eventDeleteArray);
 
 }
 
+// Save button on click listener.
 $('#saveSlots').on('click', function () {
 
 	var deleteObjInfoHolder = [];
@@ -946,18 +1023,21 @@ $('#saveSlots').on('click', function () {
 });
 
 
+// Open the add event slot modal
 $('#openAddEvents').on('click', function () {
 	$('#addEventModal').modal('toggle');
 	changedDuration(ADD_TIME_TABLE_ELEMENT); // update the add cells
 	//$('#datepicker').datepicker('update', ''); // clear all dates
 });
 
+// reset the add event slot modal upon hiding
 $('#addEventModal').on('hidden.bs.modal', function () {
 	//$('#datepicker').datepicker('update', ''); // clear all dates
 	$('#datepicker').datepicker('setDate', null);
 	$('.removeOnClear').remove(); //Clear all cells
 });
 
+// Check if there's duplicate items in two arrays. Return true if there is no duplicates otherwise false.
 //source: https://truetocode.com/check-for-duplicates-in-array-of-javascript-objects/
 function arraysNoDuplicate(superset, subset) {
 
@@ -987,6 +1067,7 @@ function arraysNoDuplicate(superset, subset) {
 
 }
 
+// submit added event slots here. 
 $('#addEventsButton').on('click', function () {
 	var addEventsCheck = addEventSlots();
 
@@ -1001,7 +1082,7 @@ $('#addEventsButton').on('click', function () {
 			//for (let i = 0; i < addEventsCheck.length; i++)
 			stateOfEvent.addedSlots = stateOfEvent.addedSlots.concat(addEventsCheck);
 
-			addToExistingEvent(addEventsCheck);
+			addToAddedEvent(addEventsCheck);
 			$('#addEventModal').modal('toggle');
 
 		}
@@ -1010,6 +1091,7 @@ $('#addEventsButton').on('click', function () {
 	}
 });
 
+// Append new event slots to added slots table 
 function appendToAddedTable(date, nameOfDay, startTime, endTime) {
 	var newRow = $('<tr></tr>');
 
@@ -1071,7 +1153,8 @@ function databaseDateFormatToReadable(databaseDateObj) {
 	}
 }
 
-function addToExistingEvent(newSlots) {
+// Add to added events table. This function calls the append function which actually does the physical appending. This loops and calls it multiple time per new slot that needs to be added.
+function addToAddedEvent(newSlots) {
 
 	//console.log(newSlots);
 
@@ -1114,6 +1197,7 @@ function convertAMPMToMilitary(timeInAMPM) {
 	return sHours + ":" + sMinutes;
 }
 
+// Returns the selected added slots from the add slider. If no slots are added, return false.
 function addEventSlots() {
 
 	var num = 0;

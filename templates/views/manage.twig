@@ -85,36 +85,43 @@
 				<h4> Event Information </h4>
 				<div class="informationContainer">
 
-					<label> Event Location: {{ event_location }} </label><br>
-					<label> Event Description: {{ event_description }} </label><br><br>
-
+					<label> Event Location: <text> {{ event_location }} </text></label><br>
+					
+					
+					{% if event_description == "" %}
+						<label> Event Description: <text> None </text> </label><br><br>
+					{% else %}
+						<label> Event Description: <text> {{ event_description }} </text></label><br><br>
+					{% endif %}
+					
+				
 					{% if anonymous == 1 %}
 
-					<label> Anonymous Event: True </label><br>
+					<label> Anonymous Event: <text style="color:blue"> Enabled </text></label><br>
 
 					{% else %}
 
-					<label> Anonymous Event: False </label><br>
+					<label> Anonymous Event: <text style="color:red">Disabled </text></label><br>
 
 					{% endif %}
 
 					{% if upload == 1 %}
 					
-					<label> Enable File Upload: True </label><br><br>
+					<label> Enable File Upload: <text style="color:blue">Enabled </text></label><br><br>
 
 					{% else %}
 
-					<label> Enable File Upload: False </label><br><br>
+					<label> Enable File Upload: <text style="color:red">Disabled </text></label><br><br>
 					
 					{% endif %}
 
-					<label> Event Capacity: {{ event_capacity }} </label><br>
-					<label> Available Slots: {{ event_space }} </label><br>
-					<label> Duration Per Timeslot: {{ slot_duration }} minutes</label><br><br>
+					<label> Event Capacity: <text>{{ event_capacity }} </text></label><br>
+					<label> Available Slots: <text>{{ event_space }} </text></label><br>
+					<label> Duration Per Timeslot: <text>{{ slot_duration }} minutes</text></label><br><br>
 
 					<label> 
 						Link to Event Registration: 
-						<a href="./register?key={{ event_key}}">Here</a> 
+						<a href="./register?key={{event_key}}">Here</a> 
 					</label>
 
 				</div>
@@ -159,8 +166,8 @@
 						{% set file_path = table_row|last %}
 
 						<td scope="col">
-							<a href="../{{ file_path }}" download>
-								<button class="manageEvent fileDownloadButton btn btn-dark btn-sm">
+							<a class="fileDownloadFile" href="../{{ file_path }}" download>
+								<button class="fileDownloadButton btn btn-dark btn-sm">
 									<i class="fa fa-download"></i> <text>Download </text>
 								</button>
 							</a>
@@ -245,6 +252,35 @@
 					<button type="button" class="btn btn-dark" id="inviteCancelButton"
 						data-dismiss="modal">Cancel</button>
 					<button type="button" class="btn btn-dark" id="inviteSubmitButton">Send</button>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	
+	
+	<div id="deleteUser" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1> Remove User </h1>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="deleteUserDetails" style="text-align: center;">
+						<label style="font-weight: bold;" id="deleteUserHeader"></label>
+						<br>
+						<label style="color:red; font-weight: bold;">*This Cannot be Undone!*</label>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-dark" id="deleteUserCancelButton"
+						data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-dark" id="deleteUserSubmitButton">Delete</button>
 				</div>
 			</div>
 

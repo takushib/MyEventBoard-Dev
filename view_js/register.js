@@ -1,3 +1,30 @@
+/******************************************************************
+* register.js
+*
+* This JavaScript file is for the register page. A user can register for a slot in an event on this page.
+* Ideally to share events, this is the page that the event creator would share to other users. Each event has it's own link.
+* Though, the difference is really on the hash.
+* A user may upload a file to their registration after registering for the event if the event has file uploading enabled.
+* 
+* 
+* FUTURE TASKS:
+*
+* - Refactoring: This page suffers from being developed in the early stages. There are a lot of code that can be written better 
+*	or code that could have been reused more efficiently. There should ideally be only 1 document.ready function.
+* 
+* - BUG: Registering for a new slot while previously signed up for a different slot has a UI bug. This bug incorrectly displays the capacity
+* 	for that previous slot unless the page is refreshed. 
+*
+* - BUG: Two date pickers when there should really only be one.
+*
+* - Schedule Checking: Registering for an event slot doesn't check for time conflicts with events the user own and other events
+*	they are registered to. Ideally the application should detect time conflicts.
+*
+* - Suggestion: It might be better to rewrite this page altogether.
+*
+*********************************************************************/
+
+
 var weekday = new Array(7);
 
 weekday[0]="Sunday";
@@ -8,7 +35,20 @@ weekday[4]="Thursday";
 weekday[5]="Friday";
 weekday[6]="Saturday";
 
-
+const monthEnum = {
+	January: '1',
+	February: '2',
+	March: '3',
+	April: '4',
+	May: '5',
+	June: '6',
+	July: '7',
+	August: '8',
+	September: '9',
+	October: '10',
+	November: '11',
+	December: '12'
+}
 
 // Returns week day name of a date obj
 
@@ -64,25 +104,29 @@ function setMySlot(modalTimeSlot, timeSlotObject) {
 
 }
 
+// Reset the slot back to it's reflective value after changing a reservation.
+// I believe the bug is somewhere in here
 function resetSlot(timeSlot) {
 
-	console.log(timeSlot);
-	console.log(timeSlot.id);
-	console.log(document.getElementById(timeSlot.id));
+//	console.log(timeSlot);
+	//console.log(timeSlot.id);
+	//console.log(document.getElementById(timeSlot.id));
 
 
 	timeSlot.my_slot = 0;
-	timeSlot.space = parseInt(timeSlot.space) + 1;
+	timeSlot.space = parseInt(timeSlot.space);
 	timeSlot.full = 0;
 
 	const timeSlotRow = document.getElementById(timeSlot.id);
 	if (timeSlotRow) timeSlotRow.classList.remove('fullSlot');
 
-	console.log(timeSlot.id)
-	console.log(timeSlotRow)
+	//console.log(timeSlot.id)
+	//console.log(timeSlotRow)
 
 }
 
+// Check for the users time slot to reset after changing a reservation slot.
+// I believe the bug is somewhere in here
 function resetMySlot(timeSlotObjects) {
 
 	$('.mySlot td').text("");
@@ -103,7 +147,7 @@ function resetMySlot(timeSlotObjects) {
 
 }
 
-
+// This function could be replaced or moved to the UI file or a UI Date function file.
 function getCurrentTime() {
 
 	var date = new Date();
@@ -117,6 +161,7 @@ function getCurrentTime() {
 
 };
 
+// This could be replaced or moved to the UI or a UI Date function file.
 function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
 
 	if (!((timeToBeChecked.includes("AM") || timeToBeChecked.includes("PM") || todayTimeStamp.includes("PM") || todayTimeStamp.includes("AM"))))
@@ -156,6 +201,7 @@ function checkTimeIfLessThanToday(timeToBeChecked, todaysTime) {
 		return false;
 }
 
+// This function could be replaced or moved to the UI file or a UI Date function file.
 function getTodayDate() {
 
 	// Returns mm/dd/yyyy
@@ -170,13 +216,13 @@ function getTodayDate() {
 
 }
 
-
+// Remove any on click listeners on the submission modal if hidden
 $('#myModal').on('hidden.bs.modal', function () {
 	$('#submitButton').off();
 });
 
-var previous_slot = null;
 
+// Save the Registered Slot
 function saveRegister() {
 
 	//console.log("Test");
@@ -246,23 +292,9 @@ function saveRegister() {
 }
 
 
-const monthEnum = {
-	January: '1',
-	February: '2',
-	March: '3',
-	April: '4',
-	May: '5',
-	June: '6',
-	July: '7',
-	August: '8',
-	September: '9',
-	October: '10',
-	November: '11',
-	December: '12'
-}
-
 $(document).ready(function () {
-	timeSlotObjects = createTimeSlotObjects();
+	var previous_slot = null;
+	timeSlotObjects = createTimeSlotObjects();	//initialize db objects here
 	
 	monthDayAvailableSpace = getMonthDayAvailableSpace();
 	document.getElementById('timeSlots').remove();
@@ -272,6 +304,7 @@ $(document).ready(function () {
 		$('.fileUploadContainer').remove();
 
 });
+
 
 function formatDate(d) {
 	var day = String(d.getDate())
@@ -344,6 +377,7 @@ $(function () {
 
 });
 
+// adds the listener to submit function
 function addSubmitListenerToSubmitButton() {
 	$("#submitButton").one('click', function () {
 		saveRegister();
@@ -389,7 +423,7 @@ function calcStartTime() {
 	var test2 = timeSlotObjects[timeSlotKeys[1]].start_time.hour;
 }
 
-
+// Create the modal for registration 
 function createFields() {
 
 	$('.removeOnClear').remove(); //Clear all cells
@@ -445,12 +479,14 @@ function createFields() {
 	}
 }
 
+// Create spacing in between non contiguous time slots in the registration modal
 function addBlankSpace() {
 	var newRow = $('<tr><th></th><th></th></tr>');
 	newRow.addClass("removeOnClear blank");
 	$('#slotPicker tbody').append(newRow);
 }
 
+// Create the selectable slots for registration
 function createCells(startTime, spaceAvailable, isFull, id, isMySlot) {
 
 	var rowContent = '<tr><th><div>' + totalMinutesToFormat(startTime);
@@ -483,6 +519,7 @@ function createCells(startTime, spaceAvailable, isFull, id, isMySlot) {
 
 }
 
+// Function called upon a slot being clicked.
 function selectASlot() {
 	$("#slotPicker td").click(function () {
 
@@ -564,6 +601,7 @@ function slice_time(timeText) {
 
 }
 
+//initialize the time slots objects
 function createTimeSlotObjects() {
 
 	timeSlotTable = document.getElementById('timeSlots');
@@ -629,6 +667,7 @@ function getMonthDayAvailableSpace() {
 
 }
 
+// highlight the dates that are used for this event. (full event date is red. Open event date is blue).
 function highlightCalendar() {
 
 	var calendarTitle = document.getElementsByClassName('datepicker-switch')[0].textContent;
@@ -666,7 +705,7 @@ function highlightCalendar() {
 
 }
 
-
+// Get the selectable dates
 function getSelectableDates() {
 
 	var enableDays = [];
@@ -687,6 +726,7 @@ function getSelectableDates() {
 
 }
 
+// File upload upon registration complete and file uploading is enabled for the event
 $('#submitFile').on('click', function () {
 
     var inputFile = $('#inputFile');
