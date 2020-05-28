@@ -17,6 +17,9 @@
 *
 * - BUG: Two date pickers when there should really only be one.
 *
+* - Schedule Checking: Registering for an event slot doesn't check for time conflicts with events the user own and other events
+*	they are registered to. Ideally the application should detect time conflicts.
+*
 * - Suggestion: It might be better to rewrite this page altogether.
 *
 *********************************************************************/

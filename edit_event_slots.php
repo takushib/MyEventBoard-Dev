@@ -100,7 +100,7 @@
     // response to front end
 
     if ($insertSuccess && $deleteSuccess) {
-        echo "The event time slots changes was successfully saved!";
+        echo "The event time slots changes were successfully saved!";
     }
     else {
 

@@ -282,7 +282,7 @@ $('#saveForm').on('click', function () {
 	
 	if (hasChangedValue == false)
 	{
-		alert("No Changes have been Made");
+		alert("No changes have been made");
 		return;
 	}
 
