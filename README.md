@@ -37,5 +37,9 @@ For documentation on the source code, it can be found at https://apereo.github.i
 Mimey is a package that MyEventBoard uses for its file upload functionality.  
 Read more about it at https://github.com/ralouphie/mimey
 
+## License & Copyright
 
+Copyright (c) 2020 Tommy Liao, Blaise Takushi, Simon Louie
+
+Licensed under the [MIT License](LICENSE).
 
