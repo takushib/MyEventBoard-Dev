@@ -25,6 +25,14 @@
         exit;
     }
 
+    // check if event name or event location is blank
+
+    if (trim($_POST['eventName']) == "" || trim($_POST['eventLocation']) == "") {
+        echo "Event name and event location must be specified." . "\n";
+        echo "No changes to the event details were made.";
+        exit;
+    } 
+
 
     // get event details from POST requestt
 
@@ -52,10 +60,12 @@
 
     $eventData["upload"] = $enableUpload;
 
-
     // update database entry using given data
 
     $result = $database -> changeEventDetails($eventKey, $eventData);
+
+
+    // send response
 
     if ($result > 0) {
         echo "The event details were successfully edited!";
