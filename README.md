@@ -37,13 +37,31 @@ For documentation on the source code, it can be found at https://apereo.github.i
 Mimey is a package that MyEventBoard uses for its file upload functionality.  
 Read more about it at https://github.com/ralouphie/mimey
 
-## Contributors
+## To-Do List For Future Development
 
-Tommy Liao, liaoto@oregonstate.edu or tommycs404@gmail.com
+- Refactoring for front end code (special attention needed for HTML and JS)
+- Data binding for event editing or a better method for updating the UI after data changes
+- Feedback for while waiting on running task in the UI  
+    (e.g. the loading spinner before confirmation to show that the action is being worked on)
+- Improvement of styling for mobile
+- Support for "find best common time" use case  
+    (this requires the ability to reserve multiple time slots of an event)
+- Walk-through for website usage
+- User experience testing
+- Invitations for event registration via e-mail
+- Ability to view other users in registered slots (event must not be set to anonymous)
+- Textbox for submitting text information at registration
+- Ability to specify an alternate name (such a group name) for a reservation
+- File upload at registration (not only after registration)
+- Reset and undo feature for event editing
 
-Simon Louie, louisi@oregonstate.edu or simon-louie@outlook.com
+## Contact Information
 
-Blaise Takushi, takushib@oregonstate.edu or Btsg808@gmail.com 
+Tommy Liao: liaoto@oregonstate.edu or tommycs404@gmail.com
+
+Simon Louie: louisi@oregonstate.edu or simon-louie@outlook.com
+
+Blaise Takushi: takushib@oregonstate.edu or Btsg808@gmail.com 
 
 ## License & Copyright
 
