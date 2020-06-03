@@ -474,5 +474,5 @@ function dragTable() {
 }
 
 $("#goToManageButton").on('click', function() {
-	window.location = "./events";
+	window.location = "./events.php";
 })

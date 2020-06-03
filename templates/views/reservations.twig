@@ -35,7 +35,7 @@
 				<tr id="{{ table_row|last }}"scope="row">
 
 					<td>
-						<a class="text-info" href="./reservation_details?key={{ table_row|last }}">{{ table_row|first }}</a>
+						<a class="text-info" href="./reservation_details.php?key={{ table_row|last }}">{{ table_row|first }}</a>
 					</td>
 
 					{% for column in table_row|slice(1, -2) %}

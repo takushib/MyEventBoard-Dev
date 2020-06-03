@@ -44,7 +44,7 @@
 						<td class="d-none" scope="col">{{ event_key }}</td>
 
 						<td scope="col">
-							<a class="linkToEvent" href="./manage?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
+							<a class="linkToEvent" href="./manage.php?key={{ event_key }}">{{ table_row|slice(1,1)|first }}</a>
 						</td>
 						
 						{% for column in table_row|slice(2) %}

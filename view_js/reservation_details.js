@@ -49,7 +49,7 @@ $(document).ready(function () {
 			returnButton.addClass('btn btn-dark');
 			
 			returnButton.on('click', function() {
-				window.location.href = "./reservations";
+				window.location.href = "./reservations.php";
 			});
 			
 			removedContainer.append('<h3> Registered Slot Has Been Deleted </h3>');
