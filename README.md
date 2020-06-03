@@ -40,7 +40,9 @@ Read more about it at https://github.com/ralouphie/mimey
 ## Contributors
 
 Tommy Liao, liaoto@oregonstate.edu
+
 Simon Louie, louisi@oregonstate.edu
+
 Blaise Takushi, takushib@oregonstate.edu
 
 ## License & Copyright
