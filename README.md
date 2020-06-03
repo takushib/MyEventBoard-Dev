@@ -39,11 +39,11 @@ Read more about it at https://github.com/ralouphie/mimey
 
 ## Contributors
 
-Tommy Liao, liaoto@oregonstate.edu
+Tommy Liao, liaoto@oregonstate.edu or tommycs404@gmail.com
 
-Simon Louie, louisi@oregonstate.edu
+Simon Louie, louisi@oregonstate.edu or simon-louie@outlook.com
 
-Blaise Takushi, takushib@oregonstate.edu
+Blaise Takushi, takushib@oregonstate.edu or Btsg808@gmail.com 
 
 ## License & Copyright
 
