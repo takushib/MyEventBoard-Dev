@@ -58,7 +58,7 @@ $(document).ready(function () {
 			returnButton.addClass('btn btn-dark');
 			
 			returnButton.on('click', function() {
-				window.location.href = "./events";
+				window.location.href = "./events.php";
 			});
 			
 			removedContainer.append('<h3> Event Has Been Deleted </h3>');
