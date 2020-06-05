@@ -254,7 +254,11 @@ function saveRegister() {
 		}).done(function (response) {
 
 			if (response <= -1) {
+				//console.log("Response = -1");
+			//	console.log(response);
 				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
+				$("#confirmationText").addClass("doNotDisplay");
+				$("#uploadLabel").addClass("doNotDisplay");
 				document.getElementById('feedbackMessage').textContent =
 					"The time slot was full! Please select another one!";
 				$('.fileUpload').addClass('doNotDisplay');
@@ -263,17 +267,26 @@ function saveRegister() {
 				addSubmitListenerToSubmitButton();
 			}
 			else if (response == 0) {
+			//	console.log("Response = 0");
+			//	console.log(response);
 				resetMySlot(timeSlotObjects);
 				setFullSlot(selectedSlot, timeSlotObjects[slotKey]);
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
+				$("#confirmationText").removeClass("doNotDisplay");
+				$("#uploadLabel").removeClass("doNotDisplay");
 				document.getElementById('feedbackMessage').textContent = "You have been registered!";
 				$('.fileUpload').removeClass('doNotDisplay');
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
 			}
 			else {
+			//	console.log("Response > 0");
+			//	console.log(response.length);
+				console.log(response);
 				resetMySlot(timeSlotObjects);
 				setMySlot(selectedSlot, timeSlotObjects[slotKey]);
+				$("#confirmationText").removeClass("doNotDisplay");
+				$("#uploadLabel").removeClass("doNotDisplay");
 				$('#myModal').modal('toggle');
 				$('#feedBackModal').modal('toggle');
 				// timeSlotObjects[slotKey].space = response;
