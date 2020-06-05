@@ -61,6 +61,7 @@ Read more about it at https://github.com/ralouphie/mimey
 - Homepage calendar view for schedule (possibly?)
 - Ability to export schedule (reservations) to different calendar application (google calendar).
 - Removing a registered user from your event (event manage page)
+- Reminder feature for Reservations
 
 ## Contact Information
 
