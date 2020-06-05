@@ -60,6 +60,7 @@ Read more about it at https://github.com/ralouphie/mimey
      (e.g. the loading spinner before confirmation to show that the action is being worked on)
 - Homepage calendar view for schedule (possibly?)
 - Ability to export schedule (reservations) to different calendar application (google calendar).
+- Removing a registered user from your event (event manage page)
 
 ## Contact Information
 
