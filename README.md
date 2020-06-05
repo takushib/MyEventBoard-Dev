@@ -22,6 +22,10 @@ MyEventBoard uses Twig, Mimey, and phpCAS. Install Composer first, and then inst
 Remember to also set permissions for everything inside the repository.  
 Run the script named 'set_permissions.sh'.
 
+## Aplication Tutorial
+
+
+
 ## Resources for Development
 
 Composer is a dependency manager for PHP. Visit https://getcomposer.org/ for more information.
@@ -62,9 +66,6 @@ Read more about it at https://github.com/ralouphie/mimey
 - Ability to export schedule (reservations) to different calendar application (google calendar)
 - Removing a registered user from your event (event manage page)
 - Reminder feature for Reservations (e.g through email)
-
-## Aplication Tutorial
-
 
 ## Contact Information
 
