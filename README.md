@@ -37,7 +37,7 @@ Read more about it at https://github.com/ralouphie/mimey
 
 ## To-Do List For Future Development
 
-### High Prioritiy
+### High Priority
 - Refactoring for front end code (special attention needed for HTML and JS)
 - Data binding for event editing or a better method for updating the UI after data changes
 - Improvement of styling for mobile
