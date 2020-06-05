@@ -59,9 +59,9 @@ Read more about it at https://github.com/ralouphie/mimey
 - Feedback for while waiting on a running task in the UI 
      (e.g. the loading spinner before confirmation to show that the action is being worked on)
 - Homepage calendar view for schedule (possibly?)
-- Ability to export schedule (reservations) to different calendar application (google calendar).
+- Ability to export schedule (reservations) to different calendar application (google calendar)
 - Removing a registered user from your event (event manage page)
-- Reminder feature for Reservations
+- Reminder feature for Reservations (e.g through email)
 
 ## Contact Information
 
