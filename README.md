@@ -41,7 +41,7 @@ Read more about it at https://github.com/ralouphie/mimey
 
 - Refactoring for front end code (special attention needed for HTML and JS)
 - Data binding for event editing or a better method for updating the UI after data changes
-- Feedback for while waiting on running task in the UI  
+- Feedback for while waiting on a running task in the UI  
     (e.g. the loading spinner before confirmation to show that the action is being worked on)
 - Improvement of styling for mobile
 - Support for "find best common time" use case  
