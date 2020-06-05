@@ -77,7 +77,7 @@ $(document).ready(function () {
 		
 		$('#inviteSubmitButton').off();
 		$('#inviteSubmitButton').on("click", function() {
-			$('#inviteConfirm').modal('toggle');
+			alert("Feature Unavailable: Currently Under Development. (WIP)");
 			//send invitation emails here
 		});
 		
