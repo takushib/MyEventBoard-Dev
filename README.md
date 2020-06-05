@@ -22,7 +22,7 @@ MyEventBoard uses Twig, Mimey, and phpCAS. Install Composer first, and then inst
 Remember to also set permissions for everything inside the repository.  
 Run the script named 'set_permissions.sh'.
 
-## Aplication Tutorial
+## Application Tutorial
 
 
 
