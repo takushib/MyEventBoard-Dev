@@ -442,6 +442,7 @@ class DatabaseInterface {
             LEFT JOIN meb_user U 
                 ON B.fk_user_id = U.id
             WHERE E.hash = ?
+			ORDER BY T.start_time
 
         ";
 
