@@ -74,8 +74,7 @@ const stateOfEvent = {
 	duration: "",	// tracks the previous duration of the state
 	dbDuration: "",	// duration from the DB. Only gets updated on Init/Save
 	dbCapacity: "",	// capacity from the DB. Only gets updated on Init/Save
-	addedSlots: [],
-	dbSlots: [] // save the snapshot of the DB's existing slot. Only changes on init/save
+	addedSlots: []
 };
 
 const disabledStack = [];  // This will hold arrays of objects with a snapshot of what changes were made at that instance of an edit or duration change
@@ -98,6 +97,7 @@ function getDayName(dateObj) {
 }
 
 // Reset the state objects
+// not sure if this actually is working as intended
 function resetTheState() {
 
 	$('#addEventsTable tbody').empty();
@@ -152,7 +152,7 @@ function getDataFromDB() {
 		dbSlots[i].endTime   = dbSlots[i].endTime.substring(0, dbSlots[i].endTime.length-3);
 	}
 
-	console.log(dbSlots);
+	//console.log(dbSlots);
 }
 
 // initialize the state objects
@@ -178,10 +178,7 @@ function initTimeState() {
 	while (existingEventsArray.length > 0)
 		existingEventsArray.pop();
 
-	stateOfEvent.dbSlots = [];
-
 	for (let i = 0; i < dbExistingSlots.length; i++) {
-		stateOfEvent.dbSlots.push(dbExistingSlots[i]);
 		existingEventsArray.push(dbExistingSlots[i]);
 		var dbObjToReadable = databaseDateFormatToReadable(dbExistingSlots[i]);
 		appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
@@ -191,6 +188,39 @@ function initTimeState() {
 
 }
 
+// Add full slots to existing slots so edits cant go over them
+function editSlotSelectionChanged() {
+	
+	$('.removeEditOnClear').each(function() {
+		$(this).removeClass("fullSlot");
+		$(this).removeClass("selected");
+	});
+	
+	var allSlotsTempArray = existingEventsArray.concat(stateOfEvent.addedSlots);
+	
+	$("#editTimeSelector tr").not(':first').not(':last').each(function () {
+
+		var time = formatTime($(this).children().find('div').text());
+		var datePieces = $("#editDates").val().split("/");
+		
+		
+		// we only need the startTime since we only compare the start times for duplicates
+		var timeInObject = [{
+							   startTime: (datePieces[2] + "-" + datePieces[0] + "-" + datePieces[1] + " " + time),
+							   endTime: null
+				           }];
+		
+		
+		if (arraysNoDuplicate(allSlotsTempArray, timeInObject) == false)
+			$(this).children().last().addClass("fullSlot");
+		
+	});
+
+}
+
+$("#editDates").on("change", function() {
+	editSlotSelectionChanged();
+});
 
 // Edit slots modal
 function buildModalForMoveSlots(editRow) {
@@ -206,17 +236,6 @@ function buildModalForMoveSlots(editRow) {
 
 	$("#editDatepicker").datepicker("setDate", slotDate);
 	$("#editDatepicker").datepicker("defaultDate", slotDate );
-
-
-	$("#editTimeSelector tr").not(':first').not(':last').each(function () {
-
-		var time = formatTime($(this).children().find('div').text());
-
-		if (time == slotPieces[1])
-		{
-			$(this).children().last().addClass("fullSlot");
-		}
-	});
 
 }
 
@@ -727,9 +746,6 @@ $('#durationSelector').on('change', function (e) {
 						while (existingEventsArray.length > 0)
 							existingEventsArray.pop();
 
-						for (let i = 0; i < stateOfEvent.dbSlots.length; i++)
-							existingEventsArray.push(stateOfEvent.dbSlots[i]);
-
 						for (let i = 0; i < existingEventsArray.length; i++) {
 							var dbObjToReadable = databaseDateFormatToReadable(existingEventsArray[i]);
 							appendToExistingEventTable(dbObjToReadable.date, dbObjToReadable.dayName, dbObjToReadable.startTime, dbObjToReadable.endTime);
@@ -754,9 +770,9 @@ $('#durationSelector').on('change', function (e) {
 					changedDuration(EDIT_TIME_TABLE_ELEMENT);
 					updateEditSlotTimeTable();
 
-					console.log(stateOfEvent.addedSlots);
-					console.log(existingEventsArray);
-					console.log(disabledStack);
+					//console.log(stateOfEvent.addedSlots);
+			//		console.log(existingEventsArray);
+				//	console.log(disabledStack);
 
 					$('#generalConfirm').modal('toggle');
 					stateOfEvent.duration = $("#durationSelector option:selected").val();
@@ -777,12 +793,15 @@ function updateEditSlotTimeTable() {
 	$("#editTimeSelector tr td").each(function() {
 		$(this).on("click", function() {
 
-			$(".selected").each(function() {
-				$(this).removeClass("selected");
-			});
+			if (!$(this).hasClass("fullSlot")) {
+				$(".selected").each(function() {
+					$(this).removeClass("selected");
+				});
 
-			$(this).toggleClass("selected");
+				$(this).toggleClass("selected");
+			}
 		});
+		
 	});
 }
 
@@ -794,7 +813,7 @@ function changedDuration(timeTablePickerSelectorID) {
 
 	var selectedDuration = parseInt($('#durationSelector').find(":selected").val(), 10);
 
-	console.log(timeTablePickerSelectorID);
+	//console.log(timeTablePickerSelectorID);
 
 	var offset = 0;
 	var minutes = 0;
@@ -959,9 +978,9 @@ function getExistingEventsFromDBCachedSlots(deleteDatesArray) {
 }
 
 
-// Save the time changes here
+// Save the time changes here.
 function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, eventNewCapacity) {
-
+	
 	var newAddArray = JSON.stringify(eventAddArray);
 	var newDeleteArray = JSON.stringify(eventDeleteArray);
 	$.ajax({
@@ -971,8 +990,8 @@ function saveTimeChanges(eventAddArray, eventDeleteArray, eventNewDuration, even
 			eventHash: window.location.search.split('?key=')[1],
 			addedSlots: newAddArray,
 			deletedSlots: newDeleteArray,
-			slot_duration: eventNewDuration,
-			slot_capacity: eventNewCapacity
+			slot_duration: parseInt(eventNewDuration, 10),
+			slot_capacity: parseInt(eventNewCapacity, 10)
 		}
 	}).done(function(response) {
 		$('#refreshChangeHeader').text(response);
@@ -999,22 +1018,42 @@ $('#saveSlots').on('click', function () {
 	for (let i = 0; i < disabledStack.length; i++)	// Get the disabled slots back into the delete array
 		deleteObjInfoHolder = deleteObjInfoHolder.concat(disabledStack[i].disabledSlots);
 
-	console.log(stateOfEvent.capacity);
-	console.log(stateOfEvent.dbCapacity);
+		
 	if (deleteObjInfoHolder.length < 1 && stateOfEvent.addedSlots < 1 && stateOfEvent.capacity == stateOfEvent.dbCapacity)
 	{
 		alert("No Changes have been made");
 		return;
 	}
+	
+	
+	
+	/* 
+	If statement below:
+		Prevents event from not having any slots left after editing. 	
+		Ideally we don't want this. This is mainly a quick patch. We want events to support having 0 slots if a creator edits it that way. 
+		However, the application is set to not work when events have 0 slots, so this a problem we haven't fixed yet and should be fixed.
+	*/
+	if (stateOfEvent.addedSlots.length < 1)
+	{
+		if (getExistingEventsFromDBCachedSlots(deleteObjInfoHolder).length == dbSlots.length)
+		{
+			alert("Must have at added at least one time slot or have least one remaining existing time slot");
+			return;
+		}
+	}
 
+	
+	
 	buildModalForTimeSave("Confirm Save", stateOfEvent.addedSlots, deleteObjInfoHolder, stateOfEvent.duration, stateOfEvent.capacity);
 	$('#generalConfirm').modal('toggle');
 
 
 	$('#generalAcceptButton').one('click', function () {
+		
 		saveTimeChanges(stateOfEvent.addedSlots, getExistingEventsFromDBCachedSlots(deleteObjInfoHolder), stateOfEvent.duration, stateOfEvent.capacity);
-		$('#generalConfirm').modal('toggle');
 		resetTheState();
+		$('#generalConfirm').modal('toggle');
+		
 	});
 
 	$('#generalCancelButton').on('click', function () {
@@ -1043,7 +1082,7 @@ $('#addEventModal').on('hidden.bs.modal', function () {
 function arraysNoDuplicate(superset, subset) {
 
 
-	//console.log(superset);
+//	console.log(superset);
 	//console.log(subset);
 
 	if (!Array.isArray(superset) || !Array.isArray(subset))
@@ -1243,3 +1282,8 @@ function addEventSlots() {
 	}
 
 }
+
+$("#resetButton").on("click", function() {
+	// Reset stuff here.
+	alert("Feature Unavailable: Currently under development (WIP)");
+});

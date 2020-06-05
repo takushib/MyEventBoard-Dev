@@ -90,7 +90,7 @@ function initFormState() {
 	}
 
 	while (rawEntries.length > 0) rawEntries[0].remove();
-	console.log(databaseObj);
+	//console.log(databaseObj);
 	
 	var dbEventName = databaseObj[0]['name'];
 	var dbEventLocation = databaseObj[0]['location'];
@@ -118,7 +118,7 @@ function initFormState() {
 	$('#anonymousCheck').prop("checked", dbAnonymousOption);
 	$('#fileUpload').prop("checked", dbFileOption);
 	
-	console.log(formState);
+	//console.log(formState);
 
 }	
 
