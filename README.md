@@ -63,6 +63,9 @@ Read more about it at https://github.com/ralouphie/mimey
 - Removing a registered user from your event (event manage page)
 - Reminder feature for Reservations (e.g through email)
 
+## Aplication Tutorial
+
+
 ## Contact Information
 
 Tommy Liao: liaoto@oregonstate.edu or tommycs404@gmail.com
