@@ -6,9 +6,7 @@ as part of the Schedule It! project.
 ## Accessing the Application
 
 While MyEventBoard is currently in development, it can be accessed at:  
-http://web.engr.oregonstate.edu/~liaoto/MyEventBoard/  
-http://web.engr.oregonstate.edu/~louiesi/MyEventBoard/  
-http://web.engr.oregonstate.edu/~takushib/MyEventBoard/  
+https://eecs.oregonstate.edu/education/myeventboard/
 
 ## Setting Up the Repository for Development
 
