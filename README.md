@@ -37,10 +37,9 @@ Read more about it at https://github.com/ralouphie/mimey
 
 ## To-Do List For Future Development
 
+# High Prioritiy
 - Refactoring for front end code (special attention needed for HTML and JS)
 - Data binding for event editing or a better method for updating the UI after data changes
-- Feedback for while waiting on a running task in the UI  
-    (e.g. the loading spinner before confirmation to show that the action is being worked on)
 - Improvement of styling for mobile
 - Support for "find best common time" use case  
     (this requires the ability to reserve multiple time slots of an event)
@@ -53,8 +52,14 @@ Read more about it at https://github.com/ralouphie/mimey
 - File upload at registration (not only after registration)
 - Reset and undo feature for event editing
 - Editing the event capacity
+
+# Low Priority
 - Time conflict checks (for event registration. Maybe for event creation)
 - Log out button (ONID)
+- Feedback for while waiting on a running task in the UI 
+     (e.g. the loading spinner before confirmation to show that the action is being worked on)
+- Homepage calendar view for schedule (possibly?)
+- Ability to export schedule (reservations) to different calendar application (google calendar).
 
 ## Contact Information
 
