@@ -54,6 +54,8 @@ Read more about it at https://github.com/ralouphie/mimey
 - Ability to specify an alternate name (such a group name) for a reservation
 - File upload at registration (not only after registration)
 - Reset and undo feature for event editing
+- Editing the event capacity
+- Time conflict checks (for event registration. Maybe for event creation)
 
 ## Contact Information
 
