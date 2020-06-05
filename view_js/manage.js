@@ -116,7 +116,7 @@ function deleteThisEvent(hashKey) {
 function initializeEmptyDownloadItems() {
 	$(".fileDownloadFile").each(function() {
 		//console.log($(this).attr("href"));
-		if ($(this).attr("href") == "../")
+		if ($(this).attr("href") == "./")
 			$(this).replaceWith( "<text>None</text>");
 	});
 }
