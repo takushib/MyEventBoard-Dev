@@ -801,7 +801,7 @@ class DatabaseInterface {
         
         if ($result) {
             $resultArray = $result -> fetch_all(MYSQLI_NUM);
-            $errorCode = $resultArray[0];
+            $errorCode = $resultArray[0][0];
         }
         else {
             $errorCode = -1;
