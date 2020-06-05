@@ -11,9 +11,6 @@
 *
 * - Refactoring: This page suffers from being developed in the early stages. There are a lot of code that can be written better 
 *	or code that could have been reused more efficiently. There should ideally be only 1 document.ready function.
-* 
-* - BUG: Registering for a new slot while previously signed up for a different slot has a UI bug. This bug incorrectly displays the capacity
-* 	for that previous slot unless the page is refreshed. 
 *
 * - BUG: Two date pickers when there should really only be one.
 *
@@ -101,11 +98,11 @@ function setMySlot(modalTimeSlot, timeSlotObject) {
 	modalTimeSlot[0].textContent = '✔';
 
 	timeSlotObject.my_slot = 1;
+	timeSlotObject.space = timeSlotObject.space - 1;
 
 }
 
 // Reset the slot back to it's reflective value after changing a reservation.
-// I believe the bug is somewhere in here
 function resetSlot(timeSlot) {
 
 //	console.log(timeSlot);
@@ -114,7 +111,7 @@ function resetSlot(timeSlot) {
 
 
 	timeSlot.my_slot = 0;
-	timeSlot.space = parseInt(timeSlot.space);
+	timeSlot.space = parseInt(timeSlot.space, 10) + 1;
 	timeSlot.full = 0;
 
 	const timeSlotRow = document.getElementById(timeSlot.id);
@@ -126,7 +123,6 @@ function resetSlot(timeSlot) {
 }
 
 // Check for the users time slot to reset after changing a reservation slot.
-// I believe the bug is somewhere in here
 function resetMySlot(timeSlotObjects) {
 
 	$('.mySlot td').text("");
