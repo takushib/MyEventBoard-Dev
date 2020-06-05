@@ -257,21 +257,21 @@ function editSlot(datesToBeMoved, toBeMovedRow) {
 		var startTime = null;
 		var endTime = null;
 
+		// loop through selectable edit table column
 		$("#editTimeSelector tr").not(':first').not(':last').each(function () {
 
 			if ($(this).children().last().hasClass("selected"))
 			{
-				startTime = $(this).children().find('div').text();
-			}
-
-			if ($(this).children().last().hasClass("fullSlot"))
-			{
-				hasSelected = $(this).children().find('div').text();
+				startTime = $(this).children().find('div').text();  // Check for the selected slot
+				hasSelected = true;									
 			}
 		});
 
-		if (startTime == null)
-			startTime = hasSelected;
+		if (hasSelected == false)
+		{
+			alert("No time slot selected");
+			return false;
+		}
 
 		endTime = formatTime(parseInt(startTime,10) + parseInt(stateOfEvent.duration, 10));
 		startTime = formatTime(startTime);
@@ -311,6 +311,7 @@ function editSlot(datesToBeMoved, toBeMovedRow) {
 		}
 		else
 		{
+			alert("Duplicate time slot detected");
 			return false;
 		}
 }
@@ -346,7 +347,7 @@ $('#editExistingSlots').on('click', function () {
 	$('#editSlotsConfirmButton').on('click', function () {
 
 		if (editSlot(datesToBeMoved, toBeMovedRow) == false) {
-			alert("duplicate slot detected");
+			return;
 		}
 		else
 		{
