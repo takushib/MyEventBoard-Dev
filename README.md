@@ -37,7 +37,7 @@ Read more about it at https://github.com/ralouphie/mimey
 
 ## To-Do List For Future Development
 
-# High Prioritiy
+### High Prioritiy
 - Refactoring for front end code (special attention needed for HTML and JS)
 - Data binding for event editing or a better method for updating the UI after data changes
 - Improvement of styling for mobile
@@ -53,7 +53,7 @@ Read more about it at https://github.com/ralouphie/mimey
 - Reset and undo feature for event editing
 - Editing the event capacity
 
-# Low Priority
+### Low Priority
 - Time conflict checks (for event registration. Maybe for event creation)
 - Log out button (ONID)
 - Feedback for while waiting on a running task in the UI 
