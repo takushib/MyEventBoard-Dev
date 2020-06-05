@@ -54,6 +54,7 @@ Read more about it at https://github.com/ralouphie/mimey
 - Reset and undo feature for event editing
 - Editing the event capacity
 - Time conflict checks (for event registration. Maybe for event creation)
+- Log out button (ONID)
 
 ## Contact Information
 
