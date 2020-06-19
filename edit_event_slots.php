@@ -60,9 +60,12 @@
 
             // build URL that leads to sign-up page for event
 
-            $developerONID = substr(getcwd(), strlen('/nfs/stak/users/'), -1 * strlen('/public_html/MyEventBoard'));
-            $siteURL = 'http://web.engr.oregonstate.edu/~' . $developerONID . '/MyEventBoard/';
-            $siteURL = $siteURL . 'register?key=' . $eventKey;
+            // $developerONID = substr(getcwd(), strlen('/nfs/stak/users/'), -1 * strlen('/public_html/MyEventBoard'));
+            // $siteURL = 'http://web.engr.oregonstate.edu/~' . $developerONID . '/MyEventBoard/';
+            // $siteURL = $siteURL . 'register?key=' . $eventKey;
+
+            $siteURL = 'https://eecs.oregonstate.edu/education/myeventboard/';
+            $siteURL = $siteURL . 'register.php?key=' . $eventKey;
 
             // email users who were kicked off after successful delete
 
