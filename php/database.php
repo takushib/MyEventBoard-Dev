@@ -33,12 +33,13 @@ class DatabaseInterface {
         $userName = trim(fgets($databaseDetails));
         $password = trim(fgets($databaseDetails));
         $databaseName = trim(fgets($databaseDetails));
+        $port = trim(fgets($databaseDetails));
     
         fclose($databaseDetails);
     
         // create connection to database
         
-        $this -> database = new mysqli($host, $userName, $password, $databaseName);
+        $this -> database = new mysqli($host, $userName, $password, $databaseName, $port);
     
         // check if that was successful
         // application is completely dependent on database so dying is acceptable
@@ -1062,7 +1063,7 @@ class DatabaseInterface {
 
 }
 
-
 $database = new DatabaseInterface();
+$database -> connectAsReadOnlyUser();
 
 ?>
