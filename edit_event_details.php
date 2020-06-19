@@ -8,6 +8,7 @@
 
     require_once 'php/database.php';
 
+    $database -> connectAsAdministrator();
 
     // check if user is creator
 

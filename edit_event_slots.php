@@ -8,6 +8,8 @@
 
     require_once 'php/database.php';
 
+    $database -> connectAsAdministrator();
+
     // include email function
 
     require_once 'php/notify_user.php';

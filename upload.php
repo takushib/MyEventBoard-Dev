@@ -8,6 +8,7 @@
     
     require_once 'php/database.php';
 
+    $database -> connectAsAdministrator();
     
     // get time slot key from POST request
 
