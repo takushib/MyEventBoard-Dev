@@ -13,7 +13,7 @@ if (!isset($_SESSION['user'])) {
 
     require_once 'php/cas.php';
 
-    // we use the user's ONID, first name, last name and email
+    // we use the user's ONID, first name, last name and e-mail
     // however, many more attributes are available
 
     $_SESSION['user'] = $_SESSION['phpCAS']['user'];
@@ -33,6 +33,8 @@ if (!isset($_SESSION['user'])) {
 // add user to database if user does not exist
 
 require_once 'php/database.php';
+
+$database -> connectAsAdministrator();
 
 $database -> addUser(
     $_SESSION['user'], $_SESSION['email'], 
