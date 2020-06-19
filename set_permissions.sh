@@ -13,3 +13,5 @@ chmod 700 composer*
 
 chmod 700 README.md
 chmod 700 text_file
+chmod 700 secret1
+chmod 700 secret2
