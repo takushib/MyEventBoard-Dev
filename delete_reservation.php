@@ -8,6 +8,8 @@
 
 	require_once 'php/database.php';
 
+	$database -> connectAsAdministrator();
+
 	// get data from POST request
 
 	$slotKey = $_POST["key"];

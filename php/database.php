@@ -11,12 +11,52 @@ class DatabaseInterface {
     private $database;
 
 
-    function __construct($host, $userName, $password, $databaseName) {
-        $this -> database = new mysqli($host, $userName, $password, $databaseName);
+    public function __construct($mode = null) {
+        switch ($mode) {
+            case 'a': $this -> connectAsAdministrator();
+            case 'ro': $this -> connectAsReadOnlyUser();
+            default: $this -> connectToDatabase('text_file');
+        }
     }
 
     public function getError() {
         return ($this -> database -> connect_error);
+    }
+
+    private function connectToDatabase($fileName) {
+
+        // get information for connecting to database
+    
+        $databaseDetails = fopen($fileName, 'r');
+    
+        $host = trim(fgets($databaseDetails));
+        $userName = trim(fgets($databaseDetails));
+        $password = trim(fgets($databaseDetails));
+        $databaseName = trim(fgets($databaseDetails));
+        $port = trim(fgets($databaseDetails));
+    
+        fclose($databaseDetails);
+    
+        // create connection to database
+        
+        $this -> database = new mysqli($host, $userName, $password, $databaseName, $port);
+    
+        // check if that was successful
+        // application is completely dependent on database so dying is acceptable
+        // return if it was successful
+    
+        if ($this -> getError()) {
+            die('A connection to the database could not be established.');
+        }
+        
+    }
+
+    public function connectAsReadOnlyUser() {
+        $this -> connectToDatabase('secret1');
+    }
+
+    public function connectAsAdministrator() {
+        $this -> connectToDatabase('secret2');
     }
 
     
@@ -1023,28 +1063,7 @@ class DatabaseInterface {
 
 }
 
-
-// information for connecting to database
-
-$databaseDetails = fopen('text_file', 'r');
-
-$host = trim(fgets($databaseDetails));
-$userName = trim(fgets($databaseDetails));
-$password = trim(fgets($databaseDetails));
-$databaseName = trim(fgets($databaseDetails));
-
-fclose($databaseDetails);
-
-
-// create connection to database
-
-$database = new DatabaseInterface($host, $userName, $password, $databaseName);
-
-// check if that was successful
-// application is completely dependent on database so dying is acceptable
-
-if ($database -> getError()) {
-    die('A connection to the database could not be established.');
-}
+$database = new DatabaseInterface();
+$database -> connectAsReadOnlyUser();
 
 ?>

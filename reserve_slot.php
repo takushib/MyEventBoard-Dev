@@ -6,8 +6,9 @@
 
     // set up connection to database via MySQLi
 
-    require_once 'php/database.php';
-
+	require_once 'php/database.php';
+	
+	$database -> connectAsAdministrator();
 
 	// get slot key from POST request
 
