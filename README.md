@@ -24,7 +24,7 @@ Run the script named 'set_permissions.sh'.
 
 ## Application Features Overview
 
-Video:
+Video: https://oregonstate.app.box.com/file/683373432528
 
 PDF: https://github.com/takushib/MyEventBoard/blob/master/doc/MyEventBoard%20Application%20Overview.pdf
 
