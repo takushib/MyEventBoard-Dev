@@ -1,7 +1,7 @@
 # MyEventBoard
 
 MyEventBoard is a scheduling web application developed by Tommy Liao, Simon Louie and Blaise Takushi,  
-as part of the Schedule It! project.
+as part of the Schedule It! project. Blaise Takushi is the primary backend developer for this project (most of his work can be found in the .php server files).
 
 ## Accessing the Application
 
